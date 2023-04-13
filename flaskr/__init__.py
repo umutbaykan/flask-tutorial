@@ -8,6 +8,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
+        # database is the location where db files will be saved upon running
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
 
@@ -25,10 +26,9 @@ def create_app(test_config=None):
         pass
 
     # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
-
+    # @app.route('/hello')
+    # def hello():
+    #     return 'Hello, World!'
 
     db.init_app(app)
     app.register_blueprint(auth.bp)
