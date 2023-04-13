@@ -7,8 +7,11 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
 
+# url prefix will be applied before the routes, the first variable 'auth' is t
+# name of the blueprint
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+# so this route actually becomes /auth/register 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
@@ -32,6 +35,9 @@ def register():
             except db.IntegrityError:
                 error = f"User {username} is already registered."
             else:
+                # auth.login here because it redirects you to the method that is 
+                # defined under the blueprint object here (takes the name after the
+                # method, not the route)
                 return redirect(url_for("auth.login"))
 
         flash(error)
