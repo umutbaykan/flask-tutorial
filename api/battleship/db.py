@@ -1,42 +1,31 @@
-import sqlite3
 
-import click
+from bson import json_util
+
 from flask import current_app, g
+from werkzeug.local import LocalProxy
+from flask_pymongo import PyMongo
+
+from pymongo.errors import DuplicateKeyError, OperationFailure
+from bson.objectid import ObjectId
+from bson.errors import InvalidId
 
 
 def get_db():
-    if 'db' not in g:
-        g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
-        g.db.row_factory = sqlite3.Row
+    """
+    Configuration method to return db instance
+    """
+    db = getattr(g, "_database", None)
 
-    return g.db
+    if db is None:
 
-
-def close_db(e=None):
-    db = g.pop('db', None)
-
-    if db is not None:
-        db.close()
+        db = g._database = PyMongo(current_app).db
+       
+    return db
 
 
-def init_db():
-    db = get_db()
+# Use LocalProxy to read the global db instance with just `db`
+db = LocalProxy(get_db)
 
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
-
-# The argument passed in the decorator can be called from CLI
-# flask --app battleship init-db
-@click.command('init-db')
-def init_db_command():
-    """Clear the existing data and create new tables."""
-    init_db()
-    click.echo('Initialized the database.')
-
-# The methods need to be registered with the actual running app itself
-def init_app(app):
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
+def get_user():
+    response = db.users.find_one({"password": "1234"})
+    return response
