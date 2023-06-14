@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from . import auth, db
+from . import db, auth, thingy
 
 def create_app(test_config=None):
     # create and configure the app
@@ -9,7 +9,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
         # database is the location where db files will be saved upon running
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        DATABASE=os.path.join(app.instance_path, 'battleship.sqlite'),
     )
 
     if test_config is None:
@@ -25,7 +25,15 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    @app.route("/")
+    def index():
+        return "<p>Hello, World!</p>"
+    
     db.init_app(app)
+
     app.register_blueprint(auth.bp)
+    app.register_blueprint(thingy.bp)
 
     return app
+
+

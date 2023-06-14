@@ -5,7 +5,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from flaskr.db import get_db
+from battleship.db import get_db
 
 # url prefix will be applied before the routes, the first variable 'auth' is t
 # name of the blueprint

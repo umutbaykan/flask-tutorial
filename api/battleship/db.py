@@ -29,7 +29,7 @@ def init_db():
         db.executescript(f.read().decode('utf8'))
 
 # The argument passed in the decorator can be called from CLI
-# flask --app flaskr init-db
+# flask --app battleship init-db
 @click.command('init-db')
 def init_db_command():
     """Clear the existing data and create new tables."""

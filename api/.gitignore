@@ -1,10 +1,10 @@
 venv/
 
 *.pyc
-flaskr/__pycache__
+battleship/__pycache__
 
 instance/
-
+.venv
 .pytest_cache/
 .coverage
 htmlcov/
