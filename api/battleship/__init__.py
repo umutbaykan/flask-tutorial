@@ -1,16 +1,14 @@
 import os
 
-from flask import Flask, jsonify, make_response
-from . import db, auth, thingy
-
-from bson import json_util
+from flask import Flask
+from . import auth, thingy
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        MONGO_URI='mongodb://0.0.0.0/acebook'
+        MONGO_URI='mongodb://0.0.0.0/battleship'
     )
 
     if test_config is None:
@@ -25,14 +23,7 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    @app.route("/")
-    def index():
-        headers = {"Content-Type": "application/json"}
-        return make_response(json_util.dumps(db.get_user()), 200, headers)
     
-    # db.init_app(app)
-
     app.register_blueprint(auth.bp)
     app.register_blueprint(thingy.bp)
 
