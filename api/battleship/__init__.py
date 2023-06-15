@@ -16,6 +16,7 @@ def create_app(test_config=None):
         app.config.from_pyfile('config.py', silent=True)
     else:
         # load the test config if passed in
+        print("Launching on overridden (test) settings")
         app.config.from_mapping(test_config)
 
     # ensure the instance folder exists

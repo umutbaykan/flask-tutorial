@@ -10,10 +10,19 @@ def response():
   headers = {"Content-Type": "application/json"}
   return make_response(jsonify({'did it':'it worked!'}), 200, headers)
 
+@bp.route('/manualseed', methods=['GET'])
+def seed_stuff():
+  db.seed_test_database('users', [{"name":"Jason", "email":"hisemail"}, {"name":"Roger"}])
+  return "ok!"
+
 @bp.route('/getme', methods=['GET'])
 def get_user():
   headers = {"Content-Type": "application/json"}
-  print(db.db.list_collection_names())
+  return make_response(json_util.dumps(db.get_user()), 200, headers)
+
+@bp.route('/getgame', methods=['GET'])
+def get_game():
+  headers = {"Content-Type": "application/json"}
   return make_response(json_util.dumps(db.get_user()), 200, headers)
 
 @bp.route('/putme', methods=['POST'])
@@ -22,6 +31,13 @@ def put_user():
   insertion = {"name": "Jim", "password": "552", "email":"pythonic" }
   db.db["users"].insert_one(insertion)
   return make_response(json_util.dumps(db.get_user()), 200, headers)
+
+@bp.route('/putgame', methods=['POST'])
+def put_game():
+  headers = {"Content-Type": "application/json"}
+  insertion = {"game": 1}
+  operation = db.insert_game(insertion)
+  return make_response(str(operation), 200, headers)
 
 @bp.route('/drop', methods=['GET'])
 def drop_users():
