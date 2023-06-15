@@ -1,6 +1,6 @@
 from flask import (Blueprint, make_response, jsonify, request)
 
-from bson import json_util
+from bson import json_util, ObjectId
 from . import db
 
 bp = Blueprint('response', __name__, url_prefix='/response')
@@ -25,6 +25,11 @@ def get_user():
 def get_game():
   headers = {"Content-Type": "application/json"}
   return make_response(json_util.dumps(db.get_user()), 200, headers)
+
+@bp.route('/check')
+def check():
+    user = db.get_user_by_id("648b11f9c40f246ab314cd03")
+    return make_response(json_util.dumps(user), 200, {"Content-Type": "application/json"})
 
 @bp.route('/putme', methods=['POST'])
 def put_user():

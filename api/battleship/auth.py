@@ -1,7 +1,7 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response
+    Blueprint, g, redirect, request, session, url_for, make_response
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -29,49 +29,44 @@ def register():
         else:
             return make_response({}, 201)
 
-    return make_response({"error": error}, 400, {"Content-Type": "application/json"})
+    return make_response({"error": error}, 400)
 
 
 @bp.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
+    data = request.json
+    username = data['username']
+    password = data['password']
+    error = None
 
-        if user is None:
-            error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
-            error = 'Incorrect password.'
+    user = db.get_user_by_username(username)
 
-        if error is None:
-            session.clear()
-            session['user_id'] = user['id']
-            return redirect(url_for('index'))
+    if user is None:
+        error = 'Incorrect username.'
+    elif not check_password_hash(user['password'], password):
+        error = 'Incorrect password.'
 
-        flash(error)
+    if error is None:
+        session.clear()
+        session['user_id'] = str(user['_id'])
+        return make_response({}, 200)
+    
+    return make_response({"error": error}, 400)
 
-    return render_template('auth/login.html')
 
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        g.user = db.get_user_by_id(user_id)
+
 
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return make_response({}, 204)
 
 def login_required(view):
     @functools.wraps(view)

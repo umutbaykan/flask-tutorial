@@ -1,6 +1,7 @@
 from flask import current_app, g
 from werkzeug.local import LocalProxy
 from flask_pymongo import PyMongo
+from bson import ObjectId
 
 from pymongo.errors import DuplicateKeyError, OperationFailure
 from bson.objectid import ObjectId
@@ -29,6 +30,12 @@ def get_user_by_username(name):
     response = db.users.find_one({"username": name})
     return response
 
+def get_user_by_id(id):
+    """
+    Returns the user with the ID
+    """
+    response = db.users.find_one({"_id": ObjectId(id)})
+    return response
 
 def register_user(username, password):
     """
