@@ -1,4 +1,4 @@
-from flask import (Blueprint, make_response, jsonify)
+from flask import (Blueprint, make_response, jsonify, request)
 
 from bson import json_util
 from . import db
@@ -17,8 +17,9 @@ def seed_stuff():
 
 @bp.route('/getme', methods=['GET'])
 def get_user():
+  data = request.json
   headers = {"Content-Type": "application/json"}
-  return make_response(json_util.dumps(db.get_user()), 200, headers)
+  return make_response(json_util.dumps(db.get_user_by_username(data['username'])), 200, headers)
 
 @bp.route('/getgame', methods=['GET'])
 def get_game():

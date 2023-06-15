@@ -1,50 +1,38 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from battleship.db import get_db
+from . import db
 
-# url prefix will be applied before the routes, the first variable 'auth' is t
-# name of the blueprint
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-# so this route actually becomes /auth/register 
-@bp.route('/register', methods=('GET', 'POST'))
+@bp.route('/register', methods=['POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        error = None
+    data = request.json
+    username = data['username']
+    password = data['password']
+    error = None
 
-        if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
+    if not username:
+        error = 'Username is required.'
+    elif not password:
+        error = 'Password is required.'
 
-        if error is None:
-            try:
-                db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
-                )
-                db.commit()
-            except db.IntegrityError:
-                error = f"User {username} is already registered."
-            else:
-                # auth.login here because it redirects you to the method that is 
-                # defined under the blueprint object here (takes the name after the
-                # method, not the route)
-                return redirect(url_for("auth.login"))
+    if error is None:
+        try:
+            db.register_user(username, generate_password_hash(password))
+        except ValueError as err:
+            error = str(err)
+        else:
+            return make_response({}, 201)
 
-        flash(error)
+    return make_response({"error": error}, 400, {"Content-Type": "application/json"})
 
-    return render_template('auth/register.html')
 
-@bp.route('/login', methods=('GET', 'POST'))
+@bp.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']

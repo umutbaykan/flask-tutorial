@@ -1,5 +1,3 @@
-from bson import json_util
-
 from flask import current_app, g
 from werkzeug.local import LocalProxy
 from flask_pymongo import PyMongo
@@ -24,18 +22,28 @@ def get_db():
 # Use LocalProxy to read the global db instance with just `db`
 db = LocalProxy(get_db)
 
-def get_user():
-    response = db.users.find_one({"name": "Jonathan"})
+def get_user_by_username(name):
+    """
+    Returns the user with the given username
+    """
+    response = db.users.find_one({"username": name})
     return response
 
-def get_game():
-    response = db.games.find_one({"game": 1})
-    return response
 
-def insert_game(game):
-    response = db.games.insert_one(game)
-    return response.acknowledged
+def register_user(username, password):
+    """
+    Registers a user in DB. Throws an error if username already exists.
+    """
+    existing_user = get_user_by_username(username)
+    if existing_user:
+        raise ValueError("Username already exists.")
+    else:
+        db.users.insert_one({"username": username, "password": password})
+    
 
 def seed_test_database(collection, seed_data):
+    """
+    Reseeds the database based on the JSON data in seeds folder
+    """
     db[collection].drop()
     db[collection].insert_many(seed_data)
