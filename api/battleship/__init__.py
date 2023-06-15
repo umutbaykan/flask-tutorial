@@ -1,15 +1,14 @@
 import os
 
 from flask import Flask
-from . import db, auth, thingy
+from . import auth, thingy
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        # database is the location where db files will be saved upon running
-        DATABASE=os.path.join(app.instance_path, 'battleship.sqlite'),
+        MONGO_URI='mongodb://0.0.0.0/battleship'
     )
 
     if test_config is None:
@@ -17,6 +16,7 @@ def create_app(test_config=None):
         app.config.from_pyfile('config.py', silent=True)
     else:
         # load the test config if passed in
+        print("Launching on overridden (test) settings")
         app.config.from_mapping(test_config)
 
     # ensure the instance folder exists
@@ -24,13 +24,7 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    @app.route("/")
-    def index():
-        return "<p>Hello, World!</p>"
     
-    db.init_app(app)
-
     app.register_blueprint(auth.bp)
     app.register_blueprint(thingy.bp)
 

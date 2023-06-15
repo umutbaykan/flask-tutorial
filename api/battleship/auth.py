@@ -1,96 +1,80 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, g, request, session, make_response
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from battleship.db import get_db
+from . import db
 
-# url prefix will be applied before the routes, the first variable 'auth' is t
-# name of the blueprint
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-# so this route actually becomes /auth/register 
-@bp.route('/register', methods=('GET', 'POST'))
+@bp.route('/register', methods=['POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        error = None
+    data = request.json
+    username = data['username']
+    password = data['password']
+    error = None
 
-        if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
+    if not username:
+        error = 'Username is required.'
+    elif not password:
+        error = 'Password is required.'
+    elif len(password) < 8:
+        error = 'Password is too short'
 
-        if error is None:
-            try:
-                db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
-                )
-                db.commit()
-            except db.IntegrityError:
-                error = f"User {username} is already registered."
-            else:
-                # auth.login here because it redirects you to the method that is 
-                # defined under the blueprint object here (takes the name after the
-                # method, not the route)
-                return redirect(url_for("auth.login"))
+    if error is None:
+        try:
+            db.register_user(username, generate_password_hash(password))
+        except ValueError as err:
+            error = str(err)
+        else:
+            return make_response({}, 201)
 
-        flash(error)
+    return make_response({"error": error}, 400)
 
-    return render_template('auth/register.html')
 
-@bp.route('/login', methods=('GET', 'POST'))
+@bp.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
+    data = request.json
+    username = data['username']
+    password = data['password']
+    error = None
 
-        if user is None:
-            error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
-            error = 'Incorrect password.'
+    user = db.get_user_by_username(username)
 
-        if error is None:
-            session.clear()
-            session['user_id'] = user['id']
-            return redirect(url_for('index'))
+    if user is None:
+        error = 'Incorrect username.'
+    elif not check_password_hash(user['password'], password):
+        error = 'Incorrect password.'
 
-        flash(error)
+    if error is None:
+        session.clear()
+        session['user_id'] = str(user['_id'])
+        return make_response({}, 200)
+    
+    return make_response({"error": error}, 400)
 
-    return render_template('auth/login.html')
 
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        g.user = db.get_user_by_id(user_id)
+
 
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return make_response({}, 204)
 
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login'))
-
+            return make_response({"error": "You need to login"}, 400)
         return view(**kwargs)
 
     return wrapped_view
