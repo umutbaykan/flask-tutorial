@@ -1,10 +1,10 @@
 [{
   "username":"admiral_1",
-  "password":"password",
+  "password":"pbkdf2:sha256:600000$wtStihSdbIKCqR25$6d26b43955f0e4344d252a3dd48119b9955e650eb44eaf4cae6574ab706e29b1",
   "games":[]
 },
 {
   "username":"admiral_2",
-  "password":"password",
+  "password":"pbkdf2:sha256:600000$wtStihSdbIKCqR25$6d26b43955f0e4344d252a3dd48119b9955e650eb44eaf4cae6574ab706e29b1",
   "games":[]
 }]

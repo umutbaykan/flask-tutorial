@@ -1,7 +1,6 @@
 Battleships
 
-At some point this will be filled, right?
-
+![doodling](https://imgflip.com/i/7pgsm9)
 
 
 Why MongoDB?

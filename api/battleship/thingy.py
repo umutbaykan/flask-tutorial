@@ -25,7 +25,7 @@ def get_user():
 @bp.route('/getgame', methods=['GET'])
 def get_game():
   headers = {"Content-Type": "application/json"}
-  return make_response(json_util.dumps(db.get_user()), 200, headers)
+  return make_response({}, 200, headers)
 
 @bp.route('/check')
 @login_required

@@ -32,7 +32,7 @@ def app_context(app):
 
 
 @pytest.fixture
-def web_client(app):
+def client(app):
     return app.test_client()
 
 
@@ -45,10 +45,10 @@ class AuthActions(object):
     def __init__(self, client):
         self._client = client
 
-    def login(self, username='test', password='test'):
+    def login(self, username='admiral_1', password='password'):
+        data={'username': username, 'password': password}
         return self._client.post(
-            '/auth/login',
-            data={'username': username, 'password': password}
+            '/auth/login', data=json.dumps(data), content_type='application/json'
         )
 
     def logout(self):
