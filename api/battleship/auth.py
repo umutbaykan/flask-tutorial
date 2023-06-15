@@ -20,6 +20,8 @@ def register():
         error = 'Username is required.'
     elif not password:
         error = 'Password is required.'
+    elif len(password) <= 8:
+        error = 'Password is too short'
 
     if error is None:
         try:

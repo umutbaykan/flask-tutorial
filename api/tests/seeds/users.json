@@ -1,8 +1,10 @@
 [{
-  "name":"Jonathan",
-  "email":"Something"
+  "username":"admiral_1",
+  "password":"password",
+  "games":[]
 },
 {
-  "name":"Reginald",
-  "email":"A different one"
+  "username":"admiral_2",
+  "password":"password",
+  "games":[]
 }]

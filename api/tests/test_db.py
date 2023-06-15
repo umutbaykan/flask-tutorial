@@ -1,27 +1,34 @@
-import sqlite3
-
 import pytest
-from battleship.db import get_db
+from battleship.db import *
 
 
-def test_get_close_db(app):
-    with app.app_context():
-        db = get_db()
-        assert db is get_db()
+def test_get_user_by_username(app_context):
+    result = get_user_by_username("admiral_1")
+    assert result["username"] == "admiral_1"
 
-    with pytest.raises(sqlite3.ProgrammingError) as e:
-        db.execute('SELECT 1')
 
-    assert 'closed' in str(e.value)
+def test_username_doesnt_exist(app_context):
+    result = get_user_by_username("admiral_x")
+    assert result == None
 
-def test_init_db_command(runner, monkeypatch):
-    class Recorder(object):
-        called = False
 
-    def fake_init_db():
-        Recorder.called = True
+def test_get_user_by_id(app_context):
+    existing_user = get_user_by_username("admiral_1")
+    returned_user = get_user_by_id(str(existing_user["_id"]))
+    assert existing_user["_id"] == returned_user["_id"]
 
-    monkeypatch.setattr('battleship.db.init_db', fake_init_db)
-    result = runner.invoke(args=['init-db'])
-    assert 'Initialized' in result.output
-    assert Recorder.called
+
+def test_id_doesnt_exist(app_context):
+    result = get_user_by_id("648b0ab97d35b91c5d20db2e")
+    assert result == None
+
+
+def test_user_registration_went_okay(app_context):
+    register_user("admiral_3", "password")
+
+
+def test_user_already_registered(app_context):
+    with pytest.raises(ValueError) as e:
+        register_user("admiral_1", "password")
+    error_message = str(e.value)        
+    assert error_message == "Username already exists"

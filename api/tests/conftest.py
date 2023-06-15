@@ -26,6 +26,12 @@ def app():
 
 
 @pytest.fixture
+def app_context(app):
+    with app.app_context():
+        yield
+
+
+@pytest.fixture
 def web_client(app):
     return app.test_client()
 

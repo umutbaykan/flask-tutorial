@@ -1,7 +1,6 @@
 from flask import current_app, g
 from werkzeug.local import LocalProxy
 from flask_pymongo import PyMongo
-from bson import ObjectId
 
 from pymongo.errors import DuplicateKeyError, OperationFailure
 from bson.objectid import ObjectId
@@ -43,7 +42,7 @@ def register_user(username, password):
     """
     existing_user = get_user_by_username(username)
     if existing_user:
-        raise ValueError("Username already exists.")
+        raise ValueError("Username already exists")
     else:
         db.users.insert_one({"username": username, "password": password})
     
