@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from . import auth, thingy
+from .events import socketio
 
 def create_app(test_config=None):
     # create and configure the app
@@ -28,6 +29,12 @@ def create_app(test_config=None):
     app.register_blueprint(auth.bp)
     app.register_blueprint(thingy.bp)
 
+    socketio.init_app(app)
+
     return app
 
+app = create_app()
+
+if __name__ == "__main__":
+    socketio.run(app)
 

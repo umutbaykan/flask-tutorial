@@ -1,4 +1,5 @@
-from battleship import create_app
+from battleship import create_app, socketio
 
-print('invoked')
 app = create_app()
+
+socketio.run(app)
