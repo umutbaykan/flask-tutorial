@@ -1,15 +1,14 @@
-from flask import (Blueprint, make_response, jsonify, request)
+from flask import (Blueprint, make_response, jsonify, request, render_template)
 
 from bson import json_util, ObjectId
 from . import db
 from .auth import login_required
 
-bp = Blueprint('response', __name__, url_prefix='/response')
+bp = Blueprint('response', __name__, url_prefix='/')
 
 @bp.route('/', methods=['GET'])
 def response():
-  headers = {"Content-Type": "application/json"}
-  return make_response(jsonify({'did it':'it worked!'}), 200, headers)
+  return render_template('index.html')
 
 @bp.route('/manualseed', methods=['GET'])
 def seed_stuff():
