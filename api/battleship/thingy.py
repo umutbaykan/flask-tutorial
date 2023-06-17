@@ -6,9 +6,10 @@ from .auth import login_required
 
 bp = Blueprint('response', __name__, url_prefix='/')
 
-@bp.route('/', methods=['GET'])
-def response():
-  return render_template('index.html')
+@bp.route('/callme', methods=['GET'])
+def call():
+  data = {'data':'This text was fetched using an HTTP call to server on render'}
+  return jsonify(data)
 
 @bp.route('/manualseed', methods=['GET'])
 def seed_stuff():
