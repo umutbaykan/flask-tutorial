@@ -29,13 +29,11 @@ def create_app(test_config=None):
     
     app.register_blueprint(auth.bp)
     app.register_blueprint(thingy.bp)
-    CORS(app)
+    CORS(app, supports_credentials=True)
     socketio.init_app(app)
-
     return app
 
 app = create_app()
 
 if __name__ == "__main__":
     socketio.run(app)
-

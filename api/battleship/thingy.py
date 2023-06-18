@@ -1,4 +1,4 @@
-from flask import (Blueprint, make_response, jsonify, request, render_template)
+from flask import (Blueprint, make_response, jsonify, request, url_for, redirect, render_template, session)
 
 from bson import json_util, ObjectId
 from . import db
@@ -10,6 +10,19 @@ bp = Blueprint('response', __name__, url_prefix='/')
 def call():
   data = {'data':'This text was fetched using an HTTP call to server on render'}
   return data
+
+@bp.route('/join', methods=['POST'])
+def join_room():
+  data = request.json
+  room = data['room']
+  session["room"] = room
+  print(session["room"])
+  return {"res": f'you have now joined a room. room name is {session["room"]}'}
+
+@bp.route('/someroom', methods=['GET'])
+def what_room():
+  print(session.get('user_id'))
+  return {"your user_id is": session.get('user_id')}
 
 @bp.route('/manualseed', methods=['GET'])
 def seed_stuff():
