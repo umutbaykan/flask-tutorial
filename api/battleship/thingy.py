@@ -9,7 +9,7 @@ bp = Blueprint('response', __name__, url_prefix='/')
 @bp.route('/callme', methods=['GET'])
 def call():
   data = {'data':'This text was fetched using an HTTP call to server on render'}
-  return jsonify(data)
+  return data
 
 @bp.route('/manualseed', methods=['GET'])
 def seed_stuff():

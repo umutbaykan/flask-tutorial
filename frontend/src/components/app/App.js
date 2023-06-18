@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { socket } from "../../socket";
-import { ConnectionState } from "../connection-state/connectionState";
-import { ConnectionManager } from "../connection-manager/connectionManager";
-import { Events } from "../events/events";
-import { MyForm } from "../my-form/myForm";
+import { ConnectionState } from "../connection-state/ConnectionState";
+import { ConnectionManager } from "../connection-manager/ConnectionManager";
+import { Events } from "../events/Events";
+import { MyForm } from "../my-form/MyForm";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [fooEvents, setFooEvents] = useState([]);
 
-  const handleButtonClick = async () => {
+  const handleButtonClick = () => {
     fetch("http://localhost:5000/callme", {
       method: "GET",
     })
@@ -32,12 +32,12 @@ export default function App() {
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.on("foo", onFooEvent);
+    socket.on("respond-something", onFooEvent);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.off("foo", onFooEvent);
+      socket.off("respond-something", onFooEvent);
     };
   }, []);
 
