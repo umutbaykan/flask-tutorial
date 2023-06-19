@@ -13,6 +13,16 @@ def call():
   data = {'data':'This text was fetched using an HTTP call to server on render'}
   return data
 
+@bp.route('/whereami')
+def find_my_room():
+  room = session.get('room')
+  if room:
+    response = make_response(json.dumps({'room': session['room']}), 200)
+  else:
+    response = make_response(json.dumps({'error': "You are not in any room!"}), 400)
+  response.headers['Content-Type'] = 'application/json'
+  return response
+
 @bp.route('/createroom', methods=['POST'])
 def create_room():
   if session.get('user_id') is None:

@@ -34,7 +34,8 @@ def handle_something(data):
 def handle_something(data):
     message = f"Someone triggered the foo event with {data}. This message should only be seen by people in the room"
     room = session.get("room")
-    send(message, to=room)
+    # send(message, to=room)
+    emit('foo', {'response': message}, room=room, include_self=False)
 
 
 @socketio.on("connect")
