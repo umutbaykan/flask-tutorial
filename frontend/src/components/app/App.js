@@ -8,10 +8,38 @@ import { MyForm } from "../my-form/MyForm";
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [fooEvents, setFooEvents] = useState([]);
+  const [room, setRoom] = useState('room1')
 
   const handleButtonClick = () => {
-    fetch("http://localhost:5000/callme", {
+    fetch("/join", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({"room": room})
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  };
+
+  const checkRoom = () => {
+    fetch("/someroom", {
       method: "GET",
+      credentials: "include",
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  };
+
+  const login = () => {
+    fetch("/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({"username": "dRogira", "password": "password"})
     })
       .then((response) => response.json())
       .then((data) => console.log(data));
@@ -47,7 +75,12 @@ export default function App() {
       <Events events={fooEvents} />
       <ConnectionManager />
       <MyForm />
-      <button onClick={handleButtonClick}>Fetch an api!</button>
+      <button onClick={handleButtonClick}>Join a room</button>
+      <button onClick={checkRoom}>check room</button>
+      <br></br>
+      <button onClick={() => setRoom("room2")}>change to room 2</button>
+      <button onClick={() => setRoom("room1")}>change to room 1</button>
+      <button onClick={login}>login first</button>
     </div>
   );
 }
