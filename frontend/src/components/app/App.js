@@ -10,6 +10,7 @@ export default function App() {
   const [fooEvents, setFooEvents] = useState([]);
   const [loginName, setLoginName] = useState("Roger");
   const [room, setRoom] = useState("")
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
 
   // const handleButtonClick = () => {
@@ -74,6 +75,7 @@ export default function App() {
       }
     })
     .catch((error) => console.error(error));
+    setIsLoggedIn(true)
   };
 
   const logout = () => {
@@ -91,6 +93,7 @@ export default function App() {
     })
     .catch((error) => console.error(error));
     setRoom("")
+    setIsLoggedIn(false)
   }
 
   useEffect(() => {
@@ -119,9 +122,18 @@ export default function App() {
 
   return (
     <div className="App">
+      {isLoggedIn ? (
+      <>
+      <h5>Room you are joining is</h5>
+      <h3>{room}</h3>
       <ConnectionState isConnected={isConnected} />
       <Events events={fooEvents} />
       <ConnectionManager />
+      </>
+      )
+      :
+      (<h5>Login to connect to a room</h5>)
+    }
       <br>
       </br>
       <h3>Your current room stored in server session is</h3>
