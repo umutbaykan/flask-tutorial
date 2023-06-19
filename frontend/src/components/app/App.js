@@ -3,7 +3,8 @@ import { socket } from "../../socket";
 import { ConnectionState } from "../connection-state/ConnectionState";
 import { ConnectionManager } from "../connection-manager/ConnectionManager";
 import { Events } from "../events/Events";
-import { MyForm } from "../my-form/MyForm";
+// import { MyForm } from "../my-form/MyForm";
+import { RoomSpecifier } from "../room-specifier/RoomSpecifier";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -11,29 +12,7 @@ export default function App() {
   const [loginName, setLoginName] = useState("Roger");
   const [room, setRoom] = useState("")
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-
-
-  // const handleButtonClick = () => {
-  //   fetch("/join", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     credentials: "include",
-  //     body: JSON.stringify({"room": room})
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => console.log(data));
-  // };
-
-  // const checkRoom = () => {
-  //   fetch("/someroom", {
-  //     method: "GET",
-  //     credentials: "include",
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => console.log(data));
-  // };
+  const [value] = useState("frontend value")
 
   const createRoom = () => {
     fetch("/createroom", {
@@ -96,6 +75,14 @@ export default function App() {
     setIsLoggedIn(false)
   }
 
+  const triggerFoo = (event) => {
+    event.preventDefault();
+    socket.emit("foo", value, () => {
+      console.log("event emitted")
+    });
+  }
+  
+
   useEffect(() => {
     function onConnect() {
       setIsConnected(true);
@@ -111,12 +98,12 @@ export default function App() {
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.on("respond-something", onFooEvent);
+    socket.on('foo', onFooEvent);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.off("respond-something", onFooEvent);
+      socket.off('foo', onFooEvent);
     };
   }, []);
 
@@ -129,6 +116,9 @@ export default function App() {
       <ConnectionState isConnected={isConnected} />
       <Events events={fooEvents} />
       <ConnectionManager />
+      <br>
+      </br>
+      <button onClick={triggerFoo}>Trigger foo</button>
       </>
       )
       :
@@ -142,8 +132,8 @@ export default function App() {
       <button onClick={login}>Login</button>
       <button onClick={logout}>Logout</button>
       <button onClick={createRoom}>Create a random room number</button>
-      <MyForm />
-
+      {/* <MyForm /> */}
+      <RoomSpecifier />
 
     </div>
   );

@@ -30,6 +30,11 @@ def handle_something(data):
 #     print("user disconnected")
 #     emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
 
+@socketio.on('foo')
+def handle_something(data):
+    message = f"Someone triggered the foo event with {data}. This message should only be seen by people in the room"
+    room = session.get("room")
+    send(message, to=room)
 
 
 @socketio.on("connect")
@@ -45,7 +50,8 @@ def connect():
     join_room(room)
     # send({"id": user_id, "message": "has entered the room"})
     # rooms[room].get("members", 0) + 1
-    print(f"{user_id} joined room {room}")
+    # print(f"{user_id} joined room {room}")
+    send(f"{user_id} joined room {room}", to=room)
 
 
 @socketio.on("disconnect")
@@ -60,4 +66,5 @@ def disconnect():
     #         del rooms[room]
     
     # send({"name": name, "message": "has left the room"}, to=room)
-    print(f"{user_id} has left the room {room}")
+    # print(f"{user_id} has left the room {room}")
+    send(f"{user_id} has left the room {room}", to=room)

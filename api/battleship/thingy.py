@@ -26,13 +26,19 @@ def create_room():
   response.headers['Content-Type'] = 'application/json'
   return response
 
-@bp.route('/join', methods=['POST'])
+@bp.route('/joinroom', methods=['POST'])
 def join_room():
   data = request.json
   room = data['room']
-  session["room"] = room
-  print(session["room"])
-  return {"res": f'you have now joined a room. room name is {session["room"]}'}
+  if room is None:
+    error_message = 'You need to specify a room name to join'
+    print(error_message)
+    response = make_response(json.dumps({'error': error_message}), 400)
+  else:
+    session["room"] = room
+    response = make_response(json.dumps({'room': session['room']}), 200)
+  response.headers['Content-Type'] = 'application/json'
+  return response
 
 @bp.route('/someroom', methods=['GET'])
 def what_room():
