@@ -1,8 +1,9 @@
 from flask import (Blueprint, make_response, jsonify, request, url_for, redirect, render_template, session)
-
+import json
 from bson import json_util, ObjectId
 from . import db
 from .auth import login_required
+from .helpers import generate_unique_code
 
 bp = Blueprint('response', __name__, url_prefix='/')
 
@@ -10,6 +11,19 @@ bp = Blueprint('response', __name__, url_prefix='/')
 def call():
   data = {'data':'This text was fetched using an HTTP call to server on render'}
   return data
+
+@bp.route('/createroom', methods=['POST'])
+def create_room():
+  if session.get('user_id') is None:
+    error_message = 'You need to be signed in to create a room'
+    print(error_message)
+    response = make_response(json.dumps({'error': error_message}), 400)
+  else:
+    session['room'] = generate_unique_code()
+    print(f"Your new room name is going to be {session['room']}")
+    response = make_response(json.dumps({'room': session['room']}), 200)
+  response.headers['Content-Type'] = 'application/json'
+  return response
 
 @bp.route('/join', methods=['POST'])
 def join_room():

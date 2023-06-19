@@ -8,9 +8,9 @@ import { MyForm } from "../my-form/MyForm";
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [fooEvents, setFooEvents] = useState([]);
-  const [loginName, setLoginName] = useState("");
+  const [loginName, setLoginName] = useState("Roger");
+  const [room, setRoom] = useState("")
 
-  // const [room, setRoom] = useState('room1')
 
   // const handleButtonClick = () => {
   //   fetch("/join", {
@@ -34,6 +34,27 @@ export default function App() {
   //     .then((data) => console.log(data));
   // };
 
+  const createRoom = () => {
+    fetch("/createroom", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    })
+    .then((response) => {
+      if (!response.ok) {
+        response.json().then((errorData) => {
+          console.error(errorData.error);
+        });
+      } else {
+        return response.json();
+      }
+    })
+    .then((data) => setRoom(data.room))
+    .catch((error) => console.error(error));
+  }
+
   const login = () => {
     fetch("/auth/login", {
       method: "POST",
@@ -43,11 +64,13 @@ export default function App() {
       credentials: "include",
       body: JSON.stringify({"username": loginName, "password": "password"})
     })
-      // .then((response) => response.json())
-      // .then((data) => console.log(data));
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        response.json().then((errorData) => {
+          console.error(errorData.error);
+        });
+      } else {
+        return response.json();
       }
     })
     .catch((error) => console.error(error));
@@ -67,6 +90,7 @@ export default function App() {
       }
     })
     .catch((error) => console.error(error));
+    setRoom("")
   }
 
   useEffect(() => {
@@ -100,10 +124,12 @@ export default function App() {
       <ConnectionManager />
       <br>
       </br>
+      <h3>Your current room stored in server session is</h3>
+      <h1>{room}</h1>
       <input onChange={(e) => setLoginName(e.target.value)} />
       <button onClick={login}>Login</button>
       <button onClick={logout}>Logout</button>
-
+      <button onClick={createRoom}>Create a random room number</button>
       <MyForm />
 
 
