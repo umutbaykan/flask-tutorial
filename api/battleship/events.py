@@ -20,7 +20,7 @@ def handle_message(data):
 @socketio.on('create-something')
 def handle_something(data):
     print(session.get("room"))
-    # emit('respond-something', {'response': data}, broadcast=True)
+    emit('respond-something', {'response': data}, broadcast=True)
     
 @socketio.on("disconnect")
 def disconnected():

@@ -39,7 +39,7 @@ export default function App() {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({"username": "dRogira", "password": "password"})
+      body: JSON.stringify({"username": "Roger", "password": "password"})
     })
       .then((response) => response.json())
       .then((data) => console.log(data));
