@@ -19,7 +19,7 @@ export function MyForm() {
       <input onChange={(e) => setValue(e.target.value)} />
 
       <button type="submit" disabled={isLoading}>
-        Submit
+        Create a Room
       </button>
     </form>
   );

@@ -51,6 +51,7 @@ def login():
     if error is None:
         session.clear()
         session['user_id'] = str(user['_id'])
+        print(f"Someone logged in. Their user id is {session['user_id']}. This is stored in the session object now.")
         return make_response({}, 200)
     
     return make_response({"error": error}, 400)
@@ -67,7 +68,10 @@ def load_logged_in_user():
 
 @bp.route('/logout')
 def logout():
+    print(f"{session.get('user_id')} was logged in.")
     session.clear()
+    print(f"They are now logged out. The next line should be none to verify session is cleared")
+    print(f"{session.get('user_id')}")
     return make_response({}, 204)
 
 def login_required(view):

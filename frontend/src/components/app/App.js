@@ -8,29 +8,31 @@ import { MyForm } from "../my-form/MyForm";
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [fooEvents, setFooEvents] = useState([]);
-  const [room, setRoom] = useState('room1')
+  const [loginName, setLoginName] = useState("");
 
-  const handleButtonClick = () => {
-    fetch("/join", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({"room": room})
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
-  };
+  // const [room, setRoom] = useState('room1')
 
-  const checkRoom = () => {
-    fetch("/someroom", {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
-  };
+  // const handleButtonClick = () => {
+  //   fetch("/join", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     credentials: "include",
+  //     body: JSON.stringify({"room": room})
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => console.log(data));
+  // };
+
+  // const checkRoom = () => {
+  //   fetch("/someroom", {
+  //     method: "GET",
+  //     credentials: "include",
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => console.log(data));
+  // };
 
   const login = () => {
     fetch("/auth/login", {
@@ -39,11 +41,33 @@ export default function App() {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({"username": "Roger", "password": "password"})
+      body: JSON.stringify({"username": loginName, "password": "password"})
     })
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+      // .then((response) => response.json())
+      // .then((data) => console.log(data));
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+    })
+    .catch((error) => console.error(error));
   };
+
+  const logout = () => {
+    fetch("/auth/logout", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+    })
+    .catch((error) => console.error(error));
+  }
 
   useEffect(() => {
     function onConnect() {
@@ -74,13 +98,15 @@ export default function App() {
       <ConnectionState isConnected={isConnected} />
       <Events events={fooEvents} />
       <ConnectionManager />
+      <br>
+      </br>
+      <input onChange={(e) => setLoginName(e.target.value)} />
+      <button onClick={login}>Login</button>
+      <button onClick={logout}>Logout</button>
+
       <MyForm />
-      <button onClick={handleButtonClick}>Join a room</button>
-      <button onClick={checkRoom}>check room</button>
-      <br></br>
-      <button onClick={() => setRoom("room2")}>change to room 2</button>
-      <button onClick={() => setRoom("room1")}>change to room 1</button>
-      <button onClick={login}>login first</button>
+
+
     </div>
   );
 }
