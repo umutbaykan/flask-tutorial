@@ -15,7 +15,7 @@ import NotFound from './pages/NotFound/NotFound';
 const App = () => {
     return (
         <Routes>
-          <Route path='/' element={<Home/>}/>
+          <Route path='/' element={<Home navigate= { useNavigate() }/>}/>
           <Route path='/signup' element={<SignUpForm navigate={ useNavigate() }/>}/>
           <Route path='/login' element={<LoginForm navigate={ useNavigate() }/>}/>
           <Route path='/game/:gameId' element={<Game/>}/>
