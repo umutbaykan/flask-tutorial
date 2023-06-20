@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import propTypes from "prop-types";
 import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import signUp from "../../services/auth";
 
 const SignUpForm = ({ navigate }) => {
+  const [error, setError] = useState("");
   const validate = Yup.object({
     username: Yup.string()
       .min(3, "Must be at least 3 characters")
@@ -25,39 +26,43 @@ const SignUpForm = ({ navigate }) => {
     if (result.success) {
       navigate("/");
     } else {
+      setError(result.error);
       navigate("/signup");
     }
   };
 
   return (
-    <Formik
-      initialValues={{
-        username: "",
-        password: "",
-        confirmPassword: "",
-      }}
-      validationSchema={validate}
-      onSubmit={(values, { resetForm }) => {
-        handleSubmit(values);
-        resetForm();
-      }}
-    >
-      {() => (
-        <div>
-          <h1>Sign Up</h1>
-          <Form>
-            <TextField label="username" name="username" type="text" />
-            <TextField label="password" name="password" type="password" />
-            <TextField
-              label="Confirm Password"
-              name="confirmPassword"
-              type="password"
-            />
-            <button type="submit">Register</button>
-          </Form>
-        </div>
-      )}
-    </Formik>
+    <>
+      <Formik
+        initialValues={{
+          username: "",
+          password: "",
+          confirmPassword: "",
+        }}
+        validationSchema={validate}
+        onSubmit={(values, { resetForm }) => {
+          handleSubmit(values);
+          resetForm();
+        }}
+      >
+        {() => (
+          <div>
+            <h1>Sign Up</h1>
+            <Form>
+              <TextField label="username" name="username" type="text" />
+              <TextField label="password" name="password" type="password" />
+              <TextField
+                label="Confirm Password"
+                name="confirmPassword"
+                type="password"
+              />
+              <button type="submit">Register</button>
+            </Form>
+          </div>
+        )}
+      </Formik>
+      <p>{error}</p>
+    </>
   );
 };
 

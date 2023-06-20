@@ -1,21 +1,19 @@
-const signUp = async (username, password) => {
-  try {
-    const response = await fetch('/auth/register', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
+const signUp = (username, password) => {
+  return fetch("/auth/register", {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  }).then((response) => {
     if (response.status === 201) {
       return { success: true };
     } else {
-      return { error: 'Sign up failed' };
+      return response
+        .json()
+        .then((data) => ({ success: false, error: data.error }));
     }
-  } catch (error) {
-    return { error: 'An error occurred' };
-  }
+  });
 };
 
 export default signUp;
