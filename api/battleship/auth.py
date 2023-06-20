@@ -22,13 +22,17 @@ def register():
         error = 'Password is required.'
     elif len(password) < 8:
         error = 'Password is too short'
+    elif len(username) > 15:
+        error = 'Username is too long'
 
     if error is None:
         try:
-            db.register_user(username, generate_password_hash(password))
+            new_user_id = db.register_user(username, generate_password_hash(password))
         except ValueError as err:
             error = str(err)
         else:
+            session.clear()
+            session['user_id'] = new_user_id
             return make_response({}, 201)
 
     return make_response({"error": error}, 400)
