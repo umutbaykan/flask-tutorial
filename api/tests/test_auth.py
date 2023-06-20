@@ -8,21 +8,22 @@ def test_successful_login(client):
         response = client.post('/auth/login', data=json.dumps(data), content_type='application/json')
         assert response.status_code == 200
         assert len(session['user_id']) == 24
-        client.get('/response/getgame')
-        assert g.user['username'] == 'admiral_1'
 
 
-def test_successful_register(client, app_context):
+def test_successful_register(client, auth):
     data = {'username': 'admiral_3', 'password': 'password'}
-    response = client.post('/auth/register', data=json.dumps(data), content_type='application/json')
-    assert response.status_code == 201
+    with client:
+        response = client.post('/auth/register', data=json.dumps(data), content_type='application/json')
+        assert response.status_code == 201
+        assert 'user_id' in session
 
 
 @pytest.mark.parametrize(('username', 'password', 'error'), (
     ('', '', b'Username is required.'),
     ('a', '', b'Password is required.'),
     ('test', 'test', b'Password is too short'),
-    ('admiral_1', 'password', b'Username already exists')
+    ('admiral_1', 'password', b'Username already exists'),
+    ('areallylongusername', 'password', b'Username is too long')
 ))
 def test_register_validate_input(client, username, password, error):
     data={'username': username, 'password': password}

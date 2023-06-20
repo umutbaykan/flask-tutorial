@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 from flask_cors import CORS
-from . import auth, thingy
+from . import auth, thingy, room
 from .events import socketio
 
 def create_app(test_config=None):
@@ -28,14 +28,13 @@ def create_app(test_config=None):
         pass
     
     app.register_blueprint(auth.bp)
+    app.register_blueprint(room.bp)
     app.register_blueprint(thingy.bp)
-    CORS(app)
+    CORS(app, supports_credentials=True)
     socketio.init_app(app)
-
     return app
 
 app = create_app()
 
 if __name__ == "__main__":
     socketio.run(app)
-

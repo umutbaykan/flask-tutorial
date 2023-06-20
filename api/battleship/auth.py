@@ -22,13 +22,17 @@ def register():
         error = 'Password is required.'
     elif len(password) < 8:
         error = 'Password is too short'
+    elif len(username) > 15:
+        error = 'Username is too long'
 
     if error is None:
         try:
-            db.register_user(username, generate_password_hash(password))
+            new_user_id = db.register_user(username, generate_password_hash(password))
         except ValueError as err:
             error = str(err)
         else:
+            session.clear()
+            session['user_id'] = new_user_id
             return make_response({}, 201)
 
     return make_response({"error": error}, 400)
@@ -51,6 +55,7 @@ def login():
     if error is None:
         session.clear()
         session['user_id'] = str(user['_id'])
+        print(f"Someone logged in. Their user id is {session['user_id']}. This is stored in the session object now.")
         return make_response({}, 200)
     
     return make_response({"error": error}, 400)
@@ -67,7 +72,10 @@ def load_logged_in_user():
 
 @bp.route('/logout')
 def logout():
+    print(f"{session.get('user_id')} was logged in.")
     session.clear()
+    print(f"They are now logged out. The next line should be none to verify session is cleared")
+    print(f"{session.get('user_id')}")
     return make_response({}, 204)
 
 def login_required(view):

@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-
 import { socket } from "../../socket";
 import { ConnectionState } from "../connection-state/ConnectionState";
 import { ConnectionManager } from "../connection-manager/ConnectionManager";
 import { Events } from "../events/Events";
-
-
 import NotFound from "../../pages/NotFound/not-found/NotFound";
 // import { MyForm } from "../my-form/MyForm";
 import { InputForm } from "../input-form/InputForm";

@@ -44,8 +44,9 @@ def register_user(username, password):
     if existing_user:
         raise ValueError("Username already exists")
     else:
-        db.users.insert_one({"username": username, "password": password})
-    
+        result = db.users.insert_one({"username": username, "password": password})
+        return str(result.inserted_id)
+
 
 def seed_test_database(collection, seed_data):
     """
