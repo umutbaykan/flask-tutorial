@@ -1,12 +1,12 @@
-const signUp = (username, password) => {
-  return fetch("/auth/register", {
+export const auth = (username, password, route) => {
+  return fetch(`/auth/${route}`, {
     method: "post",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ username, password }),
   }).then((response) => {
-    if (response.status === 201) {
+    if (response.ok) {
       return { success: true };
     } else {
       return response
@@ -15,5 +15,3 @@ const signUp = (username, password) => {
     }
   });
 };
-
-export default signUp;

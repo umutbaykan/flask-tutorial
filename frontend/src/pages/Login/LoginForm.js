@@ -6,28 +6,22 @@ import * as Yup from "yup";
 
 import { auth } from "../../services/auth";
 
-const SignUpForm = ({ navigate }) => {
+const LoginForm = ({ navigate }) => {
   const [error, setError] = useState("");
   const validate = Yup.object({
     username: Yup.string()
-      .min(3, "Must be at least 3 characters")
-      .max(15, "Must be 15 characters or less")
       .required("Required"),
     password: Yup.string()
-      .min(8, "Password must be at least 8 charaters")
-      .required("Password is required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Password must match")
-      .required("Confirm password is required"),
+      .required("Password is required")
   });
 
   const handleSubmit = async (values) => {
-    const result = await auth(values.username, values.password, 'register');
+    const result = await auth(values.username, values.password, 'login');
     if (result.success) {
       navigate("/");
     } else {
       setError(result.error);
-      navigate("/signup");
+      navigate("/login");
     }
   };
 
@@ -36,8 +30,7 @@ const SignUpForm = ({ navigate }) => {
       <Formik
         initialValues={{
           username: "",
-          password: "",
-          confirmPassword: "",
+          password: ""
         }}
         validationSchema={validate}
         onSubmit={(values, { resetForm }) => {
@@ -47,16 +40,11 @@ const SignUpForm = ({ navigate }) => {
       >
         {() => (
           <div>
-            <h1>Sign Up</h1>
+            <h1>Log In</h1>
             <Form>
               <TextField label="username" name="username" type="text" />
               <TextField label="password" name="password" type="password" />
-              <TextField
-                label="Confirm Password"
-                name="confirmPassword"
-                type="password"
-              />
-              <button type="submit">Register</button>
+              <button type="submit">Login</button>
             </Form>
           </div>
         )}
@@ -66,6 +54,6 @@ const SignUpForm = ({ navigate }) => {
   );
 };
 
-SignUpForm.propTypes = { navigate: propTypes.func };
+LoginForm.propTypes = { navigate: propTypes.func };
 
-export default SignUpForm;
+export default LoginForm;
