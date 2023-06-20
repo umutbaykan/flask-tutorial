@@ -9,14 +9,12 @@ import { auth } from "../../services/auth";
 const LoginForm = ({ navigate }) => {
   const [error, setError] = useState("");
   const validate = Yup.object({
-    username: Yup.string()
-      .required("Required"),
-    password: Yup.string()
-      .required("Password is required")
+    username: Yup.string().required("Required"),
+    password: Yup.string().required("Password is required"),
   });
 
   const handleSubmit = async (values) => {
-    const result = await auth(values.username, values.password, 'login');
+    const result = await auth(values.username, values.password, "login");
     if (result.success) {
       navigate("/");
     } else {
@@ -30,7 +28,7 @@ const LoginForm = ({ navigate }) => {
       <Formik
         initialValues={{
           username: "",
-          password: ""
+          password: "",
         }}
         validationSchema={validate}
         onSubmit={(values, { resetForm }) => {

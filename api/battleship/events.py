@@ -1,8 +1,7 @@
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
 from flask import request, session
 from .extensions import socketio
-
-rooms = {}
+from .room import ROOMS
 
 # @socketio.on("connect")
 # def connected():
@@ -38,34 +37,37 @@ def handle_something(data):
     emit('foo', {'response': message}, room=room, include_self=False)
 
 
+# @socketio.on("connect")
+# def connect():
+#     room = session.get("room")
+#     user_id = session.get("user_id")
+#     # if not room or not user_id:
+#     #     return
+#     # if room not in rooms:
+#     #     leave_room(room)
+#     #     return
+    
+#     join_room(room)
+#     # send({"id": user_id, "message": "has entered the room"})
+#     # rooms[room].get("members", 0) + 1
+#     # print(f"{user_id} joined room {room}")
+#     send(f"{user_id} joined room {room}", to=room)
+
 @socketio.on("connect")
 def connect():
-    room = session.get("room")
-    user_id = session.get("user_id")
-    # if not room or not user_id:
-    #     return
-    # if room not in rooms:
-    #     leave_room(room)
-    #     return
+    emit('current_games', ROOMS, broadcast=True)
+
+# @socketio.on("disconnect")
+# def disconnect():
+#     room = session.get("room")
+#     user_id = session.get("user_id")
+#     leave_room(room)
+
+#     # if room in rooms:
+#     #     rooms[room]["members"] -= 1
+#     #     if rooms[room]["members"] <= 0:
+#     #         del rooms[room]
     
-    join_room(room)
-    # send({"id": user_id, "message": "has entered the room"})
-    # rooms[room].get("members", 0) + 1
-    # print(f"{user_id} joined room {room}")
-    send(f"{user_id} joined room {room}", to=room)
-
-
-@socketio.on("disconnect")
-def disconnect():
-    room = session.get("room")
-    user_id = session.get("user_id")
-    leave_room(room)
-
-    # if room in rooms:
-    #     rooms[room]["members"] -= 1
-    #     if rooms[room]["members"] <= 0:
-    #         del rooms[room]
-    
-    # send({"name": name, "message": "has left the room"}, to=room)
-    # print(f"{user_id} has left the room {room}")
-    send(f"{user_id} has left the room {room}", to=room)
+#     # send({"name": name, "message": "has left the room"}, to=room)
+#     # print(f"{user_id} has left the room {room}")
+#     send(f"{user_id} has left the room {room}", to=room)

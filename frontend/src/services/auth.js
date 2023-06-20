@@ -15,3 +15,9 @@ export const auth = (username, password, route) => {
     }
   });
 };
+
+export const logout = () => {
+  return fetch(`/auth/logout`, {
+    method: "get",
+  })
+};

@@ -22,7 +22,7 @@ const SignUpForm = ({ navigate }) => {
   });
 
   const handleSubmit = async (values) => {
-    const result = await auth(values.username, values.password, 'register');
+    const result = await auth(values.username, values.password, "register");
     if (result.success) {
       navigate("/");
     } else {
