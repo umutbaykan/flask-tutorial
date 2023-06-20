@@ -1,9 +1,12 @@
 import React from "react";
+import propTypes from "prop-types";
 import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
 import * as Yup from "yup";
 
-const SignUpForm = () => {
+import signUp from "../../services/auth";
+
+const SignUpForm = ({ navigate }) => {
   const validate = Yup.object({
     username: Yup.string()
       .min(3, "Must be at least 3 characters")
@@ -17,6 +20,15 @@ const SignUpForm = () => {
       .required("Confirm password is required"),
   });
 
+  const handleSubmit = async (values) => {
+    const result = await signUp(values.username, values.password);
+    if (result.success) {
+      navigate("/");
+    } else {
+      navigate("/signup");
+    }
+  };
+
   return (
     <Formik
       initialValues={{
@@ -25,8 +37,9 @@ const SignUpForm = () => {
         confirmPassword: "",
       }}
       validationSchema={validate}
-      onSubmit={(values) => {
-        console.log(values);
+      onSubmit={(values, { resetForm }) => {
+        handleSubmit(values);
+        resetForm();
       }}
     >
       {() => (
@@ -47,5 +60,7 @@ const SignUpForm = () => {
     </Formik>
   );
 };
+
+SignUpForm.propTypes = { navigate: propTypes.func };
 
 export default SignUpForm;
