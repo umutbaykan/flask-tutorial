@@ -1,7 +1,22 @@
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
 from flask import request, session
 from .extensions import socketio
-from .room import ROOMS
+
+ROOMS = {}
+
+def update_rooms(room_id, configurations):
+    """
+    Updates the global room object. Takes in two variables,
+    ID of the room to update and game configurations.
+    Removes the finished games from the rooms during update.
+    """
+    global ROOMS
+    ROOMS[room_id] = configurations
+    return ROOMS
+
+def list_all_rooms():
+    """Returns all the available rooms in the global room object"""
+    return ROOMS
 
 # @socketio.on("connect")
 # def connected():

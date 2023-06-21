@@ -4,6 +4,7 @@ import { socket } from "../../socket";
 
 import { ConnectionManager } from "../../components/ConnectionManager/ConnectionManager";
 import { ConnectionState } from "../../components/ConnectionState/ConnectionState";
+import NavButton from "../../components/NavButton/NavButton";
 
 const Game = () => {
   const { pathname } = useLocation();
@@ -31,6 +32,8 @@ const Game = () => {
       <h3>{roomInfo}</h3>
       <ConnectionState isConnected={isConnected} />
       <ConnectionManager />
+      <br></br>
+      <NavButton to={"/"} text={"Go home"} />
     </>
   );
 };

@@ -1,32 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { socket } from "../../../socket";
+import React, { useContext } from "react";
+import { NavLink } from "react-router-dom";
+
+import NavButton from "../../../components/NavButton/NavButton";
+
+import { LobbyContext } from "../../../App";
 
 export const CurrentGames = () => {
-  const [currentGames, setCurrentGames] = useState({});
+  const currentGames = useContext(LobbyContext);
 
-  function onCurrentGames(value) {
-    setCurrentGames((previous) => ({ ...previous, ...value }));
-  }
-
-  useEffect(() => {
-    socket.connect();
-    socket.on("current_games", onCurrentGames);
-
-    return () => {
-      socket.disconnect();
-      socket.off("current_games", onCurrentGames);
-    };
-  }, []);
   return (
     <>
       <h3>Current available games:</h3>
-      <div>
-        {Object.keys(currentGames).map((key) => (
-          <p key={key}>
-            {key}: {currentGames[key].gamestate}
-          </p>
-        ))}
-      </div>
+      {Object.keys(currentGames).map((key) => (
+        <div key={key}>
+          <NavButton to={`/game/${key}`} text={key} />
+          <p>{currentGames[key].gamestate}</p>
+        </div>
+      ))}
+      <br></br>
     </>
   );
 };
