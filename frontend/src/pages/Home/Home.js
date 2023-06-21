@@ -42,6 +42,8 @@ const Home = ({ navigate }) => {
         <br></br>
         <NavButton to={"/login"} text={"Login"} />
         <br></br>
+        <NavButton to={"/profile"} text={"Profile"} />
+        <br></br>
         <button onClick={handleLogout}>Logout</button>
       </div>
       <button onClick={handleSubmit}>Create Game</button>

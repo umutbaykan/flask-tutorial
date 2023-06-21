@@ -7,6 +7,7 @@ import Game from "./pages/Game/Game";
 import SignUpForm from "./pages/SignUp/SignUpForm";
 import LoginForm from "./pages/Login/LoginForm";
 import NotFound from "./pages/NotFound/NotFound";
+import Profile from "./pages/Profile/Profile";
 
 export const LobbyContext = createContext({})
 
@@ -18,15 +19,21 @@ const App = () => {
     setCurrentGames((previous) => ({ ...previous, ...value }));
   }
 
+  // Event listeners
   useEffect(() => {
-    socket.connect();
     socket.on("current_games", onCurrentGames);
-
     return () => {
-      socket.disconnect();
       socket.off("current_games", onCurrentGames);
     };
   }, []);
+
+  // Connection
+  useEffect(() => {
+    socket.connect();
+    return () => {
+      socket.disconnect();
+    };
+  }, [])
 
   return (
   <LobbyContext.Provider value={currentGames}>
@@ -35,6 +42,7 @@ const App = () => {
       <Route path="/signup" element={<SignUpForm navigate={useNavigate()} />} />
       <Route path="/login" element={<LoginForm navigate={useNavigate()} />} />
       <Route path="/game/:gameId" element={<Game />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </LobbyContext.Provider>
