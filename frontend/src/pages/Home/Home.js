@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import propTypes from "prop-types";
 import NavButton from "../../components/NavButton/NavButton";
-import CurrentGames from "./components/CurrentGames";
+import CurrentGames from "./components/CurrentGames/CurrentGames";
 
 import { createRoom } from "../../services/room";
 
@@ -9,6 +9,7 @@ import { createRoom } from "../../services/room";
 import { auth, logout } from "../../services/auth";
 
 const Home = ({ navigate }) => {
+  Home.propTypes = { navigate: propTypes.func };
   const [error, setError] = useState("");
   //TODO - forms to pick game configurations and save it as a state to send to server
   const gameconfigs = { arraySize: 10, ships: ["1", "2", "3"] };
@@ -55,6 +56,5 @@ const Home = ({ navigate }) => {
   );
 };
 
-Home.propTypes = { navigate: propTypes.func };
 
 export default Home;

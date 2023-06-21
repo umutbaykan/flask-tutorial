@@ -20,6 +20,7 @@ def add_player_to_game(room_id, player_id):
     if len(current_players) < 2:
         current_players.append(player_id)
         ROOMS[room_id]["players"] = current_players
+        return True
     else:
         return False
 

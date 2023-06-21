@@ -44,8 +44,9 @@ def join_room():
     data = request.json
     if "room" in session:
         del session["room"]
-    session["room"] = data["room"]
-    if add_player_to_game(session["room"], session["user_id"]):
+        
+    if add_player_to_game(data["room"], session["user_id"]):
+        session["room"] = data["room"]
         return {}, 200
     else:
         return make_response({"error": "Room is full"}, 409)

@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 
-import NavButton from "../../../components/NavButton/NavButton";
+import JoinGameButton from "../JoinGameButton/JoinGameButton";
 
-import { LobbyContext } from "../../../App";
+import { LobbyContext } from "../../../../App";
 
 export const CurrentGames = () => {
   const currentGames = useContext(LobbyContext);
@@ -12,7 +12,7 @@ export const CurrentGames = () => {
       <h3>Current available games:</h3>
       {Object.keys(currentGames).map((key) => (
         <div key={key}>
-          <NavButton to={`/game/${key}`} text={key} />
+          <JoinGameButton game_id={key}/>
           <p>{currentGames[key].gamestate}</p>
         </div>
       ))}
