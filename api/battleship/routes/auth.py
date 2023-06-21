@@ -33,7 +33,7 @@ def register():
         else:
             session.clear()
             session['user_id'] = new_user_id
-            return make_response({}, 201)
+            return {}, 200
 
     return make_response({"error": error}, 400)
 
@@ -56,7 +56,7 @@ def login():
         session.clear()
         session['user_id'] = str(user['_id'])
         print(f"Someone logged in. Their user id is {session['user_id']}. This is stored in the session object now.")
-        return make_response({}, 200)
+        return {}, 200
     
     return make_response({"error": error}, 400)
 
@@ -76,13 +76,13 @@ def logout():
     session.clear()
     print(f"They are now logged out. The next line should be none to verify session is cleared")
     print(f"{session.get('user_id')}")
-    return make_response({}, 204)
+    return {}, 204
 
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return make_response({"error": "You need to login"}, 400)
+            return make_response({"error": "You need to login"}, 401)
         return view(**kwargs)
 
     return wrapped_view

@@ -30,8 +30,18 @@ def join_room():
   if 'room' in session:
       del session['room']
   session['room'] = data['room']
-  add_player_to_game(session['room'], session['user_id'])
-  return make_response({}, 200)
+  if add_player_to_game(session['room'], session['user_id']):
+    return {}, 200
+  else:
+    return make_response({"error": "Room is full"}, 409)
+  
+  
+@bp.route('/leave', methods=["GET"])
+def leave_room():
+  if 'room' in session:
+      del session['room']
+  return {}, 200
+  
 
 @bp.route('/list', methods=['GET'])
 def list_rooms():
