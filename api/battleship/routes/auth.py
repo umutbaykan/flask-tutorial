@@ -1,29 +1,33 @@
 import functools
 
-from flask import (
-    Blueprint, g, request, session, make_response
-)
+from flask import Blueprint, g, request, session, make_response
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..database import db
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+bp = Blueprint("auth", __name__, url_prefix="/auth")
 
-@bp.route('/register', methods=['POST'])
+
+@bp.route("/register", methods=["POST"])
 def register():
+    """
+    Registers a new user and sets their id inside session
+    Returns 200 if successful or a 400 error with a JSON
+    object containing the error message
+    """
     data = request.json
-    username = data['username']
-    password = data['password']
+    username = data["username"]
+    password = data["password"]
     error = None
 
     if not username:
-        error = 'Username is required.'
+        error = "Username is required."
     elif not password:
-        error = 'Password is required.'
+        error = "Password is required."
     elif len(password) < 8:
-        error = 'Password is too short'
+        error = "Password is too short"
     elif len(username) > 15:
-        error = 'Username is too long'
+        error = "Username is too long"
 
     if error is None:
         try:
@@ -32,53 +36,66 @@ def register():
             error = str(err)
         else:
             session.clear()
-            session['user_id'] = new_user_id
-            return {}, 200
+            session["user_id"] = new_user_id
+            return {}, 201
 
     return make_response({"error": error}, 400)
 
 
-@bp.route('/login', methods=['POST'])
+@bp.route("/login", methods=["POST"])
 def login():
+    """
+    Logs in a user and sets their id inside session
+    Returns 200 if successful or a 400 error with a JSON
+    object containing the error message
+    """
     data = request.json
-    username = data['username']
-    password = data['password']
+    username = data["username"]
+    password = data["password"]
     error = None
 
     user = db.get_user_by_username(username)
 
     if user is None:
-        error = 'Incorrect username.'
-    elif not check_password_hash(user['password'], password):
-        error = 'Incorrect password.'
+        error = "Incorrect username."
+    elif not check_password_hash(user["password"], password):
+        error = "Incorrect password."
 
     if error is None:
         session.clear()
-        session['user_id'] = str(user['_id'])
-        print(f"Someone logged in. Their user id is {session['user_id']}. This is stored in the session object now.")
+        session["user_id"] = str(user["_id"])
         return {}, 200
-    
+
     return make_response({"error": error}, 400)
 
 
 @bp.before_app_request
 def load_logged_in_user():
-    user_id = session.get('user_id')
+    """
+    Retrieves the user data from db and assigns it to
+    g object before each request
+    """
+    user_id = session.get("user_id")
     if user_id is None:
         g.user = None
     else:
         g.user = db.get_user_by_id(user_id)
 
 
-@bp.route('/logout')
+@bp.route("/logout")
 def logout():
-    print(f"{session.get('user_id')} was logged in.")
+    """
+    Logs the user out and clears the session
+    """
     session.clear()
-    print(f"They are now logged out. The next line should be none to verify session is cleared")
-    print(f"{session.get('user_id')}")
     return {}, 204
 
+
 def login_required(view):
+    """
+    Wrapper function to protect routes
+    """
+
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
