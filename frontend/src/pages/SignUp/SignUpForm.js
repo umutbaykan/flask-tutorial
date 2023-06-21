@@ -4,10 +4,13 @@ import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
 import * as Yup from "yup";
 
+import { useCookies } from "react-cookie";
 import { auth } from "../../services/auth";
 
 const SignUpForm = ({ navigate }) => {
   const [error, setError] = useState("");
+  const [, setCookie, removeCookie] = useCookies([]);
+
   const validate = Yup.object({
     username: Yup.string()
       .min(3, "Must be at least 3 characters")
@@ -24,6 +27,8 @@ const SignUpForm = ({ navigate }) => {
   const handleSubmit = async (values) => {
     const result = await auth(values.username, values.password, "register");
     if (result.success) {
+      removeCookie("user_id");
+      setCookie("user_id", result.user_id);
       navigate("/");
     } else {
       setError(result.error);

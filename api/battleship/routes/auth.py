@@ -64,7 +64,7 @@ def login():
     if error is None:
         session.clear()
         session["user_id"] = str(user["_id"])
-        return {}, 200
+        return {"user_id": session["user_id"]}, 200
 
     return make_response({"error": error}, 400)
 

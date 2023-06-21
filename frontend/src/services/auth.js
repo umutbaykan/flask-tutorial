@@ -5,19 +5,19 @@ export const auth = (username, password, route) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ username, password }),
-  }).then((response) => {
-    if (response.ok) {
-      return { success: true };
-    } else {
-      return response
-        .json()
-        .then((data) => ({ success: false, error: data.error }));
-    }
-  });
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.error) {
+        return { success: false, error: data.error };
+      } else {
+        return { success: true, user_id: data.user_id };
+      }
+    });
 };
 
 export const logout = () => {
   return fetch(`/auth/logout`, {
     method: "get",
-  })
+  });
 };
