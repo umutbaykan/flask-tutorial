@@ -1,9 +1,9 @@
 from flask import (Blueprint, make_response, session, jsonify, request)
 
 from .auth import login_required
-from .extensions import socketio
-from .events import create_new_game_state, list_all_rooms, add_player_to_game
-from .helpers import generate_unique_code
+from ..utils.extensions import socketio
+from ..events.events import create_new_game_state, list_all_rooms, add_player_to_game
+from ..helpers.helpers import generate_unique_code
 
 bp = Blueprint('room', __name__, url_prefix='/room')
 
@@ -22,6 +22,9 @@ def create_room():
 @login_required
 def join_room():
   data = request.json
+  
+
+
   if 'room' in session:
       del session['room']
   session['room'] = data['room']

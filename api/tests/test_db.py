@@ -1,5 +1,5 @@
 import pytest
-from battleship.db import *
+from battleship.database.db import *
 
 
 def test_get_user_by_username(app_context):

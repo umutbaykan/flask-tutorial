@@ -3,7 +3,7 @@ import glob
 import json
 import pytest
 from battleship import create_app
-from battleship.db import seed_test_database
+from battleship.database.db import seed_test_database
 
 @pytest.fixture
 def app():

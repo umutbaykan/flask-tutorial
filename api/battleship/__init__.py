@@ -2,8 +2,9 @@ import os
 
 from flask import Flask
 from flask_cors import CORS
-from . import auth, thingy, room
-from .events import socketio
+from . import thingy
+from .routes import auth, room
+from .events.events import socketio
 
 def create_app(test_config=None):
     # create and configure the app
