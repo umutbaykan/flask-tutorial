@@ -1,7 +1,6 @@
 import pytest
 from battleship.database.db import *
 
-
 def test_get_user_by_username(app_context):
     result = get_user_by_username("admiral_1")
     assert result["username"] == "admiral_1"
@@ -32,3 +31,13 @@ def test_user_already_registered(app_context):
         register_user("admiral_1", "password")
     error_message = str(e.value)        
     assert error_message == "Username already exists"
+
+
+def test_check_a_unique_room_id(app_context):
+    result = check_if_room_id_is_unique("a")
+    assert result == True
+
+
+def test_check_an_existing_room_id(app_context):
+    result = check_if_room_id_is_unique("abcdefgh")
+    assert result == False

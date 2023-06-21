@@ -48,6 +48,11 @@ def register_user(username, password):
         return str(result.inserted_id)
 
 
+def check_if_room_id_is_unique(room_id):
+    response = db.games.find_one({"room": room_id})
+    return (response == None)
+
+
 def seed_test_database(collection, seed_data):
     """
     Reseeds the database based on the JSON data in seeds folder

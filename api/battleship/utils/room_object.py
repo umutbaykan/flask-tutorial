@@ -21,3 +21,8 @@ def add_player_to_game(room_id, player_id):
 def list_all_rooms():
     """Returns all the available rooms in the global room object"""
     return ROOMS
+
+def check_global_room_id_is_unique(room_id):
+    if room_id in ROOMS:
+        return False
+    return True
