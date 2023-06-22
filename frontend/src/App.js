@@ -17,16 +17,20 @@ const App = () => {
   const [currentGames, setCurrentGames] = useState({});
   const [chats, setChats] = useState([])
 
-  const onCurrentGames = (value) => {
-    setCurrentGames((previous) => ({ ...previous, ...value }));
+  const onCurrentGames = (games) => {
+    setCurrentGames((previous) => ({ ...previous, ...games }));
   }
 
-  const onJoiningRoom = (value) => {
-    setChats((previous) => [ ...previous, `${value.username} has joined the ${value.room}`])
+  const onJoiningRoom = (user) => {
+    setChats((previous) => [ ...previous, `${user.username} has joined the ${user.room}`])
   }
 
-  const onLeavingRoom = (value) => {
-    setChats((previous) => [ ...previous, `${value.username} has left the ${value.room}`])
+  const onLeavingRoom = (user) => {
+    setChats((previous) => [ ...previous, `${user.username} has left the ${user.room}`])
+  }
+
+  const onChatUpdate = (chat) => {
+    setChats((previous) => [ ...previous, `${chat.username}: ${chat.message}`])
   }
 
   // Event listeners
@@ -34,10 +38,12 @@ const App = () => {
     socket.on("current_games", onCurrentGames);
     socket.on("user_joined", onJoiningRoom);
     socket.on("user_left", onLeavingRoom);
+    socket.on("chat_update", onChatUpdate);
     return () => {
       socket.off("current_games", onCurrentGames);
       socket.off("user_joined", onJoiningRoom);
-      socket.off('user_left', onLeavingRoom)
+      socket.off('user_left', onLeavingRoom);
+      socket.off("chat_update", onChatUpdate);
     };
   }, []);
 

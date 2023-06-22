@@ -4,12 +4,10 @@ import TextField from "../../components/TextField/TextField";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
-import { useCookies } from "react-cookie";
 import { auth } from "../../services/auth";
 
 const LoginForm = () => {
   const [error, setError] = useState("");
-  const [, setCookie, removeCookie] = useCookies([]);
   const navigate = useNavigate();
 
   const validate = Yup.object({
@@ -20,8 +18,6 @@ const LoginForm = () => {
   const handleSubmit = async (values) => {
     const result = await auth(values.username, values.password, "login");
     if (result.success) {
-      removeCookie("user_id");
-      setCookie("user_id", result.user_id);
       navigate("/");
     } else {
       setError(result.error);

@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 
 import { ChatContext } from "../../../../App";
+import ChatForm from "../ChatForm/ChatForm";
 
 const ChatBox = () => {
     const [chats, ] = useContext(ChatContext);
@@ -11,6 +12,7 @@ const ChatBox = () => {
     {chats.map((chat, index) => (
     <li key={index}>{chat}</li>
     ))}
+    <ChatForm />
     </div>
     )
   ;
