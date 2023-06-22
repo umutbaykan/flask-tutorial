@@ -15,23 +15,29 @@ export const ChatContext = createContext([])
 const App = () => {
   
   const [currentGames, setCurrentGames] = useState({});
-  const [userJoined, setUserJoined] = useState([])
+  const [chats, setChats] = useState([])
 
   const onCurrentGames = (value) => {
     setCurrentGames((previous) => ({ ...previous, ...value }));
   }
 
   const onJoiningRoom = (value) => {
-    setUserJoined((previous) => [ ...previous, `${value.username} has joined the ${value.room}`])
+    setChats((previous) => [ ...previous, `${value.username} has joined the ${value.room}`])
+  }
+
+  const onLeavingRoom = (value) => {
+    setChats((previous) => [ ...previous, `${value.username} has left the ${value.room}`])
   }
 
   // Event listeners
   useEffect(() => {
     socket.on("current_games", onCurrentGames);
-    socket.on("user-joined", onJoiningRoom)
+    socket.on("user_joined", onJoiningRoom);
+    socket.on("user_left", onLeavingRoom);
     return () => {
       socket.off("current_games", onCurrentGames);
-      socket.off("user-joined", onJoiningRoom)
+      socket.off("user_joined", onJoiningRoom);
+      socket.off('user_left', onLeavingRoom)
     };
   }, []);
 
@@ -45,7 +51,7 @@ const App = () => {
 
   return (
   <LobbyContext.Provider value={currentGames}>
-  <ChatContext.Provider value={userJoined}>
+  <ChatContext.Provider value={[chats, setChats]}>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<SignUpForm />} />

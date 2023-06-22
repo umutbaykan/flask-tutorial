@@ -26,7 +26,7 @@ def on_join(room):
         return
     join_room(room)
     print(f"{username} has joined {room}")
-    emit("user-joined", {"user": user_id, "room": room, "username": username}, to=room)
+    emit("user_joined", {"user": user_id, "room": room, "username": username}, to=room)
 
 
 @socketio.on('leave')
@@ -38,7 +38,7 @@ def on_leave(room):
     leave_room(room)
     session["room"] = ""
     print(f"{username} has left {room}")
-    emit("user-left", {"user": user_id, "room": room, "username": username}, to=room)
+    emit("user_left", {"user": user_id, "room": room, "username": username}, to=room)
 
 
 @socketio.on("data")

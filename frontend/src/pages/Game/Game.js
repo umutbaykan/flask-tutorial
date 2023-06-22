@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { socket } from "../../socket";
+import { ChatContext } from "../../App";
 
 import WhereAmI from "../../components/whereami/whereami"
 import ChatBox from "./components/ChatBox/ChatBox";
@@ -9,6 +10,7 @@ import ChatBox from "./components/ChatBox/ChatBox";
 const Game = () => {
   const { pathname } = useLocation();
   const [game_id] = useState(pathname.substring(pathname.lastIndexOf("/") + 1));
+  const [ , setChats] = useContext(ChatContext);
   
   const navigate = useNavigate();
 
@@ -32,6 +34,7 @@ const Game = () => {
   useEffect(() => {
     const handleUserLeaving = () => {
       socket.emit('leave', game_id); // Replace with your desired socket event name
+      setChats([])
     };
 
     window.addEventListener('beforeunload', handleUserLeaving);

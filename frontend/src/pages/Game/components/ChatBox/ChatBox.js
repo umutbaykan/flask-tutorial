@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { ChatContext } from "../../../../App";
 
 const ChatBox = () => {
-    const chats = useContext(ChatContext);
+    const [chats, ] = useContext(ChatContext);
 
     return (
     <div>
