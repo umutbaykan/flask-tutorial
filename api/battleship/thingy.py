@@ -27,10 +27,12 @@ def call():
 @bp.route("/whereami")
 def find_my_room():
     room = session.get("room")
-    if room:
-        response = make_response(json.dumps({"room": session["room"]}), 200)
+    user_id = session.get("user_id")
+    if user_id:
+        username = db.get_user_by_id(user_id)["username"]
     else:
-        response = make_response(json.dumps({"error": "You are not in any room!"}), 400)
+        username = ""
+    response = make_response({"room": room, "user_id": user_id, "username": username}, 200)
     response.headers["Content-Type"] = "application/json"
     return response
 

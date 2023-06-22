@@ -3,6 +3,7 @@ import propTypes from "prop-types";
 
 import { joinRoom } from "../../../../services/room";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../../../../socket";
 
 export const JoinGameButton = ({ game_id }) => {
   JoinGameButton.propTypes = { game_id: propTypes.string };
@@ -13,6 +14,7 @@ export const JoinGameButton = ({ game_id }) => {
   const handleJoin = async () => {
     const result = await joinRoom(game_id);
     if (result.success) {
+      socket.emit("join");
       navigate(`/game/${game_id}`);
     } else {
       setError(result.error);

@@ -13,6 +13,25 @@ from ..utils.room_object import *
 #     # print(request.sid)
 #     # # emit("connect",{"data":f"id: {request.sid} is connected"})
 
+@socketio.on("join")
+def on_join():
+    room = session.get("room")
+    user_id = session.get("user_id")   
+    if not room or not user_id:
+        return
+    join_room(room)
+    print(f"{user_id} has joined room {room}")
+    emit("user-joined", {"user": user_id, "room": room}, to=room)
+
+@socketio.on('leave')
+def on_leave():
+    room = session.get("room")
+    user_id = session.get("user_id")
+    leave_room(room)
+    print(f"{user_id} has left {room}")
+    session["room"] = ""
+    emit("user-left", {"user": user_id, "room": room}, to=room)
+
 
 @socketio.on("data")
 def handle_message(data):
@@ -27,11 +46,11 @@ def handle_something(data):
     emit("respond-something", {"response": data}, broadcast=True)
 
 
-# @socketio.on("disconnect")
-# def disconnected():
-#     """event listener when client disconnects to the server"""
-#     print("user disconnected")
-#     emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
+@socketio.on("disconnect")
+def disconnected():
+    """event listener when client disconnects to the server"""
+    print("client disconnected")
+    # emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
 
 
 @socketio.on("foo")
@@ -61,6 +80,7 @@ def handle_something(data):
 
 @socketio.on("connect")
 def connect():
+    print("client connected")
     emit("current_games", ROOMS, broadcast=True)
 
 

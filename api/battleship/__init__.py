@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask_cors import CORS
+from flask_session import Session
 from . import thingy
 from .routes import auth, room
 from .events.events import socketio
@@ -10,7 +11,10 @@ from .events.events import socketio
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(SECRET_KEY="dev", MONGO_URI="mongodb://0.0.0.0/battleship")
+    app.config.from_mapping(
+        SECRET_KEY="dev", 
+        MONGO_URI="mongodb://0.0.0.0/battleship",
+        SESSION_TYPE="filesystem")
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -35,6 +39,7 @@ def create_app(test_config=None):
 
 
 app = create_app()
+Session(app)
 
 if __name__ == "__main__":
     socketio.run(app)

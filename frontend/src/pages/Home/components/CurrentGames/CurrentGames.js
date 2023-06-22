@@ -12,7 +12,7 @@ export const CurrentGames = () => {
       <h3>Current available games:</h3>
       {Object.keys(currentGames).map((key) => (
         <div key={key}>
-          <JoinGameButton game_id={key}/>
+          <JoinGameButton game_id={key} />
           <p>{currentGames[key].gamestate}</p>
         </div>
       ))}

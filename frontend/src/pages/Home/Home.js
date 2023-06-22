@@ -1,30 +1,14 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 
 import NavButton from "../../components/NavButton/NavButton";
 import CurrentGames from "./components/CurrentGames/CurrentGames";
-
-import { createRoom } from "../../services/room";
+import CreateGameButton from "./components/CreateGameButton/CreateGameButton";
 
 // TODO remove
 import { auth, logout } from "../../services/auth";
+import WhereAmI from "../../components/whereami/whereami"
 
 const Home = () => {
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  //TODO - forms to pick game configurations and save it as a state to send to server
-  const gameconfigs = { arraySize: 10, ships: ["1", "2", "3"] };
-
-  const handleSubmit = async () => {
-    const result = await createRoom(gameconfigs);
-    if (result.room) {
-      navigate(`/game/${result.room}`);
-    } else {
-      setError(result.error);
-      navigate("/");
-    }
-  };
-
   //// This section will be removed later
   const fastLogin = async () => {
     await auth("Roger", "password", "login");
@@ -48,14 +32,13 @@ const Home = () => {
         <br></br>
         <button onClick={handleLogout}>Logout</button>
       </div>
-      <button onClick={handleSubmit}>Create Game</button>
+      <CreateGameButton />
       {/* Remove the button below */}
       <button onClick={fastLogin}>Fast Login</button>
       {/* Remove the button above */}
-      <p>{error}</p>
+      <WhereAmI />
     </>
   );
 };
-
 
 export default Home;
