@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import propTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+
 import NavButton from "../../components/NavButton/NavButton";
 import CurrentGames from "./components/CurrentGames/CurrentGames";
 
@@ -8,9 +9,9 @@ import { createRoom } from "../../services/room";
 // TODO remove
 import { auth, logout } from "../../services/auth";
 
-const Home = ({ navigate }) => {
-  Home.propTypes = { navigate: propTypes.func };
+const Home = () => {
   const [error, setError] = useState("");
+  const navigate = useNavigate();
   //TODO - forms to pick game configurations and save it as a state to send to server
   const gameconfigs = { arraySize: 10, ships: ["1", "2", "3"] };
 

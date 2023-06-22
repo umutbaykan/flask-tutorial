@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import propTypes from "prop-types";
 import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 
 import { useCookies } from "react-cookie";
 import { auth } from "../../services/auth";
 
-const LoginForm = ({ navigate }) => {
+const LoginForm = () => {
   const [error, setError] = useState("");
   const [, setCookie, removeCookie] = useCookies([]);
+  const navigate = useNavigate();
 
   const validate = Yup.object({
     username: Yup.string().required("Required"),
@@ -56,7 +57,5 @@ const LoginForm = ({ navigate }) => {
     </>
   );
 };
-
-LoginForm.propTypes = { navigate: propTypes.func };
 
 export default LoginForm;

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, createContext} from "react";
-import { useNavigate, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { socket } from "./socket";
 
 import Home from "./pages/Home/Home";
@@ -38,9 +38,9 @@ const App = () => {
   return (
   <LobbyContext.Provider value={currentGames}>
     <Routes>
-      <Route path="/" element={<Home navigate={useNavigate()} />} />
-      <Route path="/signup" element={<SignUpForm navigate={useNavigate()} />} />
-      <Route path="/login" element={<LoginForm navigate={useNavigate()} />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/signup" element={<SignUpForm />} />
+      <Route path="/login" element={<LoginForm />} />
       <Route path="/game/:gameId" element={<Game />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="*" element={<NotFound />} />
