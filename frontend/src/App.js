@@ -10,20 +10,28 @@ import NotFound from "./pages/NotFound/NotFound";
 import Profile from "./pages/Profile/Profile";
 
 export const LobbyContext = createContext({})
+export const ChatContext = createContext([])
 
 const App = () => {
   
   const [currentGames, setCurrentGames] = useState({});
+  const [userJoined, setUserJoined] = useState([])
 
-  function onCurrentGames(value) {
+  const onCurrentGames = (value) => {
     setCurrentGames((previous) => ({ ...previous, ...value }));
+  }
+
+  const onJoiningRoom = (value) => {
+    setUserJoined((previous) => [ ...previous, `${value.username} has joined the ${value.room}`])
   }
 
   // Event listeners
   useEffect(() => {
     socket.on("current_games", onCurrentGames);
+    socket.on("user-joined", onJoiningRoom)
     return () => {
       socket.off("current_games", onCurrentGames);
+      socket.off("user-joined", onJoiningRoom)
     };
   }, []);
 
@@ -37,6 +45,7 @@ const App = () => {
 
   return (
   <LobbyContext.Provider value={currentGames}>
+  <ChatContext.Provider value={userJoined}>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<SignUpForm />} />
@@ -45,6 +54,7 @@ const App = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
+  </ChatContext.Provider>
   </LobbyContext.Provider>
   );
 };
