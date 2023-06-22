@@ -14,7 +14,6 @@ bp = Blueprint("room", __name__, url_prefix="/room")
 def create_room():
     """
     Generates a unique ID for a game
-    Sets the room in session object to unique ID
     Adds the creating player to the game object.
     Returns the room ID as a JSON object
     """
@@ -24,13 +23,12 @@ def create_room():
             room_id
         ):
             break
-    session["room"] = room_id
-    create_new_game_state(session["room"], {"gamestate": "someconfigs"})
-    add_player_to_game(session["room"], session["user_id"])
+    create_new_game_state(room_id, {"gamestate": "someconfigs"})
+    add_player_to_game(room_id, session["user_id"])
 
     # Sends the updated list of games to the lobby
     socketio.emit("current_games", list_all_rooms())
-    return make_response({"room": session["room"]}, 200)
+    return make_response({"room": room_id}, 200)
 
 
 @bp.route("/join", methods=["POST"])
@@ -41,25 +39,11 @@ def join_room():
     Adds the joinng player to the game object
     Returns an error if the game state has two players already
     """
-    data = request.json
-    if "room" in session:
-        del session["room"]
-        
+    data = request.json        
     if add_player_to_game(data["room"], session["user_id"]):
-        session["room"] = data["room"]
         return {}, 200
     else:
         return make_response({"error": "Room is full"}, 409)
-
-
-@bp.route("/leave", methods=["GET"])
-def leave_room():
-    """
-    Removes the room from session object
-    """
-    if "room" in session:
-        del session["room"]
-    return {}, 200
 
 
 @bp.route("/list", methods=["GET"])

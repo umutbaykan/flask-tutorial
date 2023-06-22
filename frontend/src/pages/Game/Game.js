@@ -29,7 +29,7 @@ const Game = () => {
 
   useEffect(() => {
     const handleUserLeaving = () => {
-      socket.emit('leave'); // Replace with your desired socket event name
+      socket.emit('leave', game_id); // Replace with your desired socket event name
     };
 
     window.addEventListener('beforeunload', handleUserLeaving);

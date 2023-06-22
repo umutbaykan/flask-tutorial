@@ -37,6 +37,7 @@ def register():
         else:
             session.clear()
             session["user_id"] = new_user_id
+            session["username"] = username
             return {}, 201
 
     return make_response({"error": error}, 400)
@@ -64,6 +65,7 @@ def login():
     if error is None:
         session.clear()
         session["user_id"] = str(user["_id"])
+        session["username"] = user["username"]
         return {"user_id": session["user_id"]}, 200
 
     return make_response({"error": error}, 400)

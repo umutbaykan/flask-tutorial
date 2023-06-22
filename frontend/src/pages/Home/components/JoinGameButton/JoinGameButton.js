@@ -14,7 +14,7 @@ export const JoinGameButton = ({ game_id }) => {
   const handleJoin = async () => {
     const result = await joinRoom(game_id);
     if (result.success) {
-      socket.emit("join");
+      socket.emit("join", game_id);
       navigate(`/game/${game_id}`);
     } else {
       setError(result.error);

@@ -13,11 +13,10 @@ const CreateGameButton = () => {
   const handleRoomCreation = async () => {
     const result = await createRoom(gameconfigs);
     if (result.room) {
-      socket.emit("join");
+      socket.emit("join", result.room);
       navigate(`/game/${result.room}`);
     } else {
       setError(result.error);
-      navigate("/");
     }
   };
 

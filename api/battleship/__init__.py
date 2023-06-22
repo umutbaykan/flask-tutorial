@@ -6,6 +6,7 @@ from flask_session import Session
 from . import thingy
 from .routes import auth, room
 from .events.events import socketio
+from .utils.extensions import sess
 
 
 def create_app(test_config=None):
@@ -14,7 +15,8 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY="dev", 
         MONGO_URI="mongodb://0.0.0.0/battleship",
-        SESSION_TYPE="filesystem")
+        SESSION_TYPE="filesystem"
+        )
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -34,12 +36,11 @@ def create_app(test_config=None):
     app.register_blueprint(room.bp)
     app.register_blueprint(thingy.bp)
     CORS(app, supports_credentials=True)
+    sess.init_app(app)
     socketio.init_app(app)
     return app
 
 
-app = create_app()
-Session(app)
-
 if __name__ == "__main__":
+    app = create_app()
     socketio.run(app)

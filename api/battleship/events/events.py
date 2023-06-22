@@ -4,33 +4,41 @@ from ..utils.extensions import socketio
 from ..utils.room_object import *
 
 
-# @socketio.on("connect")
-# def connected():
-#     """event listener when client connects to the server"""
-#     print("client has connected")
-#     print(session.get('user_id', False))
-#     print(session.get('room'))
-#     # print(request.sid)
-#     # # emit("connect",{"data":f"id: {request.sid} is connected"})
+@socketio.on("connect")
+def connect():
+    print("client connected")
+    emit("current_games", ROOMS, broadcast=True)
+
+
+@socketio.on("disconnect")
+def disconnected():
+    """event listener when client disconnects to the server"""
+    print("client disconnected")
+    # emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
+
 
 @socketio.on("join")
-def on_join():
-    room = session.get("room")
+def on_join(room):
     user_id = session.get("user_id")   
+    username = session.get("username")
+    session["room"] = room
     if not room or not user_id:
         return
     join_room(room)
-    print(f"{user_id} has joined room {room}")
-    emit("user-joined", {"user": user_id, "room": room}, to=room)
+    print(f"{username} has joined {room}")
+    emit("user-joined", {"user": user_id, "room": room, "username": username}, to=room)
+
 
 @socketio.on('leave')
-def on_leave():
-    room = session.get("room")
+def on_leave(room):
     user_id = session.get("user_id")
+    username = session.get("username")
+    if not room or not user_id:
+        return
     leave_room(room)
-    print(f"{user_id} has left {room}")
     session["room"] = ""
-    emit("user-left", {"user": user_id, "room": room}, to=room)
+    print(f"{username} has left {room}")
+    emit("user-left", {"user": user_id, "room": room, "username": username}, to=room)
 
 
 @socketio.on("data")
@@ -44,13 +52,6 @@ def handle_message(data):
 def handle_something(data):
     print(session.get("room"))
     emit("respond-something", {"response": data}, broadcast=True)
-
-
-@socketio.on("disconnect")
-def disconnected():
-    """event listener when client disconnects to the server"""
-    print("client disconnected")
-    # emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
 
 
 @socketio.on("foo")
@@ -76,12 +77,6 @@ def handle_something(data):
 #     # rooms[room].get("members", 0) + 1
 #     # print(f"{user_id} joined room {room}")
 #     send(f"{user_id} joined room {room}", to=room)
-
-
-@socketio.on("connect")
-def connect():
-    print("client connected")
-    emit("current_games", ROOMS, broadcast=True)
 
 
 # @socketio.on("disconnect")
