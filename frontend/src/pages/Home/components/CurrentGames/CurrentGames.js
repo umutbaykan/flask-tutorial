@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
 import JoinGameButton from "../JoinGameButton/JoinGameButton";
 
@@ -6,6 +6,10 @@ import { LobbyContext } from "../../../../App";
 
 export const CurrentGames = () => {
   const currentGames = useContext(LobbyContext);
+
+  useEffect(() => {
+    
+  }, [])
 
   return (
     <>

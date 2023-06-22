@@ -22,30 +22,35 @@ def on_join(room):
     user_id = session.get("user_id")   
     username = session.get("username")
     session["room"] = room
-    if not room or not user_id:
+    if not room_event_is_from_users_within_room_object(room, user_id):
         return
     join_room(room)
     print(f"{username} has joined {room}")
-    emit("user_joined", {"user": user_id, "room": room, "username": username}, to=room)
+    emit("user_joined", {"room": room, "username": username}, to=room)
 
 
 @socketio.on('leave')
 def on_leave(room):
     user_id = session.get("user_id")
     username = session.get("username")
-    if not room or not user_id:
+    if not room_event_is_from_users_within_room_object(room, user_id):
         return
     leave_room(room)
     session["room"] = ""
     print(f"{username} has left {room}")
-    emit("user_left", {"user": user_id, "room": room, "username": username}, to=room)
+    emit("user_left", {"room": room, "username": username}, to=room)
 
 
-@socketio.on("data")
+@socketio.on('chat')
 def handle_message(data):
     """event listener when client types a message"""
-    print("data from the front end: ", str(data))
-    emit("data", {"data": data, "id": request.sid}, broadcast=True)
+    username = session.get("username")
+    user_id = session.get("user_id")   
+    message = data.get("message")
+    room = data.get("room")
+    if not room_event_is_from_users_within_room_object(room, user_id, message):
+        return
+    emit("chat_update", {"username": username, "message": message}, to=room)
 
 
 @socketio.on("create-something")

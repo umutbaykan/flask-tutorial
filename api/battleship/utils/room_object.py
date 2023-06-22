@@ -23,7 +23,20 @@ def add_player_to_game(room_id, player_id):
         return True
     else:
         return False
+    
 
+def room_event_is_from_users_within_room_object(room_id=None, player_id=None, *args):
+    """
+    Checks whether event is coming from a player in the room
+    and none of the other additional parameters are none
+    """
+    if any(arg is None for arg in args):
+        return False
+    if room_id is None or player_id is None:
+        return False
+    current_players = ROOMS[room_id].get("players", [])
+    return True if player_id in current_players else False
+        
 
 def list_all_rooms():
     """Returns all the available rooms in the global room object"""
