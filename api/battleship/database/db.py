@@ -2,9 +2,7 @@ from flask import current_app, g
 from werkzeug.local import LocalProxy
 from flask_pymongo import PyMongo
 
-from pymongo.errors import DuplicateKeyError, OperationFailure
 from bson.objectid import ObjectId
-from bson.errors import InvalidId
 
 
 def get_db():
@@ -16,11 +14,13 @@ def get_db():
     if db is None:
         connection = PyMongo(current_app)
         db = g._database = connection.db
-       
+
     return db
+
 
 # Use LocalProxy to read the global db instance with just `db`
 db = LocalProxy(get_db)
+
 
 def get_user_by_username(name):
     """
@@ -29,12 +29,14 @@ def get_user_by_username(name):
     response = db.users.find_one({"username": name})
     return response
 
+
 def get_user_by_id(id):
     """
     Returns the user with the ID
     """
     response = db.users.find_one({"_id": ObjectId(id)})
     return response
+
 
 def register_user(username, password):
     """
@@ -46,6 +48,15 @@ def register_user(username, password):
     else:
         result = db.users.insert_one({"username": username, "password": password})
         return str(result.inserted_id)
+
+
+def check_if_room_id_is_unique(room_id):
+    """
+    Checks if there is an existing room ID in the database
+    Returns a boolean value
+    """
+    response = db.games.find_one({"room": room_id})
+    return response is None
 
 
 def seed_test_database(collection, seed_data):

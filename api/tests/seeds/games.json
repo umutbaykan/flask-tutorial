@@ -1,6 +1,8 @@
 [{
-  "game": 1
+  "game": 1,
+  "room": "abcdefgh"
 },
 {
-  "game": 2
+  "game": 2,
+  "room": "kzoplkej"
 }]

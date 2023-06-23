@@ -4,7 +4,7 @@ import propTypes from 'prop-types';
 
 const NavButton = ({to, text}) => {
   return (
-    <NavLink to={to} className="navbutton">{text}</NavLink>
+    <NavLink to={to} className="navbutton" key={to}>{text}</NavLink>
   )
 }
 

@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import propTypes from "prop-types";
 import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 
 import { auth } from "../../services/auth";
 
-const SignUpForm = ({ navigate }) => {
+const SignUpForm = () => {
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
   const validate = Yup.object({
     username: Yup.string()
       .min(3, "Must be at least 3 characters")
@@ -22,7 +24,7 @@ const SignUpForm = ({ navigate }) => {
   });
 
   const handleSubmit = async (values) => {
-    const result = await auth(values.username, values.password, 'register');
+    const result = await auth(values.username, values.password, "register");
     if (result.success) {
       navigate("/");
     } else {
@@ -65,7 +67,5 @@ const SignUpForm = ({ navigate }) => {
     </>
   );
 };
-
-SignUpForm.propTypes = { navigate: propTypes.func };
 
 export default SignUpForm;
