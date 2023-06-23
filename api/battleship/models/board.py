@@ -10,6 +10,13 @@ class Board:
             for ship_piece in ship.coordinates:
                 board[ship_piece['row']][ship_piece['column']] = ship.symbol
         return board
+    
+
+    def get_ship_by_name(self, ship_name):
+        for ship in self.ships:
+            if ship.name == ship_name:
+                return ship
+        return False
 
 
     def print_board(self):
