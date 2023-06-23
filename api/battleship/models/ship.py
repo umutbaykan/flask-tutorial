@@ -1,8 +1,9 @@
 class Ship:
-    def __init__(self, name, size, orientation, starting_coordinate):
+    def __init__(self, name, size, orientation, starting_coordinate, symbol):
         self.name = name
         self.size = size
         self.orientation = orientation
+        self.symbol = symbol
         self.coordinates = self.generate_coordinates(starting_coordinate)
         self.sunk = False
 
@@ -18,5 +19,7 @@ class Ship:
             elif self.orientation == "vertical":
                 coordinates.append({"column": column, "row": row + 1, "hit": False})
         return coordinates
+    
+
 
     
