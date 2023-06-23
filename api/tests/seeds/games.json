@@ -1,6 +1,11 @@
 [{
-  "game": 1,
-  "room": "abcdefgh"
+  "game_id": "abcdefgh",
+  "game_settings": {"array_size": 8, "ships": {"frigate":true, "destroyer":true, "cruiser":true, "battleship":true, "aircraft_carrier":true}},
+  "players": {"player_1": 
+  {"id": "6495822522b4741d1481b1c5", "ship_locations": 
+  
+  {"player_2": "6495822522b4741d1481b1c6"}
+  
 },
 {
   "game": 2,

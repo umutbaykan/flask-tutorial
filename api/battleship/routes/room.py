@@ -3,7 +3,7 @@ from flask import Blueprint, make_response, session, jsonify, request
 from .auth import login_required
 from ..utils.extensions import socketio
 from ..utils.room_object import *
-from ..database.db import check_if_room_id_is_unique
+from ..database.db import *
 from ..helpers.helpers import generate_unique_code
 
 bp = Blueprint("room", __name__, url_prefix="/room")
@@ -19,9 +19,7 @@ def create_room():
     """
     while True:
         room_id = generate_unique_code()
-        if check_if_room_id_is_unique(room_id) and check_global_game_id_is_unique(
-            room_id
-        ):
+        if check_global_game_id_is_unique(room_id):
             break
     create_new_game_state(room_id, {"gamestate": "someconfigs"})
     add_player_to_game(room_id, session["user_id"])
