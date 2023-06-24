@@ -12,6 +12,12 @@ class Board:
         return board
     
 
+    def check_if_position_suitable(self, params):
+        column = params['column']
+        row = params['row']
+        ship_length = self.ships[params['ship_name']]
+
+
     def get_ship_by_name(self, ship_name):
         for ship in self.ships:
             if ship.name == ship_name:

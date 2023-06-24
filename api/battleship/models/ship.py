@@ -1,26 +1,87 @@
+import json
+
+
 class Ship:
-    def __init__(self, name, size, symbol):
+    def __init__(self, name, size, coordinates, overridden=None):
+        self._validate_ship_data(name, size, coordinates, overridden)
         self.name = name
-        self.size = size
-        self.symbol = symbol
-        self.coordinates = []
-        self.sunk = False
+        self.coordinates = coordinates
+        if overridden is not None:
+            self.alive = overridden
+        else:
+            self.alive = [True for _ in range(size)]
 
-    def is_sunk(self):
-        return all(piece["hit"] for piece in self.coordinates)
-    
-    def generate_coordinates(self, starting_coordinate, orientation):
-        coordinates = []
-        if starting_coordinate is None or orientation not in ['vertical', 'horizontal']:
-            return
-        row, column = starting_coordinate
-        for i in range(self.size):
-            if orientation == "horizontal":
-                coordinates.append({"column": column + i, "row": row, "hit": False})
-            elif orientation == "vertical":
-                coordinates.append({"column": column, "row": row + 1, "hit": False})
-        return coordinates
-    
+    def hit(self, bombed_coordinate):
+        for i in range(len(self.coordinates)):
+            if self.coordinates[i] == bombed_coordinate:
+                self.alive[i] = False
+                return True
+        return False
+
+    @staticmethod
+    def _validate_ship_data(name, size, coordinates, overridden):
+        if name not in ship_classes:
+            raise ValueError("Invalid ship name.")
+        if len(coordinates) > size:
+            raise ValueError(
+                "Invalid coordinates. The length exceeds the size of the ship."
+            )
+        if overridden is not None and len(overridden) > size:
+            raise ValueError("Invalid overridden ship data.")
+
+    @staticmethod
+    def serialize(ship):
+        data = {
+            "name": ship.name,
+            "coordinates": ship.coordinates,
+            "alive": ship.alive,
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def deserialize(ship_state):
+        ship_dict = json.loads(ship_state)
+        name = ship_dict["name"]
+        if name in ship_classes:
+            ship_class = ship_classes[name]
+            coordinates = ship_dict["coordinates"]
+            overridden = ship_dict.get("alive")
+            Ship._validate_ship_data(name, ship_class.size, coordinates, overridden)
+            return ship_class(coordinates, overridden=overridden)
+        return False
 
 
-    
+class Destroyer(Ship):
+    size = 2
+
+    def __init__(self, coordinates, overridden=None):
+        super().__init__("Destroyer", self.size, coordinates, overridden)
+
+
+class Cruiser(Ship):
+    size = 3
+
+    def __init__(self, coordinates, overridden=None):
+        super().__init__("Cruiser", self.size, coordinates, overridden)
+
+
+class Battleship(Ship):
+    size = 4
+
+    def __init__(self, coordinates, overridden=None):
+        super().__init__("Battleship", self.size, coordinates, overridden)
+
+
+class AircraftCarrier(Ship):
+    size = 5
+
+    def __init__(self, coordinates, overridden=None):
+        super().__init__("AircraftCarrier", self.size, coordinates, overridden)
+
+
+ship_classes = {
+    "Cruiser": Cruiser,
+    "Destroyer": Destroyer,
+    "Battleship": Battleship,
+    "AircraftCarrier": AircraftCarrier,
+}

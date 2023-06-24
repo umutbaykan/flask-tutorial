@@ -1,4 +1,4 @@
-from ..database import db
+from . import db
 from werkzeug.local import LocalProxy
 from flask_pymongo import PyMongo
 
