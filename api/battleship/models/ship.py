@@ -89,8 +89,8 @@ class AircraftCarrier(Ship):
 
 
 ship_classes = {
-    "Cruiser": Cruiser,
     "Destroyer": Destroyer,
+    "Cruiser": Cruiser,
     "Battleship": Battleship,
     "AircraftCarrier": AircraftCarrier,
 }
