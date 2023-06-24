@@ -1,4 +1,6 @@
 import json
+from .ship import Ship
+from ..utils.helpers import validate_coordinate_input
 
 
 class Board:
@@ -45,7 +47,12 @@ class Board:
             if True in ship.alive:
                 return True
         return False
-    
+
+    @staticmethod
+    def _validate_board_size(size):
+        if type(size) != int or size > 16 or size < 5:
+            raise ValueError("Invalid board size.")
+
     @staticmethod
     def serialize(board):
         serialized_ships = []
@@ -54,6 +61,19 @@ class Board:
         data = {
             "size": board.size,
             "ships": serialized_ships,
-            "missed_shots": board.missed_shots
+            "missed_shots": board.missed_shots,
         }
         return data
+
+    @staticmethod
+    def deserialize(board_state):
+        board_dict = json.loads(board_state)
+        unparsed_ships = board_dict.get("ships")
+        ship_objects = []
+        for ship in unparsed_ships:
+            ship_objects.append(Ship.deserialize(ship))
+        size = board_dict.get("size")
+        missed_shots = board_dict.get("missed_shots")
+        validate_coordinate_input(missed_shots)
+        Board._validate_board_size(size)
+        return Board(size=size, ships=ship_objects, missed_shots=missed_shots)

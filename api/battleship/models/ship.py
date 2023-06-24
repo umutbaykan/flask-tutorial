@@ -1,4 +1,5 @@
 import json
+from ..utils.helpers import validate_coordinate_input
 
 
 class Ship:
@@ -20,6 +21,8 @@ class Ship:
 
     @staticmethod
     def _validate_ship_data(name, size, coordinates, alive_override):
+        if type(size) != int:
+            raise ValueError("Invalid ship size.")
         if name not in ship_classes:
             raise ValueError("Invalid ship name.")
         if type(coordinates) != list:
@@ -28,13 +31,8 @@ class Ship:
             raise ValueError(
                 "Invalid coordinates. The length exceeds the size of the ship."
             )
-        for coord in coordinates:
-            if not isinstance(coord, list) or len(coord) != 2:
-                raise ValueError("Invalid coordinate format. Expected [x, y] format.")
-            if not all(isinstance(val, int) and val >= 0 for val in coord):
-                raise ValueError(
-                    "Invalid coordinate value. Coordinates must be non-negative integers."
-                )
+        validate_coordinate_input(coordinates)
+        ## Add method to check for diagonal ships
         if alive_override is not None and len(alive_override) > size:
             raise ValueError("Invalid overridden ship data.")
 
@@ -49,15 +47,17 @@ class Ship:
 
     @staticmethod
     def deserialize(ship_state):
-        ship_dict = json.loads(ship_state)
-        name = ship_dict["name"]
-        if name in ship_classes:
-            ship_class = ship_classes[name]
-            coordinates = ship_dict["coordinates"]
-            alive_override = ship_dict.get("alive")
-            Ship._validate_ship_data(name, ship_class.size, coordinates, alive_override)
-            return ship_class(coordinates, alive_override=alive_override)
-        return False
+        if isinstance(ship_state, str):
+            ship_dict = json.loads(ship_state)
+        else:
+            ship_dict = ship_state
+        name = ship_dict.get("name")
+        ship_class = ship_classes.get(name)
+        size = ship_class.size if ship_class else None
+        coordinates = ship_dict.get("coordinates")
+        alive_override = ship_dict.get("alive")
+        Ship._validate_ship_data(name, size, coordinates, alive_override)
+        return ship_class(coordinates, alive_override=alive_override)
 
 
 class Destroyer(Ship):

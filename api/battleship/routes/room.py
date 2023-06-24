@@ -4,7 +4,7 @@ from .auth import login_required
 from ..utils.extensions import socketio
 from ..utils.room_object import *
 from ..database.db import *
-from ..helpers.helpers import generate_unique_code
+from ..utils.helpers import generate_unique_code
 
 bp = Blueprint("room", __name__, url_prefix="/room")
 

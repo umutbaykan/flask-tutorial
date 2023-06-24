@@ -104,9 +104,13 @@ def test_if_ship_is_serialized_correctly():
         ),
     ],
 )
-def test_ship_deserialization(json_file, expected_name, expected_coordinates, expected_alive):
+def test_ship_deserialization(
+    json_file, expected_name, expected_coordinates, expected_alive
+):
     test_directory = os.path.dirname(os.path.abspath(__file__))
-    json_file_path = os.path.join(test_directory, "..", "seeds", "model_objects", json_file)
+    json_file_path = os.path.join(
+        test_directory, "..", "seeds", "model_objects", json_file
+    )
     with open(json_file_path) as file:
         json_data = file.read()
         result = Ship.deserialize(json_data)
@@ -124,6 +128,7 @@ def test_ship_deserialization(json_file, expected_name, expected_coordinates, ex
             "Invalid coordinates. The length exceeds the size of the ship.",
         ),
         ("ship_invalid.json", "Invalid overridden ship data."),
+        ("ship_empty_object.json", "Invalid ship size."),
     ],
 )
 def test_if_ship_deserialized_input_is_incorrect(json_file, expected_error):
