@@ -1,30 +1,22 @@
 class Board:
-    def __init__(self, array_size=10, ships=None):
-        self.ships = ships or []
-        self.board = self.generate_board(array_size)
-
-
-    def generate_board(self, array_size): 
-        board = [([0] * array_size) for _ in range(array_size)]
-        for ship in self.ships:
-            for ship_piece in ship.coordinates:
-                board[ship_piece['row']][ship_piece['column']] = ship.symbol
-        return board
+    def __init__(self, size=10, list_of_ships=[], shots=[]):
+        self.size = size
+        self.list_of_ships = list_of_ships
+        self.shots = shots
     
-
-    def check_if_position_suitable(self, params):
-        column = params['column']
-        row = params['row']
-        ship_length = self.ships[params['ship_name']]
-
-
-    def get_ship_by_name(self, ship_name):
-        for ship in self.ships:
-            if ship.name == ship_name:
-                return ship
-        return False
-
-
-    def print_board(self):
-        for row in self.board:
-            print(row)
+    def place(self, ship):
+        if self.can_place(ship):
+            self.list_of_ships.append(ship)
+            return True
+        else:
+            return False
+        
+    def can_place(self, ship):
+        for coordinate in ship.coordinates:
+            # Check for invalid data types and negative integers
+            if not all(isinstance(coord, int) and coord >= 0 for coord in coordinate):
+                return False
+            # Check whether coordinates are out of range
+            if not all(coord < self.size for coord in coordinate):
+                return False
+        return True

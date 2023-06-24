@@ -22,10 +22,19 @@ class Ship:
     def _validate_ship_data(name, size, coordinates, overridden):
         if name not in ship_classes:
             raise ValueError("Invalid ship name.")
+        if type(coordinates) != list:
+            raise ValueError("Invalid data type for coordinates.")
         if len(coordinates) > size:
             raise ValueError(
                 "Invalid coordinates. The length exceeds the size of the ship."
             )
+        for coord in coordinates:
+            if not isinstance(coord, list) or len(coord) != 2:
+                raise ValueError("Invalid coordinate format. Expected [x, y] format.")
+            if not all(isinstance(val, int) and val >= 0 for val in coord):
+                raise ValueError(
+                    "Invalid coordinate value. Coordinates must be non-negative integers."
+                )
         if overridden is not None and len(overridden) > size:
             raise ValueError("Invalid overridden ship data.")
 

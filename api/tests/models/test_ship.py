@@ -27,12 +27,28 @@ def test_successful_ship_creation(ship_class, size, coordinates):
     assert ship.alive == [True] * size
 
 
-def test_if_ship_coordinates_are_larger_than_allowed_size():
+@pytest.mark.parametrize(
+    "coordinates, expected_error",
+    [
+        (
+            [[0, 0], [0, 1], [0, 2]],
+            "Invalid coordinates. The length exceeds the size of the ship.",
+        ),
+        (True, "Invalid data type for coordinates."),
+        (
+            [[0, 0], [-1, 1]],
+            "Invalid coordinate value. Coordinates must be non-negative integers.",
+        ),
+        (
+            [[0, 0], ["-1", 1]],
+            "Invalid coordinate value. Coordinates must be non-negative integers.",
+        ),
+    ],
+)
+def test_validate_ship_coordinates(coordinates, expected_error):
     with pytest.raises(ValueError) as e:
-        Destroyer([[0, 0], [0, 1], [0, 2]])
-    assert (
-        str(e.value) == "Invalid coordinates. The length exceeds the size of the ship."
-    )
+        Destroyer(coordinates)
+    assert str(e.value) == expected_error
 
 
 def test_if_ship_name_is_invalid():
@@ -89,13 +105,18 @@ def test_if_ship_is_deserialized_correctly():
 @pytest.mark.parametrize(
     "json_file, expected_error",
     [
-        ("ship_too_long.json", "Invalid coordinates. The length exceeds the size of the ship."),
+        (
+            "ship_too_long.json",
+            "Invalid coordinates. The length exceeds the size of the ship.",
+        ),
         ("ship_invalid.json", "Invalid overridden ship data."),
-    ]
+    ],
 )
 def test_if_ship_deserialized_input_is_incorrect(json_file, expected_error):
     test_directory = os.path.dirname(os.path.abspath(__file__))
-    json_file_path = os.path.join(test_directory, "..", "seeds", "model_objects", json_file)
+    json_file_path = os.path.join(
+        test_directory, "..", "seeds", "model_objects", json_file
+    )
     with open(json_file_path) as file:
         json_data = file.read()
         with pytest.raises(ValueError) as e:
