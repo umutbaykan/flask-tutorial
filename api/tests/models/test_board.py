@@ -13,6 +13,12 @@ class FakeShips(TestCase):
         self.fake_cruiser.alive = [True, True, False]
         self.fake_cruiser.hit.return_value = True
 
+        self.sunk_cruiser = Mock()
+        self.sunk_cruiser.alive = [False, False, False]
+
+        self.sunk_destroyer = Mock()
+        self.sunk_destroyer.alive = [False, False]
+
         self.fake_destroyer = MagicMock()
         self.fake_destroyer.hit.return_value = False
 
@@ -58,52 +64,22 @@ class TestShipsGetHit(FakeShips):
         self.fake_destroyer.hit.assert_called_with([0, 2])
         self.fake_cruiser.hit.assert_called_with([0, 2])
         assert result == True
+        assert board.shots == []
 
     def test_miss(self):
         board = Board(ships=[self.fake_destroyer])
         result = board.shoot([0, 2])
         self.fake_destroyer.hit.assert_called_with([0, 2])
         assert result == False
+        assert board.shots == [[0, 2]]
 
 
-# class TestBoardInitiation(FakeShips):
-#     def test_render_board_with_default_size(self):
-#         board = Board()
-#         assert board.board == [[0] * 10 for x in range(10)]
+class TestIfShipsAreAlive(FakeShips):
+    def test_ships_alive(self):
+        board = Board(ships=[self.fake_cruiser, self.sunk_destroyer])
+        assert board.ships_alive() == True
 
+    def test_all_ships_sunk(self):
+        board = Board(ships=[self.sunk_cruiser, self.sunk_destroyer])
+        assert board.ships_alive() == False
 
-#     def test_render_board_with_no_ships(self):
-#         board = Board(array_size=5)
-#         assert board.board == [[0] * 5 for x in range(5)]
-
-
-#     def test_render_board_with_one_ship(self):
-#         board = Board(array_size=5, ships=[self.fake_cruiser])
-#         assert board.board == [
-#             ["C", "C", "C", 0, 0],
-#             [0, 0, 0, 0, 0],
-#             [0, 0, 0, 0, 0],
-#             [0, 0, 0, 0, 0],
-#             [0, 0, 0, 0, 0],
-#         ]
-
-
-#     def test_render_board_with_multiple_ships(self):
-#         board = Board(array_size=5, ships=[self.fake_destroyer, self.fake_cruiser])
-#         assert board.board == [
-#             ["C", "C", "C", 0, 0],
-#             ["D", "D", 0, 0, 0],
-#             [0, 0, 0, 0, 0],
-#             [0, 0, 0, 0, 0],
-#             [0, 0, 0, 0, 0],
-#         ]
-
-
-# class TestBoardShips(FakeShips):
-#     def test_if_ship_object_can_be_returned(self):
-#         board = Board(5, ships=[self.fake_destroyer, self.fake_cruiser])
-#         assert board.get_ship_by_name('cruiser') == self.fake_cruiser
-
-#     def test_returns_false_when_ship_not_found(self):
-#         board = Board(5, ships=[self.fake_destroyer, self.fake_cruiser])
-#         assert board.get_ship_by_name('battleship') == False

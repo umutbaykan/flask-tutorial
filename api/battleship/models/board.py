@@ -34,4 +34,12 @@ class Board:
         for ship in self.ships:
             if ship.hit(coordinate):
                 return True
+        self.shots.append(coordinate)
         return False
+
+    def ships_alive(self):
+        for ship in self.ships:
+            if True in ship.alive:
+                return True
+        return False
+    
