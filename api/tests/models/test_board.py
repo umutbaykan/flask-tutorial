@@ -1,3 +1,4 @@
+import pytest
 from battleship.models.board import *
 from unittest.mock import Mock
 from unittest import TestCase
@@ -12,25 +13,38 @@ class FakeShips(TestCase):
         self.fake_cruiser.alive = [True, True, True]
 
 
-class TestShipCanBePlaced():
-    def test_returns_false_if_ship_coords_are_negative_integers(self):
-        invalid_ship = Mock()
-        invalid_ship.coordinates = [[0,0], [-1,0]]
-        board = Board()
-        assert board.can_place(invalid_ship) == False
-        
-    def test_returns_false_if_ship_coords_are_not_integers(self):
-        ship1, ship2 = Mock()
-        ship1.coordinates = [[0,0], [-1,'hello']]
-        ship2.coordinates = [[]]
-        board = Board()
-        assert board.can_place(invalid_ship) == False
+class TestShipCanBePlaced:
+    @pytest.mark.parametrize(
+        "coordinates, expected_result",
+        [
+            ([[0, 0], [1, 0], [2, 0]], True),
+            ([[0, 1], [0, 2], [0, 3]], False),
+            ([[3, 0], [3, 1]], False),
+        ],
+    )
+    def test_can_place_ship_on_empty_board(self, coordinates, expected_result):
+        test_ship = Mock()
+        test_ship.coordinates = coordinates
+        board = Board(3)
+        assert board.can_place(test_ship) == expected_result
 
-    def test_returns_false_if_ship_coords_are_out_of_range(self):
-        invalid_ship = Mock()
-        invalid_ship.coordinates = [[0,0], [0,1], [0,2], [0,3], [0,4]]
-        board = Board(size=4)
-        assert board.can_place(invalid_ship) == False
+    @pytest.mark.parametrize(
+        "coordinates, expected_result",
+        [
+            ([[1, 1], [1, 2]], True),
+            ([[0, 2], [0, 3]], False),
+            ([[3, 0], [4, 0]], False),
+        ],
+    )
+    def test_can_place_ship_on_already_populated_board(self, coordinates, expected_result):
+        test_ship, ship1, ship2 = Mock(), Mock(), Mock()
+        test_ship.coordinates = coordinates
+        ship1.coordinates = [[0,0],[0,1],[0,2]]
+        ship2.coordinates = [[1,0],[2,0],[3,0]]
+        board = Board(5, ships=[ship1, ship2])
+        assert board.can_place(test_ship) == expected_result
+        
+        
 
     
 
