@@ -99,73 +99,100 @@ cruiser = Cruiser([[0, 0], [0, 1], [0, 2]], alive_override=[True, True, False])
 destroyer = Destroyer([[3, 3], [4, 3]], alive_override=[False, True])
 
 
-def test_if_board_is_serialized_correctly():
-    board = Board(
-        size=7,
-        ships=[cruiser, destroyer],
-        missed_shots=[[0, 4], [2, 3], [5, 5]],
-    )
-    expected_state = {
-        "size": 7,
-        "ships": [
-            {
-                "name": "Cruiser",
-                "coordinates": [[0, 0], [0, 1], [0, 2]],
-                "alive": [True, True, False],
-            },
-            {
-                "name": "Destroyer",
-                "coordinates": [[3, 3], [4, 3]],
-                "alive": [False, True],
-            },
+class TestSerializations:
+    @pytest.mark.parametrize(
+        "board, expected_state",
+        [
+            (
+                Board(missed_shots=[]),
+                {
+                    "size": 10,
+                    "ships": [],
+                    "missed_shots": [],
+                },
+            ),
+            (
+                Board(
+                    size=7,
+                    ships=[cruiser, destroyer],
+                    missed_shots=[[0, 4], [2, 3], [5, 5]],
+                ),
+                {
+                    "size": 7,
+                    "ships": [
+                        {
+                            "name": "Cruiser",
+                            "coordinates": [[0, 0], [0, 1], [0, 2]],
+                            "alive": [True, True, False],
+                        },
+                        {
+                            "name": "Destroyer",
+                            "coordinates": [[3, 3], [4, 3]],
+                            "alive": [False, True],
+                        },
+                    ],
+                    "missed_shots": [[0, 4], [2, 3], [5, 5]],
+                },
+            ),
         ],
-        "missed_shots": [[0, 4], [2, 3], [5, 5]],
-    }
-    assert Board.serialize(board) == expected_state
-
-
-def test_successful_board_deserialization():
-    test_directory = os.path.dirname(os.path.abspath(__file__))
-    json_file_path = os.path.join(
-        test_directory, "..", "seeds", "model_objects", "board_regular.json"
     )
-    with open(json_file_path) as file:
-        json_data = file.read()
-        result = Board.deserialize(json_data)
+    def test_if_board_is_serialized_correctly(self, board, expected_state):
+        assert Board.serialize(board) == expected_state
 
-    assert result.missed_shots == [[0, 4], [2, 3], [5, 5]]
-    assert len(result.ships) == 2
-    ship = result.ships[0]
-    assert ship.name == "Cruiser"
-    assert ship.coordinates == [[0, 0], [0, 1], [0, 2]]
-    assert ship.alive == [True, True, False]
-    assert result.ships[1].name == "Destroyer"
-    assert result.size == 7
+    def test_successful_board_deserialization(self):
+        test_directory = os.path.dirname(os.path.abspath(__file__))
+        json_file_path = os.path.join(
+            test_directory, "..", "seeds", "model_objects", "board_regular.json"
+        )
+        with open(json_file_path) as file:
+            json_data = file.read()
+            result = Board.deserialize(json_data)
 
+        assert result.missed_shots == [[0, 4], [2, 3], [5, 5]]
+        assert len(result.ships) == 2
+        ship = result.ships[0]
+        assert ship.name == "Cruiser"
+        assert ship.coordinates == [[0, 0], [0, 1], [0, 2]]
+        assert ship.alive == [True, True, False]
+        assert result.ships[1].name == "Destroyer"
+        assert result.size == 7
 
-@pytest.mark.parametrize(
-    "json_file, expected_error",
-    [
-        ("board_too_large.json", "Invalid board size."),
-        ("board_too_small.json", "Invalid board size."),
-        ("board_invalid_shot_type.json", "Invalid coordinate data type."),
-        (
-            "board_invalid_coordinate_format.json",
-            "Invalid coordinate format. Expected [x, y] format.",
-        ),
-        (
-            "board_invalid_coordinate_value.json",
-            "Invalid coordinate value. Coordinates must be non-negative integers.",
-        ),
-    ],
-)
-def test_if_board_deserialized_input_is_incorrect(json_file, expected_error):
-    test_directory = os.path.dirname(os.path.abspath(__file__))
-    json_file_path = os.path.join(
-        test_directory, "..", "seeds", "model_objects", json_file
+    def test_successful_board_deserialization_for_empty_json(self):
+        test_directory = os.path.dirname(os.path.abspath(__file__))
+        json_file_path = os.path.join(
+            test_directory, "..", "seeds", "model_objects", "board_empty.json"
+        )
+        with open(json_file_path) as file:
+            json_data = file.read()
+            result = Board.deserialize(json_data)
+
+        assert result.ships == []
+        assert result.missed_shots == []
+        assert result.size == 7
+
+    @pytest.mark.parametrize(
+        "json_file, expected_error",
+        [
+            ("board_too_large.json", "Invalid board size."),
+            ("board_too_small.json", "Invalid board size."),
+            ("board_invalid_shot_type.json", "Invalid coordinate data type."),
+            (
+                "board_invalid_coordinate_format.json",
+                "Invalid coordinate format. Expected [x, y] format.",
+            ),
+            (
+                "board_invalid_coordinate_value.json",
+                "Invalid coordinate value. Coordinates must be non-negative integers.",
+            ),
+        ],
     )
-    with open(json_file_path) as file:
-        json_data = file.read()
-        with pytest.raises(ValueError) as e:
-            Board.deserialize(json_data)
-        assert str(e.value) == expected_error
+    def test_if_board_deserialized_input_is_incorrect(self, json_file, expected_error):
+        test_directory = os.path.dirname(os.path.abspath(__file__))
+        json_file_path = os.path.join(
+            test_directory, "..", "seeds", "model_objects", json_file
+        )
+        with open(json_file_path) as file:
+            json_data = file.read()
+            with pytest.raises(ValueError) as e:
+                Board.deserialize(json_data)
+            assert str(e.value) == expected_error
