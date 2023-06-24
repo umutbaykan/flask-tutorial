@@ -1,5 +1,4 @@
 import pytest
-import json
 import os
 from battleship.models.ship import *
 
@@ -72,7 +71,7 @@ def test_if_ship_is_not_hit():
 
 
 def test_if_ship_damage_can_be_overridden():
-    ship = Destroyer([[0, 0], [0, 1]], overridden=[False, True])
+    ship = Destroyer([[0, 0], [0, 1]], alive_override=[False, True])
     assert ship.alive == [False, True]
 
 
@@ -84,22 +83,37 @@ def test_if_ship_is_serialized_correctly():
         "coordinates": [[0, 0], [0, 1], [0, 2]],
         "alive": [True, True, False],
     }
-    json_ship = Ship.serialize(ship)
-    parsed_data = json.loads(json_ship)
-    assert parsed_data == expected_state
+    dict_ship = Ship.serialize(ship)
+    assert dict_ship == expected_state
 
 
-def test_if_ship_is_deserialized_correctly():
+@pytest.mark.parametrize(
+    "json_file, expected_name, expected_coordinates, expected_alive",
+    [
+        (
+            "ship_correct.json",
+            "Cruiser",
+            [[0, 0], [0, 1], [0, 2]],
+            [True, True, False],
+        ),
+        (
+            "ship_fully_alive.json",
+            "Cruiser",
+            [[3, 0], [4, 0], [5, 0]],
+            [True, True, True],
+        ),
+    ],
+)
+def test_ship_deserialization(json_file, expected_name, expected_coordinates, expected_alive):
     test_directory = os.path.dirname(os.path.abspath(__file__))
-    json_file_path = os.path.join(
-        test_directory, "..", "seeds", "model_objects", "ship_correct.json"
-    )
+    json_file_path = os.path.join(test_directory, "..", "seeds", "model_objects", json_file)
     with open(json_file_path) as file:
         json_data = file.read()
         result = Ship.deserialize(json_data)
-    assert result.name == "Cruiser"
-    assert result.coordinates == [[0, 0], [0, 1], [0, 2]]
-    assert result.alive == [True, True, False]
+
+    assert result.name == expected_name
+    assert result.coordinates == expected_coordinates
+    assert result.alive == expected_alive
 
 
 @pytest.mark.parametrize(

@@ -1,8 +1,11 @@
+import json
+
+
 class Board:
-    def __init__(self, size=10, ships=[], shots=[]):
+    def __init__(self, size=10, ships=[], missed_shots=[]):
         self.size = size
         self.ships = ships
-        self.shots = shots
+        self.missed_shots = missed_shots
 
     def place(self, ship):
         if self.can_place(ship):
@@ -34,7 +37,7 @@ class Board:
         for ship in self.ships:
             if ship.hit(coordinate):
                 return True
-        self.shots.append(coordinate)
+        self.missed_shots.append(coordinate)
         return False
 
     def ships_alive(self):
@@ -43,3 +46,14 @@ class Board:
                 return True
         return False
     
+    @staticmethod
+    def serialize(board):
+        serialized_ships = []
+        for ship in board.ships:
+            serialized_ships.append(ship.serialize(ship))
+        data = {
+            "size": board.size,
+            "ships": serialized_ships,
+            "missed_shots": board.missed_shots
+        }
+        return data

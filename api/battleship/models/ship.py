@@ -2,12 +2,12 @@ import json
 
 
 class Ship:
-    def __init__(self, name, size, coordinates, overridden=None):
-        self._validate_ship_data(name, size, coordinates, overridden)
+    def __init__(self, name, size, coordinates, alive_override=None):
+        self._validate_ship_data(name, size, coordinates, alive_override)
         self.name = name
         self.coordinates = coordinates
-        if overridden is not None:
-            self.alive = overridden
+        if alive_override is not None:
+            self.alive = alive_override
         else:
             self.alive = [True for _ in range(size)]
 
@@ -19,7 +19,7 @@ class Ship:
         return False
 
     @staticmethod
-    def _validate_ship_data(name, size, coordinates, overridden):
+    def _validate_ship_data(name, size, coordinates, alive_override):
         if name not in ship_classes:
             raise ValueError("Invalid ship name.")
         if type(coordinates) != list:
@@ -35,7 +35,7 @@ class Ship:
                 raise ValueError(
                     "Invalid coordinate value. Coordinates must be non-negative integers."
                 )
-        if overridden is not None and len(overridden) > size:
+        if alive_override is not None and len(alive_override) > size:
             raise ValueError("Invalid overridden ship data.")
 
     @staticmethod
@@ -45,7 +45,7 @@ class Ship:
             "coordinates": ship.coordinates,
             "alive": ship.alive,
         }
-        return json.dumps(data)
+        return data
 
     @staticmethod
     def deserialize(ship_state):
@@ -54,38 +54,38 @@ class Ship:
         if name in ship_classes:
             ship_class = ship_classes[name]
             coordinates = ship_dict["coordinates"]
-            overridden = ship_dict.get("alive")
-            Ship._validate_ship_data(name, ship_class.size, coordinates, overridden)
-            return ship_class(coordinates, overridden=overridden)
+            alive_override = ship_dict.get("alive")
+            Ship._validate_ship_data(name, ship_class.size, coordinates, alive_override)
+            return ship_class(coordinates, alive_override=alive_override)
         return False
 
 
 class Destroyer(Ship):
     size = 2
 
-    def __init__(self, coordinates, overridden=None):
-        super().__init__("Destroyer", self.size, coordinates, overridden)
+    def __init__(self, coordinates, alive_override=None):
+        super().__init__("Destroyer", self.size, coordinates, alive_override)
 
 
 class Cruiser(Ship):
     size = 3
 
-    def __init__(self, coordinates, overridden=None):
-        super().__init__("Cruiser", self.size, coordinates, overridden)
+    def __init__(self, coordinates, alive_override=None):
+        super().__init__("Cruiser", self.size, coordinates, alive_override)
 
 
 class Battleship(Ship):
     size = 4
 
-    def __init__(self, coordinates, overridden=None):
-        super().__init__("Battleship", self.size, coordinates, overridden)
+    def __init__(self, coordinates, alive_override=None):
+        super().__init__("Battleship", self.size, coordinates, alive_override)
 
 
 class AircraftCarrier(Ship):
     size = 5
 
-    def __init__(self, coordinates, overridden=None):
-        super().__init__("AircraftCarrier", self.size, coordinates, overridden)
+    def __init__(self, coordinates, alive_override=None):
+        super().__init__("AircraftCarrier", self.size, coordinates, alive_override)
 
 
 ship_classes = {
