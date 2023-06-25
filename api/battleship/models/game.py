@@ -1,0 +1,170 @@
+import json
+from .ship import Ship, ship_classes
+from .board import Board
+
+
+class Game:
+    def __init__(
+        self,
+        game_id=None,
+        players=[],
+        allowed_ships={},
+        boards=[],
+        who_started=1,
+        turn=1,
+        ready=False,
+        who_won=None,
+    ):
+        self.game_id = game_id
+        self.players = players
+        self.boards = boards
+        self.ready = ready
+        self.turn = turn
+        self.who_started = who_started
+        self.allowed_ships = allowed_ships
+        self.who_won = who_won
+
+    def place_ships(self, player_index, ships_array):
+        current_board = self.boards[player_index]
+        current_board_state = Board.serialize(self.boards[player_index])
+        for ship in ships_array:
+            try:
+                ship_object = Ship.deserialize(ship)
+                if not current_board.place(ship_object):
+                    self.boards[player_index] = Board.deserialize(current_board_state)
+                    return {"error": "Cannot place ships."}
+            except ValueError as ve:
+                self.boards[player_index] = Board.deserialize(current_board_state)
+                return {"error": str(ve.args[0])}
+        self._are_boards_placed()
+        return True
+
+    def is_over(self):
+        for index, board in enumerate(self.boards):
+            if not board.ships_alive():
+                self.who_won = self.players[index - 1]
+                return True
+        return False
+
+    def add_player(self, player_id):
+        if len(self.players) < 2:
+            self.players.append(player_id)
+            return True
+        return {"error": "Game is full."}
+
+    def fire(self, coordinate):
+        result = self._get_opponents_board().shoot(coordinate)
+        self.turn += 1
+        return result
+
+    def is_players_turn(self, player_id):
+        if self._is_player_valid(player_id):
+            player_index = (self.who_started + self.turn) % 2
+            return self.players[player_index] == player_id
+        return False
+
+    def _get_opponents_board(self):
+        opponent_index = (self.who_started + self.turn + 1) % 2
+        return self.boards[opponent_index]
+
+    def _is_player_valid(self, user_id):
+        if user_id in self.players:
+            return True
+        return {"error": "You are not in the game."}
+
+    def _are_boards_placed(self):
+        for board in self.boards:
+            if len(board.ships) == 0:
+                return False
+        self.ready = True
+        return True
+
+    def _check_incoming_ships_match_with_configs(self, ships_array):
+        ship_occurrence = {}
+        for ship in ships_array:
+            ship_occurrence[ship.get("name", "invalid")] = (
+                ship_occurrence.get(ship.get("name", "invalid"), 0) + 1
+            )
+        return ship_occurrence == self.allowed_ships
+
+    @staticmethod
+    def _validate_ship_json(ships_json):
+        ships_array = json.loads(ships_json)
+        if ships_array.get("ships"):
+            return ships_array["ships"]
+        return False
+
+    @staticmethod
+    def _validate_firing_coordinates_json(fire_json):
+        fire_dict = json.loads(fire_json)
+        if fire_dict.get("coordinates") and fire_dict.get("user_id"):
+            return fire_dict
+        return False
+
+    @staticmethod
+    def _validate_configurations(configs):
+        configs_dict = json.loads(configs)
+        # Throw an error if configs are corrupted, otherwise return as dictionary
+        return configs_dict
+
+    @staticmethod
+    def _get_allowed_ships(validated_ship_dict):
+        chosen_ships = {}
+        for item in validated_ship_dict:
+            for key, value in item.items():
+                if key in ship_classes and value > 0 and type(value) == int:
+                    chosen_ships[key] = value
+        return chosen_ships
+
+    @staticmethod
+    def create_new_game_from_configs(configs):
+        new_game = Game()
+        parsed_configs = Game._validate_configurations(configs)
+        [new_game.boards.append(Board(size=parsed_configs["size"])) for _ in range(2)]
+        new_game.allowed_ships = Game._get_allowed_ships(parsed_configs["ships"])
+        new_game.players.append(parsed_configs["p1_id"])
+        new_game.game_id = parsed_configs["game_id"]
+        new_game.who_started = parsed_configs["who_started"]
+        return new_game
+
+    @staticmethod
+    def serialize(game):
+        serialized_boards = []
+        for board in game.boards:
+            serialized_boards.append(Board.serialize(board))
+        data = {
+            "game_id": game.game_id,
+            "players": game.players,
+            "boards": serialized_boards,
+            "ready": game.ready,
+            "turn": game.turn,
+            "who_started": game.who_started,
+            "allowed_ships": game.allowed_ships,
+            "who_won": game.who_won,
+        }
+        return json.dumps(data)
+
+    @staticmethod
+    def deserialize(game_state):
+        game_dict = json.loads(game_state)
+        unparsed_boards = game_dict.get("boards")
+        board_objects = []
+        for board in unparsed_boards:
+            board_objects.append(Board.deserialize(board))
+        game_id = game_dict.get("game_id")
+        players = game_dict.get("players", [])
+        ready = game_dict.get("ready", False)
+        turn = game_dict.get("turn", 1)
+        who_started = game_dict.get("who_started", 1)
+        allowed_ships = game_dict.get("allowed_ships", {})
+        who_won = game_dict.get("who_won")
+        return Game(
+            boards=board_objects,
+            game_id=game_id,
+            players=players,
+            ready=ready,
+            turn=turn,
+            who_started=who_started,
+            allowed_ships=allowed_ships,
+            who_won=who_won,
+        )

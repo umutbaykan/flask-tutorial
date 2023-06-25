@@ -1,8 +1,10 @@
-[{
-  "game": 1,
-  "room": "abcdefgh"
-},
-{
-  "game": 2,
-  "room": "kzoplkej"
-}]
+[
+  {
+    "game": 1,
+    "room": "abcdefgh"
+  },
+  {
+    "game": 2,
+    "room": "kzoplkej"
+  }
+]

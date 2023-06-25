@@ -12,7 +12,7 @@ import json
 from bson import json_util, ObjectId
 from .database import db
 from .routes.auth import login_required
-from .helpers.helpers import generate_unique_code
+from .utils.helpers import generate_unique_code
 from flask_socketio import join_room, leave_room, send, SocketIO
 
 bp = Blueprint("response", __name__, url_prefix="/")

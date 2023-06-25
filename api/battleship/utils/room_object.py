@@ -25,6 +25,17 @@ def add_player_to_game(room_id, player_id):
         return False
     
 
+def remove_player_from_game(room_id, player_id):
+    """
+    Removes a player's id from the game
+    """
+    global ROOMS
+    current_players = ROOMS[room_id].get("players", [])
+    if player_id in current_players:
+        ROOMS[room_id]['players'].remove(player_id)
+    
+
+
 def room_event_is_from_users_within_room_object(room_id=None, player_id=None, *args):
     """
     Checks whether event is coming from a player in the room

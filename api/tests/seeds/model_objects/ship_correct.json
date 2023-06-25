@@ -1,0 +1,9 @@
+{
+  "name": "Cruiser",
+  "coordinates": [
+    [0, 0],
+    [0, 1],
+    [0, 2]
+  ],
+  "alive": [true, true, false]
+}

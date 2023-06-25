@@ -3,7 +3,7 @@ import functools
 from flask import Blueprint, g, request, session, make_response
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from ..database import db
+from ..database.user import *
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -31,7 +31,7 @@ def register():
 
     if error is None:
         try:
-            new_user_id = db.register_user(username, generate_password_hash(password))
+            new_user_id = register_user(username, generate_password_hash(password))
         except ValueError as err:
             error = str(err)
         else:
@@ -55,7 +55,7 @@ def login():
     password = data["password"]
     error = None
 
-    user = db.get_user_by_username(username)
+    user = get_user_by_username(username)
 
     if user is None:
         error = "Incorrect username."
@@ -81,7 +81,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = db.get_user_by_id(user_id)
+        g.user = get_user_by_id(user_id)
 
 
 @bp.route("/logout")
