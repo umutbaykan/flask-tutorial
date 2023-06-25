@@ -9,9 +9,11 @@ class FakeBoards(TestCase):
     def setUp(self):
         self.live_board_1 = Mock()
         self.live_board_1.ships_alive.return_value = True
+        self.live_board_1.ships = ["P1 Ship"]
 
         self.live_board_2 = Mock()
         self.live_board_2.ships_alive.return_value = True
+        self.live_board_2.ships = ["P2 Ship"]
 
         self.sunk_board = Mock()
         self.sunk_board.ships_alive.return_value = False
@@ -28,6 +30,9 @@ def game(request):
         json_data = file.read()
     game = Game.create_new_game_from_configs(json_data)
     yield game
+    game.boards[0].ships, game.boards[1].ships = [], []
+    game.boards[0].missed_shots, game.boards[1].missed_shots = [], []
+    game.players == []
 
 
 @pytest.fixture
@@ -51,13 +56,12 @@ def test_successful_game_initialization():
         json_data = file.read()
         game = Game.create_new_game_from_configs(json_data)
         assert game.gameId == "fkEjOpkL"
-        assert game.p1_id == "6495822522b4741d1481b1c6"
-        assert game.p2_id == None
+        assert game.players[0] == "6495822522b4741d1481b1c6"
         assert game.boards[0].size == 8
         assert game.boards[1].size == 8
         assert game.ready == False
-        assert game.turn == 0
-        assert game.who_started == 1
+        assert game.turn == 1
+        assert game.who_started == 2
         assert game.allowed_ships == {
             "Destroyer": 1,
             "Cruiser": 2,
@@ -72,7 +76,6 @@ def test_successful_game_initialization():
     indirect=["game", "read_json"],
 )
 def test_successful_ship_placement(game, read_json):
-    assert game.boards[0].ships == []
     parsed_ships = Game._validate_ship_json(read_json)
     result = game.place_ships(0, parsed_ships)
     assert result == True
@@ -85,18 +88,47 @@ def test_successful_ship_placement(game, read_json):
 @pytest.mark.parametrize(
     "game, read_json, expected_error",
     [
-        ("game_regular_configs", "ship_placement_multiple_but_clashing", {"error": "Cannot place ships"}),
+        ("game_regular_configs", "ship_placement_multiple_but_clashing", {"error": "Cannot place ships."}),
         ("game_regular_configs", "ship_placement_invalid_ship_class", {"error": "Invalid ship size."})
      ],
     indirect=["game", "read_json"],
 )
 def test_unsuccessful_ship_placement_due_to_ship_corruption(game, read_json, expected_error):
-    game.boards[0].ships = []
     parsed_ships = Game._validate_ship_json(read_json)
     result = game.place_ships(0, parsed_ships)
     assert result == expected_error
     assert game.boards[0].ships == []
-    
+
+
+class TestIfPlayersCanBeAddedToGame:
+    def test_adding_new_player(self):
+        game = Game(players=[])
+        assert game.add_player('player_1') == True
+        assert game.players == ['player_1']
+        assert game.add_player('player_2') == True
+        assert game.players == ['player_1', 'player_2']
+
+    def test_adding_another_player_when_capacity_is_full(self):
+        game = Game(players=['player_1', 'player_2'])
+        assert game.add_player('player_3') == {"error": "Game is full."}
+        
+
+class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
+    def test_returns_true_if_it_is_your_turn(self):
+        # Game instance - Player 1 should start and its the first turn.
+        # Player 1 should have the turn
+        game = Game(boards=[self.live_board_1, self.live_board_2], who_started=1, turn=1, players=['player_1', 'player_2'])
+        assert game.is_players_turn('player_1') == True
+        assert game.is_players_turn('player_2') == False
+        assert game.is_players_turn('player_3') == False
+
+    def test_returns_the_opponents_board_to_shoot_at_when_its_your_turn(self):
+        # Game instance - Player 1 should start and its the first turn.
+        # Player 2 board should return
+        game = Game(boards=[self.live_board_1, self.live_board_2], who_started=1, turn=1, players=['player_1', 'player_2'])
+        assert game.is_players_turn('player_1') == True
+        assert game._get_opponents_board() == self.live_board_2
+
 
 class TestIfGameUnderstandsItsOver(FakeBoards):
     def test_returns_false_if_both_boards_are_alive(self):
@@ -110,13 +142,13 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
 
 class TestValidators:
     def test_valid_player_request(self):
-        game = Game(p1_id="p1idfromdb", p2_id="p2idfromdb")
-        assert game._is_player_valid("p1idfromdb") == 0
-        assert game._is_player_valid("p2idfromdb") == 1
+        game = Game(players=["p1idfromdb", "p2idfromdb"])
+        assert game._is_player_valid("p1idfromdb") == True
+        assert game._is_player_valid("p2idfromdb") == True
 
     def test_invalid_player_request(self):
-        game = Game(p1_id="p1idfromdb")
-        assert game._is_player_valid("p2idfromdb") == False
+        game = Game(players=["p1idfromdb"])
+        assert game._is_player_valid("p2idfromdb") == {"error": "You are not in the game."}
 
     @pytest.mark.parametrize("game", ["game_regular_configs"], indirect=True)
     def test_returns_true_when_boards_are_placed(self, game):

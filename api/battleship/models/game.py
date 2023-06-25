@@ -5,15 +5,14 @@ from .board import Board
 
 class Game:
     def __init__(
-        self, gameId=None, p1_id=None, p2_id=None, allowed_ships={}, boards=[]
+        self, gameId=None, players=[], allowed_ships={}, boards=[], who_started=1, turn=1
     ):
         self.gameId = gameId
-        self.p1_id = p1_id
-        self.p2_id = p2_id
+        self.players = players
         self.boards = boards
         self.ready = False
-        self.turn = 0
-        self.who_started = None
+        self.turn = turn
+        self.who_started = who_started
         self.allowed_ships = allowed_ships
         self.who_won = None
 
@@ -25,7 +24,7 @@ class Game:
                 ship_object = Ship.deserialize(ship)
                 if not current_board.place(ship_object):
                     self.boards[player_index] = Board.deserialize(current_board_state)
-                    return {"error": "Cannot place ships"}
+                    return {"error": "Cannot place ships."}
             except ValueError as ve:
                 self.boards[player_index] = Board.deserialize(current_board_state)
                 return {"error": str(ve.args[0])}
@@ -37,13 +36,27 @@ class Game:
             if not board.ships_alive():
                 return True
         return False
-
-    def _is_player_valid(self, session_id):
-        if session_id == self.p1_id:
-            return 0
-        elif session_id == self.p2_id:
-            return 1
+    
+    def is_players_turn(self, player_id):
+        if self._is_player_valid(player_id):
+            player_index = (self.who_started + self.turn) % 2
+            return self.players[player_index] == player_id
         return False
+    
+    def add_player(self, player_id):
+        if len(self.players) < 2:
+            self.players.append(player_id)
+            return True
+        return {"error": "Game is full."}
+    
+    def _get_opponents_board(self):
+        opponent_index = (self.who_started + self.turn + 1) % 2
+        return self.boards[opponent_index]
+    
+    def _is_player_valid(self, session_id):
+        if session_id in self.players:
+            return True
+        return {"error": "You are not in the game."}
 
     def _are_boards_placed(self):
         for board in self.boards:
@@ -88,7 +101,7 @@ class Game:
         parsed_configs = Game._validate_configurations(configs)
         [new_game.boards.append(Board(size=parsed_configs["size"])) for _ in range(2)]
         new_game.allowed_ships = Game._get_allowed_ships(parsed_configs["ships"])
-        new_game.p1_id = parsed_configs["p1_id"]
+        new_game.players.append(parsed_configs["p1_id"])
         new_game.gameId = parsed_configs["game_id"]
         new_game.who_started = parsed_configs["who_started"]
         return new_game
