@@ -67,7 +67,10 @@ class Board:
 
     @staticmethod
     def deserialize(board_state):
-        board_dict = json.loads(board_state)
+        if isinstance(board_state, str):
+            board_dict = json.loads(board_state)
+        else:
+            board_dict = board_state
         unparsed_ships = board_dict.get("ships")
         ship_objects = []
         for ship in unparsed_ships:
