@@ -31,12 +31,20 @@ def test_successful_ship_creation(ship_class, size, coordinates):
     [
         (
             [[0, 0], [0, 1], [0, 2]],
-            "Invalid coordinates. The length exceeds the size of the ship.",
+            "Invalid coordinates. The length does not match the size of the ship.",
+        ),
+        (
+            [[0, 0]],
+            "Invalid coordinates. The length does not match the size of the ship.",
         ),
         (True, "Invalid data type for coordinates."),
         (
             [[0, 0], [-1, 1]],
             "Invalid coordinate value. Coordinates must be non-negative integers.",
+        ),
+        (
+            [[0, 0], [1, 1]],
+            "Invalid coordinates. Ships can't be placed diagonally.",
         ),
         (
             [[0, 0], ["-1", 1]],
@@ -125,7 +133,7 @@ def test_ship_deserialization(
     [
         (
             "ship_too_long.json",
-            "Invalid coordinates. The length exceeds the size of the ship.",
+            "Invalid coordinates. The length does not match the size of the ship.",
         ),
         ("ship_invalid.json", "Invalid overridden ship data."),
         ("ship_empty_object.json", "Invalid ship size."),

@@ -20,6 +20,15 @@ class Ship:
         return False
 
     @staticmethod
+    def _validate_ship_is_straight(coordinates):
+        rows, columns = set(), set()
+        for coord in coordinates:
+            rows.add(coord[0])
+            columns.add(coord[1])
+        if len(rows) > 1 and len(columns) > 1:
+            raise ValueError("Invalid coordinates. Ships can't be placed diagonally.")
+
+    @staticmethod
     def _validate_ship_data(name, size, coordinates, alive_override):
         if type(size) != int:
             raise ValueError("Invalid ship size.")
@@ -27,12 +36,12 @@ class Ship:
             raise ValueError("Invalid ship name.")
         if type(coordinates) != list:
             raise ValueError("Invalid data type for coordinates.")
-        if len(coordinates) > size:
+        if len(coordinates) != size:
             raise ValueError(
-                "Invalid coordinates. The length exceeds the size of the ship."
+                "Invalid coordinates. The length does not match the size of the ship."
             )
         validate_coordinate_input(coordinates)
-        ## Add method to check for diagonal ships
+        Ship._validate_ship_is_straight(coordinates)
         if alive_override is not None and len(alive_override) > size:
             raise ValueError("Invalid overridden ship data.")
 
