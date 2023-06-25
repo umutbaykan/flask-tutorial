@@ -17,7 +17,7 @@ def game(request):
 
 
 @pytest.fixture
-def ships_json(request):
+def read_json(request):
     configs = request.param
     test_directory = os.path.dirname(os.path.abspath(__file__))
     json_file_path = os.path.join(
@@ -53,15 +53,19 @@ def test_successful_game_initialization():
 
 
 @pytest.mark.parametrize(
-    "game, ships_json",
+    "game, read_json",
     [("game_regular_configs", "ship_placement_multiple")],
-    indirect=["game", "ships_json"],
+    indirect=["game", "read_json"],
 )
-def test_successful_ship_placement(game, ships_json):
-    parsed_ships = Game._validate_ship_json(ships_json)
+def test_successful_ship_placement(game, read_json):
+    parsed_ships = Game._validate_ship_json(read_json)
     result = game.place_ships(0, parsed_ships)
     assert result == True
-    
+    assert len(game.boards[0].ships) == 4
+    for ship in game.boards[0].ships:
+        assert all(element == True for element in ship.alive)
+    assert game.boards[0].ships[0].coordinates == [[4, 4], [4, 5]]
+
 
 class TestValidators:
     def test_valid_player_request(self):
@@ -88,32 +92,65 @@ class TestValidators:
         assert game.ready == False
 
     @pytest.mark.parametrize(
-        "game, ships_json",
-        [("game_regular_configs", "ship_placement_multiple")],
-        indirect=["game", "ships_json"],
-    )
-    def test_validates_if_the_ship_array_passed_in_is_valid(self, game, ships_json):
-        parsed_ships_json = json.loads(ships_json)
-        assert game._validate_ship_array(parsed_ships_json) == True
-
-    @pytest.mark.parametrize(
-        "ships_json",
+        "parsed_configs_ships, expected_result",
         [
-            ("ship_placement_empty"),
-            ("ship_placement_invalid_ship_names"),
-        ]
+            (
+                [
+                    {"Destroyer": 1},
+                    {"Cruiser": 2},
+                    {"Battleship": 0},
+                    {"AircraftCarrier": 1},
+                ],
+                {"Destroyer": 1, "Cruiser": 2, "AircraftCarrier": 1},
+            ),
+            (
+                [
+                    {"Submarine": 3},
+                ],
+                {},
+            ),
+            (
+                [
+                    {"Cruiser": -3},
+                    {"Battleship": 2},
+                ],
+                {"Battleship": 2},
+            ),
+            ([{"Cruiser": True}], {}),
+        ],
     )
-    def test_invalid_ship_json(self, ships_json):
-        assert Game._validate_ship_json(ships_json) is False
+    def test_getting_allowed_ships(self, parsed_configs_ships, expected_result):
+        result = Game._get_allowed_ships(parsed_configs_ships)
+        assert result == expected_result
 
     @pytest.mark.parametrize(
-        "game, ships_json, expected_result",
+        "read_json, expected_result",
+        [
+            ("ship_placement_empty", False),
+            ("ship_placement_invalid_ship_array", False),
+            (
+                "ship_placement_single",
+                [{"name": "Destroyer", "coordinates": [[4, 4], [4, 5]]}],
+            ),
+        ],
+        indirect=["read_json"],
+    )
+    def test_invalid_ship_json(self, read_json, expected_result):
+        assert Game._validate_ship_json(read_json) == expected_result
+
+    @pytest.mark.parametrize(
+        "game, read_json, expected_result",
         [
             ("game_regular_configs", "ship_placement_multiple", True),
             ("game_regular_configs", "ship_placement_mismatch", False),
         ],
-        indirect=["game", "ships_json"],
+        indirect=["game", "read_json"],
     )
-    def test_validates_if_the_ship_array_passed_in_is_valid(self, game, ships_json, expected_result):
-        parsed_ships = Game._validate_ship_json(ships_json)
-        assert game._validate_ship_array(parsed_ships) == expected_result
+    def test_validates_if_the_ship_array_passed_in_is_valid(
+        self, game, read_json, expected_result
+    ):
+        parsed_ships = Game._validate_ship_json(read_json)
+        assert (
+            game._check_incoming_ships_match_with_configs(parsed_ships)
+            == expected_result
+        )

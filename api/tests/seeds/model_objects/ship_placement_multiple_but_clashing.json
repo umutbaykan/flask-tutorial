@@ -1,20 +1,37 @@
-{   "ships":
-    [
-        {
-        "name": "Destroyer",
-        "coordinates": [[4,4], [4,5]]
-        },
-        {
-        "name": "Cruiser",
-        "coordinates": [[0,0], [0,1], [0,2]]
-        },
-        {
-        "name": "Cruiser",
-        "coordinates": [[0,1], [1,1], [2,1]]
-        },
-        {
-        "name": "AircraftCarrier",
-        "coordinates": [[3,3], [4,3], [5,3], [6,3], [7,3]]
-        }
-    ]
+{
+  "ships": [
+    {
+      "name": "Destroyer",
+      "coordinates": [
+        [4, 4],
+        [4, 5]
+      ]
+    },
+    {
+      "name": "Cruiser",
+      "coordinates": [
+        [0, 0],
+        [0, 1],
+        [0, 2]
+      ]
+    },
+    {
+      "name": "Cruiser",
+      "coordinates": [
+        [0, 1],
+        [1, 1],
+        [2, 1]
+      ]
+    },
+    {
+      "name": "AircraftCarrier",
+      "coordinates": [
+        [3, 3],
+        [4, 3],
+        [5, 3],
+        [6, 3],
+        [7, 3]
+      ]
+    }
+  ]
 }

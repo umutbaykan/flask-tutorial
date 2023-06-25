@@ -1,0 +1,11 @@
+{
+  "ships": [
+    {
+      "name": "Destroyer",
+      "coordinates": [
+        [4, 4],
+        [4, 5]
+      ]
+    }
+  ]
+}

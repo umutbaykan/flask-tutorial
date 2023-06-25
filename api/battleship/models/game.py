@@ -21,7 +21,7 @@ class Game:
         for ship in ships_array:
             try:
                 ship_object = Ship.deserialize(ship)
-                if not current_board.can_place(ship_object):
+                if not current_board.place(ship_object):
                     self.boards[player_index] = Board.deserialize(current_board_state)
                     return {"error": "Cannot place ships"}
             except ValueError as ve:
@@ -44,7 +44,7 @@ class Game:
         self.ready = True
         return True
     
-    def _validate_ship_array(self, ships_array):
+    def _check_incoming_ships_match_with_configs(self, ships_array):
         ship_occurrence = {}
         for ship in ships_array:
             ship_occurrence[ship.get("name", "invalid")] = (
@@ -54,12 +54,9 @@ class Game:
 
     @staticmethod
     def _validate_ship_json(ships_json):
-        try:
-            ships_array = json.loads(ships_json)
-            if ships_array.get("ships"):
-                return ships_array["ships"]
-        except json.JSONDecodeError:
-            pass
+        ships_array = json.loads(ships_json)
+        if ships_array.get("ships"):
+            return ships_array["ships"]
         return False
 
     @staticmethod
@@ -74,7 +71,7 @@ class Game:
         chosen_ships = {}
         for item in validated_ship_dict:
             for key, value in item.items():
-                if key in ship_classes and value > 0:
+                if key in ship_classes and value > 0 and type(value) == int:
                     chosen_ships[key] = value
         return chosen_ships
 
