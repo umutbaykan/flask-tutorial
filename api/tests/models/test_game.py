@@ -61,7 +61,7 @@ def test_successful_game_initialization():
         assert game.boards[1].size == 8
         assert game.ready == False
         assert game.turn == 1
-        assert game.who_started == 2
+        assert game.who_started == 1
         assert game.allowed_ships == {
             "Destroyer": 1,
             "Cruiser": 2,
@@ -98,6 +98,49 @@ def test_unsuccessful_ship_placement_due_to_ship_corruption(game, read_json, exp
     result = game.place_ships(0, parsed_ships)
     assert result == expected_error
     assert game.boards[0].ships == []
+
+
+@pytest.mark.parametrize(
+    "game, read_json",
+    [("game_regular_configs", "ship_placement_multiple")],
+    indirect=["game", "read_json"],
+)
+def test_successful_hit(game, read_json):
+    parsed_ships = Game._validate_ship_json(read_json)
+    game.players = []
+    game.add_player('player_1')
+    game.place_ships(0, parsed_ships)
+    game.add_player('player_2')
+    game.place_ships(1, parsed_ships)
+    assert game.fire([4,4]) == True
+    assert game.turn == 2
+    assert game.who_started == 1
+    assert game.boards[1].missed_shots == []
+    assert game.boards[1].ships[0].alive == [False, True]
+
+
+@pytest.mark.parametrize(
+    "game, read_json",
+    [("game_regular_configs", "ship_placement_multiple")],
+    indirect=["game", "read_json"],
+)
+def test_unsuccessful_hit(game, read_json):
+    parsed_ships = Game._validate_ship_json(read_json)
+    game.players = []
+    game.add_player('player_1')
+    game.place_ships(0, parsed_ships)
+    game.add_player('player_2')
+    game.place_ships(1, parsed_ships)
+    assert game.players == ['player_1', 'player_2']
+    assert game.is_players_turn('player_1') == True
+    assert game.is_players_turn('player_2') == False
+    assert game.fire([5,5]) == False
+    assert game.turn == 2
+    assert game.who_started == 1
+    assert game.boards[1].missed_shots == [[5,5]]
+    assert game.boards[0].missed_shots == []
+    assert game.is_players_turn('player_1') == False
+    assert game.is_players_turn('player_2') == True
 
 
 class TestIfPlayersCanBeAddedToGame:
@@ -138,6 +181,16 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
     def test_returns_true_if_one_board_is_sunk(self):
         game = Game(boards=[self.live_board_1, self.sunk_board])
         assert game.is_over() == True
+
+    def test_sets_the_winning_if_p1_wins(self):
+        game = Game(players=['winner', 'loser'], boards=[self.live_board_1, self.sunk_board])
+        assert game.is_over() == True
+        assert game.who_won == 'winner'
+
+    def test_sets_the_winning_player_if_p2_wins(self):
+        game = Game(players=['loser', 'winner'], boards=[self.sunk_board, self.live_board_1])
+        assert game.is_over() == True
+        assert game.who_won == 'winner'
 
 
 class TestValidators:

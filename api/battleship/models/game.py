@@ -32,29 +32,35 @@ class Game:
         return True
 
     def is_over(self):
-        for board in self.boards:
+        for index, board in enumerate(self.boards):
             if not board.ships_alive():
+                self.who_won = self.players[index - 1]
                 return True
         return False
-    
-    def is_players_turn(self, player_id):
-        if self._is_player_valid(player_id):
-            player_index = (self.who_started + self.turn) % 2
-            return self.players[player_index] == player_id
-        return False
-    
+        
     def add_player(self, player_id):
         if len(self.players) < 2:
             self.players.append(player_id)
             return True
         return {"error": "Game is full."}
     
+    def fire(self, coordinate):
+        result = self._get_opponents_board().shoot(coordinate)
+        self.turn += 1
+        return result
+    
+    def is_players_turn(self, player_id):
+        if self._is_player_valid(player_id):
+            player_index = (self.who_started + self.turn) % 2
+            return self.players[player_index] == player_id
+        return False
+
     def _get_opponents_board(self):
         opponent_index = (self.who_started + self.turn + 1) % 2
         return self.boards[opponent_index]
     
-    def _is_player_valid(self, session_id):
-        if session_id in self.players:
+    def _is_player_valid(self, user_id):
+        if user_id in self.players:
             return True
         return {"error": "You are not in the game."}
 
@@ -78,6 +84,13 @@ class Game:
         ships_array = json.loads(ships_json)
         if ships_array.get("ships"):
             return ships_array["ships"]
+        return False
+    
+    @staticmethod
+    def _validate_firing_coordinates_json(fire_json):
+        fire_dict = json.loads(fire_json)
+        if fire_dict.get("coordinates") and fire_dict.get("user_id"):
+            return fire_dict
         return False
 
     @staticmethod
