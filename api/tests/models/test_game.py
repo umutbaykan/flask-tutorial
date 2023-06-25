@@ -1,6 +1,20 @@
 import pytest
 import os
 from battleship.models.game import *
+from unittest.mock import Mock
+from unittest import TestCase
+
+
+class FakeBoards(TestCase):
+    def setUp(self):
+        self.live_board_1 = Mock()
+        self.live_board_1.ships_alive.return_value = True
+
+        self.live_board_2 = Mock()
+        self.live_board_2.ships_alive.return_value = True
+
+        self.sunk_board = Mock()
+        self.sunk_board.ships_alive.return_value = False
 
 
 @pytest.fixture
@@ -65,6 +79,16 @@ def test_successful_ship_placement(game, read_json):
     for ship in game.boards[0].ships:
         assert all(element == True for element in ship.alive)
     assert game.boards[0].ships[0].coordinates == [[4, 4], [4, 5]]
+
+
+class TestIfGameUnderstandsItsOver(FakeBoards):
+    def test_returns_false_if_both_boards_are_alive(self):
+        game = Game(boards=[self.live_board_1, self.live_board_2])
+        assert game.is_over() == False
+
+    def test_returns_true_if_one_board_is_sunk(self):
+        game = Game(boards=[self.live_board_1, self.sunk_board])
+        assert game.is_over() == True
 
 
 class TestValidators:

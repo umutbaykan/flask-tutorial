@@ -4,11 +4,13 @@ from .board import Board
 
 
 class Game:
-    def __init__(self, gameId=None, p1_id=None, p2_id=None, allowed_ships={}):
+    def __init__(
+        self, gameId=None, p1_id=None, p2_id=None, allowed_ships={}, boards=[]
+    ):
         self.gameId = gameId
         self.p1_id = p1_id
         self.p2_id = p2_id
-        self.boards = []
+        self.boards = boards
         self.ready = False
         self.turn = 0
         self.who_started = None
@@ -29,7 +31,13 @@ class Game:
                 return {"error": ve}
         self._are_boards_placed()
         return True
-    
+
+    def is_over(self):
+        for board in self.boards:
+            if not board.ships_alive():
+                return True
+        return False
+
     def _is_player_valid(self, session_id):
         if session_id == self.p1_id:
             return 0
@@ -43,7 +51,7 @@ class Game:
                 return False
         self.ready = True
         return True
-    
+
     def _check_incoming_ships_match_with_configs(self, ships_array):
         ship_occurrence = {}
         for ship in ships_array:
