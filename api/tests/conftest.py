@@ -20,10 +20,12 @@ def app():
         seed_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seeds")
         for file_path in glob.glob(os.path.join(seed_path, "*")):
             if os.path.isfile(file_path):
-                collection = os.path.basename(file_path).split(".")[0]
-                with open(file_path, "r") as f:
-                    data = json.load(f)
-                    seed_test_database(collection, data)
+                filename = os.path.basename(file_path)
+                if filename in ["games.json", "users.json"]:
+                    collection = os.path.splitext(filename)[0]
+                    with open(file_path, "r") as f:
+                        data = json.load(f)
+                        seed_test_database(collection, data)
 
     yield app
 
