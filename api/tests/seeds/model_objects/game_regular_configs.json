@@ -1,0 +1,12 @@
+{
+    "size": 8,
+    "ships": [
+        {"Destroyer": 1},
+        {"Cruiser": 2},
+        {"Battleship": 0},
+        {"AircraftCarrier": 1}
+    ],
+    "who_started": 1,
+    "p1_id": "6495822522b4741d1481b1c6",
+    "game_id": "fkEjOpkL"
+}
