@@ -26,8 +26,8 @@ def game(request):
     )
     with open(json_file_path) as file:
         json_data = file.read()
-        game = Game.create_new_game_from_configs(json_data)
-        yield game
+    game = Game.create_new_game_from_configs(json_data)
+    yield game
 
 
 @pytest.fixture
@@ -72,6 +72,7 @@ def test_successful_game_initialization():
     indirect=["game", "read_json"],
 )
 def test_successful_ship_placement(game, read_json):
+    assert game.boards[0].ships == []
     parsed_ships = Game._validate_ship_json(read_json)
     result = game.place_ships(0, parsed_ships)
     assert result == True
@@ -80,6 +81,22 @@ def test_successful_ship_placement(game, read_json):
         assert all(element == True for element in ship.alive)
     assert game.boards[0].ships[0].coordinates == [[4, 4], [4, 5]]
 
+
+@pytest.mark.parametrize(
+    "game, read_json, expected_error",
+    [
+        ("game_regular_configs", "ship_placement_multiple_but_clashing", {"error": "Cannot place ships"}),
+        ("game_regular_configs", "ship_placement_invalid_ship_class", {"error": "Invalid ship size."})
+     ],
+    indirect=["game", "read_json"],
+)
+def test_unsuccessful_ship_placement_due_to_ship_corruption(game, read_json, expected_error):
+    game.boards[0].ships = []
+    parsed_ships = Game._validate_ship_json(read_json)
+    result = game.place_ships(0, parsed_ships)
+    assert result == expected_error
+    assert game.boards[0].ships == []
+    
 
 class TestIfGameUnderstandsItsOver(FakeBoards):
     def test_returns_false_if_both_boards_are_alive(self):

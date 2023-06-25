@@ -28,7 +28,7 @@ class Game:
                     return {"error": "Cannot place ships"}
             except ValueError as ve:
                 self.boards[player_index] = Board.deserialize(current_board_state)
-                return {"error": ve}
+                return {"error": str(ve.args[0])}
         self._are_boards_placed()
         return True
 
@@ -75,7 +75,6 @@ class Game:
 
     @staticmethod
     def _get_allowed_ships(validated_ship_dict):
-        # Tests currently missing
         chosen_ships = {}
         for item in validated_ship_dict:
             for key, value in item.items():
