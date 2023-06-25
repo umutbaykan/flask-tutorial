@@ -17,7 +17,7 @@ def game(request):
 
 
 @pytest.fixture
-def ships_array(request):
+def ships_json(request):
     configs = request.param
     test_directory = os.path.dirname(os.path.abspath(__file__))
     json_file_path = os.path.join(
@@ -52,6 +52,17 @@ def test_successful_game_initialization():
         assert game.who_won == None
 
 
+@pytest.mark.parametrize(
+    "game, ships_json",
+    [("game_regular_configs", "ship_placement_multiple")],
+    indirect=["game", "ships_json"],
+)
+def test_successful_ship_placement(game, ships_json):
+    parsed_ships = Game._validate_ship_json(ships_json)
+    result = game.place_ships(0, parsed_ships)
+    assert result == True
+    
+
 class TestValidators:
     def test_valid_player_request(self):
         game = Game(p1_id="p1idfromdb", p2_id="p2idfromdb")
@@ -77,23 +88,32 @@ class TestValidators:
         assert game.ready == False
 
     @pytest.mark.parametrize(
-        "game, ships_array",
+        "game, ships_json",
         [("game_regular_configs", "ship_placement_multiple")],
-        indirect=["game", "ships_array"],
+        indirect=["game", "ships_json"],
     )
-    def test_validates_if_the_ship_array_passed_in_is_valid(self, game, ships_array):
-        parsed_ships_array = json.loads(ships_array)
-        assert game._validate_ship_array(parsed_ships_array) == True
+    def test_validates_if_the_ship_array_passed_in_is_valid(self, game, ships_json):
+        parsed_ships_json = json.loads(ships_json)
+        assert game._validate_ship_array(parsed_ships_json) == True
 
     @pytest.mark.parametrize(
-        "game, ships_array",
+        "ships_json",
         [
-            ("game_regular_configs", "ship_placement_mismatch"),
-            ("game_regular_configs", "ship_placement_empty"),
-            ("game_regular_configs", "ship_placement_invalid_ship_names"),
-        ],
-        indirect=["game", "ships_array"],
+            ("ship_placement_empty"),
+            ("ship_placement_invalid_ship_names"),
+        ]
     )
-    def test_invalid_ship_array(self, game, ships_array):
-        parsed_ships_array = json.loads(ships_array)
-        assert game._validate_ship_array(parsed_ships_array) is False
+    def test_invalid_ship_json(self, ships_json):
+        assert Game._validate_ship_json(ships_json) is False
+
+    @pytest.mark.parametrize(
+        "game, ships_json, expected_result",
+        [
+            ("game_regular_configs", "ship_placement_multiple", True),
+            ("game_regular_configs", "ship_placement_mismatch", False),
+        ],
+        indirect=["game", "ships_json"],
+    )
+    def test_validates_if_the_ship_array_passed_in_is_valid(self, game, ships_json, expected_result):
+        parsed_ships = Game._validate_ship_json(ships_json)
+        assert game._validate_ship_array(parsed_ships) == expected_result

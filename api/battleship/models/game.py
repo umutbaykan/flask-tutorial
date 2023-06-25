@@ -15,21 +15,17 @@ class Game:
         self.allowed_ships = allowed_ships
         self.who_won = None
 
-    def place_ships(self, player_id, ships_json):
-        player = self._is_player_valid(player_id)
-        ships_array = json.loads(ships_json)
-        if not self._validate_ship_array(ships_array):
-            return {"error": "Ships do not match game configurations"}
-        current_board = self.boards[player]
-        current_board_state = Board.serialize(self.boards[player])
+    def place_ships(self, player_index, ships_array):
+        current_board = self.boards[player_index]
+        current_board_state = Board.serialize(self.boards[player_index])
         for ship in ships_array:
             try:
                 ship_object = Ship.deserialize(ship)
                 if not current_board.can_place(ship_object):
-                    self.boards[player] = Board.deserialize(current_board_state)
+                    self.boards[player_index] = Board.deserialize(current_board_state)
                     return {"error": "Cannot place ships"}
             except ValueError as ve:
-                self.boards[player] = Board.deserialize(current_board_state)
+                self.boards[player_index] = Board.deserialize(current_board_state)
                 return {"error": ve}
         self._are_boards_placed()
         return True
@@ -47,15 +43,23 @@ class Game:
                 return False
         self.ready = True
         return True
-
+    
     def _validate_ship_array(self, ships_array):
         ship_occurrence = {}
-        if ships_array.get("ships"):
-            for ship in ships_array["ships"]:
-                ship_occurrence[ship.get("name", "invalid")] = (
-                    ship_occurrence.get(ship.get("name", "invalid"), 0) + 1
-                )
-            return ship_occurrence == self.allowed_ships
+        for ship in ships_array:
+            ship_occurrence[ship.get("name", "invalid")] = (
+                ship_occurrence.get(ship.get("name", "invalid"), 0) + 1
+            )
+        return ship_occurrence == self.allowed_ships
+
+    @staticmethod
+    def _validate_ship_json(ships_json):
+        try:
+            ships_array = json.loads(ships_json)
+            if ships_array.get("ships"):
+                return ships_array["ships"]
+        except json.JSONDecodeError:
+            pass
         return False
 
     @staticmethod
