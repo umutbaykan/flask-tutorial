@@ -88,12 +88,22 @@ def test_successful_ship_placement(game, read_json):
 @pytest.mark.parametrize(
     "game, read_json, expected_error",
     [
-        ("game_regular_configs", "ship_placement_multiple_but_clashing", {"error": "Cannot place ships."}),
-        ("game_regular_configs", "ship_placement_invalid_ship_class", {"error": "Invalid ship size."})
-     ],
+        (
+            "game_regular_configs",
+            "ship_placement_multiple_but_clashing",
+            {"error": "Cannot place ships."},
+        ),
+        (
+            "game_regular_configs",
+            "ship_placement_invalid_ship_class",
+            {"error": "Invalid ship size."},
+        ),
+    ],
     indirect=["game", "read_json"],
 )
-def test_unsuccessful_ship_placement_due_to_ship_corruption(game, read_json, expected_error):
+def test_unsuccessful_ship_placement_due_to_ship_corruption(
+    game, read_json, expected_error
+):
     parsed_ships = Game._validate_ship_json(read_json)
     result = game.place_ships(0, parsed_ships)
     assert result == expected_error
@@ -108,11 +118,11 @@ def test_unsuccessful_ship_placement_due_to_ship_corruption(game, read_json, exp
 def test_successful_hit(game, read_json):
     parsed_ships = Game._validate_ship_json(read_json)
     game.players = []
-    game.add_player('player_1')
+    game.add_player("player_1")
     game.place_ships(0, parsed_ships)
-    game.add_player('player_2')
+    game.add_player("player_2")
     game.place_ships(1, parsed_ships)
-    assert game.fire([4,4]) == True
+    assert game.fire([4, 4]) == True
     assert game.turn == 2
     assert game.who_started == 1
     assert game.boards[1].missed_shots == []
@@ -127,49 +137,59 @@ def test_successful_hit(game, read_json):
 def test_unsuccessful_hit(game, read_json):
     parsed_ships = Game._validate_ship_json(read_json)
     game.players = []
-    game.add_player('player_1')
+    game.add_player("player_1")
     game.place_ships(0, parsed_ships)
-    game.add_player('player_2')
+    game.add_player("player_2")
     game.place_ships(1, parsed_ships)
-    assert game.players == ['player_1', 'player_2']
-    assert game.is_players_turn('player_1') == True
-    assert game.is_players_turn('player_2') == False
-    assert game.fire([5,5]) == False
+    assert game.players == ["player_1", "player_2"]
+    assert game.is_players_turn("player_1") == True
+    assert game.is_players_turn("player_2") == False
+    assert game.fire([5, 5]) == False
     assert game.turn == 2
     assert game.who_started == 1
-    assert game.boards[1].missed_shots == [[5,5]]
+    assert game.boards[1].missed_shots == [[5, 5]]
     assert game.boards[0].missed_shots == []
-    assert game.is_players_turn('player_1') == False
-    assert game.is_players_turn('player_2') == True
+    assert game.is_players_turn("player_1") == False
+    assert game.is_players_turn("player_2") == True
 
 
 class TestIfPlayersCanBeAddedToGame:
     def test_adding_new_player(self):
         game = Game(players=[])
-        assert game.add_player('player_1') == True
-        assert game.players == ['player_1']
-        assert game.add_player('player_2') == True
-        assert game.players == ['player_1', 'player_2']
+        assert game.add_player("player_1") == True
+        assert game.players == ["player_1"]
+        assert game.add_player("player_2") == True
+        assert game.players == ["player_1", "player_2"]
 
     def test_adding_another_player_when_capacity_is_full(self):
-        game = Game(players=['player_1', 'player_2'])
-        assert game.add_player('player_3') == {"error": "Game is full."}
-        
+        game = Game(players=["player_1", "player_2"])
+        assert game.add_player("player_3") == {"error": "Game is full."}
+
 
 class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
     def test_returns_true_if_it_is_your_turn(self):
         # Game instance - Player 1 should start and its the first turn.
         # Player 1 should have the turn
-        game = Game(boards=[self.live_board_1, self.live_board_2], who_started=1, turn=1, players=['player_1', 'player_2'])
-        assert game.is_players_turn('player_1') == True
-        assert game.is_players_turn('player_2') == False
-        assert game.is_players_turn('player_3') == False
+        game = Game(
+            boards=[self.live_board_1, self.live_board_2],
+            who_started=1,
+            turn=1,
+            players=["player_1", "player_2"],
+        )
+        assert game.is_players_turn("player_1") == True
+        assert game.is_players_turn("player_2") == False
+        assert game.is_players_turn("player_3") == False
 
     def test_returns_the_opponents_board_to_shoot_at_when_its_your_turn(self):
         # Game instance - Player 1 should start and its the first turn.
         # Player 2 board should return
-        game = Game(boards=[self.live_board_1, self.live_board_2], who_started=1, turn=1, players=['player_1', 'player_2'])
-        assert game.is_players_turn('player_1') == True
+        game = Game(
+            boards=[self.live_board_1, self.live_board_2],
+            who_started=1,
+            turn=1,
+            players=["player_1", "player_2"],
+        )
+        assert game.is_players_turn("player_1") == True
         assert game._get_opponents_board() == self.live_board_2
 
 
@@ -183,14 +203,18 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
         assert game.is_over() == True
 
     def test_sets_the_winning_if_p1_wins(self):
-        game = Game(players=['winner', 'loser'], boards=[self.live_board_1, self.sunk_board])
+        game = Game(
+            players=["winner", "loser"], boards=[self.live_board_1, self.sunk_board]
+        )
         assert game.is_over() == True
-        assert game.who_won == 'winner'
+        assert game.who_won == "winner"
 
     def test_sets_the_winning_player_if_p2_wins(self):
-        game = Game(players=['loser', 'winner'], boards=[self.sunk_board, self.live_board_1])
+        game = Game(
+            players=["loser", "winner"], boards=[self.sunk_board, self.live_board_1]
+        )
         assert game.is_over() == True
-        assert game.who_won == 'winner'
+        assert game.who_won == "winner"
 
 
 class TestValidators:
@@ -201,7 +225,9 @@ class TestValidators:
 
     def test_invalid_player_request(self):
         game = Game(players=["p1idfromdb"])
-        assert game._is_player_valid("p2idfromdb") == {"error": "You are not in the game."}
+        assert game._is_player_valid("p2idfromdb") == {
+            "error": "You are not in the game."
+        }
 
     @pytest.mark.parametrize("game", ["game_regular_configs"], indirect=True)
     def test_returns_true_when_boards_are_placed(self, game):
@@ -289,7 +315,11 @@ class TestSerializations:
             test_directory, "..", "seeds", "model_objects", "board_regular.json"
         )
         json_file_path_2 = os.path.join(
-            test_directory, "..", "seeds", "model_objects", "board_regular_alternative.json"
+            test_directory,
+            "..",
+            "seeds",
+            "model_objects",
+            "board_regular_alternative.json",
         )
         result_path = os.path.join(
             test_directory, "..", "seeds", "model_objects", "game_state_01.json"
@@ -300,15 +330,28 @@ class TestSerializations:
         with open(json_file_path_2) as file:
             json_data_2 = file.read()
             board_2 = Board.deserialize(json_data_2)
-        
-        game = Game(game_id='aFKeajFE')
-        game.players = ['player_1', 'player_2']
+
+        game = Game(game_id="aFKeajFE")
+        game.players = ["player_1", "player_2"]
         game.boards = [board_1, board_2]
         game.turn = 7
         game.who_started = 1
         game.ready = True
-        game.allowed_ships = {'Cruiser': 1, 'Destroyer': 1}
+        game.allowed_ships = {"Cruiser": 1, "Destroyer": 1}
         with open(result_path) as file:
             state_data = json.load(file)
             serialized_game = Game.serialize(game)
             assert serialized_game == json.dumps(state_data)
+
+    def test_successful_deserialization(self):
+        test_directory = os.path.dirname(os.path.abspath(__file__))
+        json_game_state = os.path.join(
+            test_directory, "..", "seeds", "model_objects", "game_state_01.json"
+        )
+        with open(json_game_state) as file:
+            json_data_1 = file.read()
+            game = Game.deserialize(json_data_1)
+
+        from ..seeds.model_states.game_state import state_1
+
+        assert json.loads(Game.serialize(game)) == state_1

@@ -71,12 +71,12 @@ class Board:
             board_dict = json.loads(board_state)
         else:
             board_dict = board_state
-        unparsed_ships = board_dict.get("ships")
+        unparsed_ships = board_dict.get("ships", [])
         ship_objects = []
         for ship in unparsed_ships:
             ship_objects.append(Ship.deserialize(ship))
         size = board_dict.get("size")
-        missed_shots = board_dict.get("missed_shots")
+        missed_shots = board_dict.get("missed_shots", [])
         validate_coordinate_input(missed_shots)
         Board._validate_board_size(size)
         return Board(size=size, ships=ship_objects, missed_shots=missed_shots)

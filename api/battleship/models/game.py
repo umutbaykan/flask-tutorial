@@ -5,16 +5,24 @@ from .board import Board
 
 class Game:
     def __init__(
-        self, game_id=None, players=[], allowed_ships={}, boards=[], who_started=1, turn=1
+        self,
+        game_id=None,
+        players=[],
+        allowed_ships={},
+        boards=[],
+        who_started=1,
+        turn=1,
+        ready=False,
+        who_won=None,
     ):
         self.game_id = game_id
         self.players = players
         self.boards = boards
-        self.ready = False
+        self.ready = ready
         self.turn = turn
         self.who_started = who_started
         self.allowed_ships = allowed_ships
-        self.who_won = None
+        self.who_won = who_won
 
     def place_ships(self, player_index, ships_array):
         current_board = self.boards[player_index]
@@ -37,18 +45,18 @@ class Game:
                 self.who_won = self.players[index - 1]
                 return True
         return False
-        
+
     def add_player(self, player_id):
         if len(self.players) < 2:
             self.players.append(player_id)
             return True
         return {"error": "Game is full."}
-    
+
     def fire(self, coordinate):
         result = self._get_opponents_board().shoot(coordinate)
         self.turn += 1
         return result
-    
+
     def is_players_turn(self, player_id):
         if self._is_player_valid(player_id):
             player_index = (self.who_started + self.turn) % 2
@@ -58,7 +66,7 @@ class Game:
     def _get_opponents_board(self):
         opponent_index = (self.who_started + self.turn + 1) % 2
         return self.boards[opponent_index]
-    
+
     def _is_player_valid(self, user_id):
         if user_id in self.players:
             return True
@@ -85,7 +93,7 @@ class Game:
         if ships_array.get("ships"):
             return ships_array["ships"]
         return False
-    
+
     @staticmethod
     def _validate_firing_coordinates_json(fire_json):
         fire_dict = json.loads(fire_json)
@@ -132,10 +140,31 @@ class Game:
             "turn": game.turn,
             "who_started": game.who_started,
             "allowed_ships": game.allowed_ships,
-            "who_won": game.who_won
+            "who_won": game.who_won,
         }
         return json.dumps(data)
 
     @staticmethod
-    def deserialize(game):
-        pass
+    def deserialize(game_state):
+        game_dict = json.loads(game_state)
+        unparsed_boards = game_dict.get("boards")
+        board_objects = []
+        for board in unparsed_boards:
+            board_objects.append(Board.deserialize(board))
+        game_id = game_dict.get("game_id")
+        players = game_dict.get("players", [])
+        ready = game_dict.get("ready", False)
+        turn = game_dict.get("turn", 1)
+        who_started = game_dict.get("who_started", 1)
+        allowed_ships = game_dict.get("allowed_ships", {})
+        who_won = game_dict.get("who_won")
+        return Game(
+            boards=board_objects,
+            game_id=game_id,
+            players=players,
+            ready=ready,
+            turn=turn,
+            who_started=who_started,
+            allowed_ships=allowed_ships,
+            who_won=who_won,
+        )

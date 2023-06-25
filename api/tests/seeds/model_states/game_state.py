@@ -1,5 +1,5 @@
 state_1 = {
-            "gameId": "aFKeajFE",
+            "game_id": "aFKeajFE",
             "players": ["player_1", "player_2"],
             "boards": [
                 {
