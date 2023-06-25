@@ -57,7 +57,7 @@ class Board:
     def serialize(board):
         serialized_ships = []
         for ship in board.ships:
-            serialized_ships.append(ship.serialize(ship))
+            serialized_ships.append(Ship.serialize(ship))
         data = {
             "size": board.size,
             "ships": serialized_ships,

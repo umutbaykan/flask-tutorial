@@ -280,3 +280,29 @@ class TestValidators:
             game._check_incoming_ships_match_with_configs(parsed_ships)
             == expected_result
         )
+
+
+class TestSerializations:
+    def test_successful_serialization(self):
+        test_directory = os.path.dirname(os.path.abspath(__file__))
+        json_file_path_1 = os.path.join(
+            test_directory, "..", "seeds", "model_objects", "board_regular.json"
+        )
+        json_file_path_2 = os.path.join(
+            test_directory, "..", "seeds", "model_objects", "board_regular_alternative.json"
+        )
+        with open(json_file_path_1) as file:
+            json_data_1 = file.read()
+            board_1 = Board.deserialize(json_data_1)
+        with open(json_file_path_2) as file:
+            json_data_2 = file.read()
+            board_2 = Board.deserialize(json_data_2)
+        game = Game(gameId='aFKeajFE')
+        game.players = ['player_1', 'player_2']
+        game.boards = [board_1, board_2]
+        game.turn = 7
+        game.who_started = 1
+        game.ready = True
+        game.allowed_ships = {'Cruiser': 1, 'Destroyer': 1}
+        from ..seeds.model_states.game_state import state_1
+        assert Game.serialize(game) == state_1

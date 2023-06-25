@@ -120,9 +120,22 @@ class Game:
         return new_game
 
     @staticmethod
-    def serialize(gamestate):
-        pass
+    def serialize(game):
+        serialized_boards = []
+        for board in game.boards:
+            serialized_boards.append(Board.serialize(board))
+        data = {
+            "gameId": game.gameId,
+            "players": game.players,
+            "boards": serialized_boards,
+            "ready": game.ready,
+            "turn": game.turn,
+            "who_started": game.who_started,
+            "allowed_ships": game.allowed_ships,
+            "who_won": game.who_won
+        }
+        return data
 
     @staticmethod
-    def deserialize(gamestate):
+    def deserialize(game):
         pass
