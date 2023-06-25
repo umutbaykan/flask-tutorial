@@ -5,9 +5,9 @@ from .board import Board
 
 class Game:
     def __init__(
-        self, gameId=None, players=[], allowed_ships={}, boards=[], who_started=1, turn=1
+        self, game_id=None, players=[], allowed_ships={}, boards=[], who_started=1, turn=1
     ):
-        self.gameId = gameId
+        self.game_id = game_id
         self.players = players
         self.boards = boards
         self.ready = False
@@ -115,7 +115,7 @@ class Game:
         [new_game.boards.append(Board(size=parsed_configs["size"])) for _ in range(2)]
         new_game.allowed_ships = Game._get_allowed_ships(parsed_configs["ships"])
         new_game.players.append(parsed_configs["p1_id"])
-        new_game.gameId = parsed_configs["game_id"]
+        new_game.game_id = parsed_configs["game_id"]
         new_game.who_started = parsed_configs["who_started"]
         return new_game
 
@@ -125,7 +125,7 @@ class Game:
         for board in game.boards:
             serialized_boards.append(Board.serialize(board))
         data = {
-            "gameId": game.gameId,
+            "game_id": game.game_id,
             "players": game.players,
             "boards": serialized_boards,
             "ready": game.ready,

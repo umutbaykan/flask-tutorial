@@ -55,7 +55,7 @@ def test_successful_game_initialization():
     with open(json_file_path) as file:
         json_data = file.read()
         game = Game.create_new_game_from_configs(json_data)
-        assert game.gameId == "fkEjOpkL"
+        assert game.game_id == "fkEjOpkL"
         assert game.players[0] == "6495822522b4741d1481b1c6"
         assert game.boards[0].size == 8
         assert game.boards[1].size == 8
@@ -301,7 +301,7 @@ class TestSerializations:
             json_data_2 = file.read()
             board_2 = Board.deserialize(json_data_2)
         
-        game = Game(gameId='aFKeajFE')
+        game = Game(game_id='aFKeajFE')
         game.players = ['player_1', 'player_2']
         game.boards = [board_1, board_2]
         game.turn = 7
