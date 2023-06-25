@@ -134,7 +134,7 @@ class Game:
             "allowed_ships": game.allowed_ships,
             "who_won": game.who_won
         }
-        return data
+        return json.dumps(data)
 
     @staticmethod
     def deserialize(game):
