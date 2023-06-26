@@ -30,7 +30,7 @@ def find_my_room():
     room = session.get("room")
     user_id = session.get("user_id")
     if user_id:
-        username = db.get_user_by_id(user_id)["username"]
+        username = get_user_by_id(user_id)["username"]
     else:
         username = ""
     response = make_response({"room": room, "user_id": user_id, "username": username}, 200)

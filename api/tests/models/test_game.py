@@ -47,7 +47,6 @@ def read_json(request):
         json_data = json.load(file)
         yield json_data
 
-
 @pytest.mark.parametrize("read_json", ["game_regular_configs"], indirect=["read_json"])
 def test_successful_game_initialization(read_json):
     game = Game.create_new_game_from_configs(
@@ -170,6 +169,29 @@ class TestIfPlayersCanBeAddedToGame:
         assert game.add_player("player_1") == {"error": "You are already in this game."}
 
 
+class TestIfPlayersCanBeRemovedFromGame:
+    def test_removing_existing_player_1(self):
+        game = Game(players=['player_1', 'player_2'])
+        assert game.remove_player('player_1') == True
+        assert game.players == ['player_2']
+
+    def test_removing_existing_player_2(self):
+            game = Game(players=['player_1', 'player_2'])
+            assert game.remove_player('player_2') == True
+            assert game.players == ['player_1']
+
+    def test_removing_a_player_not_in_the_game(self):
+        game = Game(players=['player_1', 'player_2'])
+        assert game.remove_player('player_3') == False
+        assert game.players == ['player_1', 'player_2']
+
+    def test_removing_both_players(self):
+        game = Game(players=['player_1', 'player_2'])
+        game.remove_player('player_1')
+        game.remove_player('player_2')
+        assert game.players == []
+        
+
 class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
     def test_returns_true_if_it_is_your_turn(self):
         # Game instance - Player 1 should start and its the first turn.
@@ -224,14 +246,12 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
 class TestValidators:
     def test_valid_player_request(self):
         game = Game(players=["p1idfromdb", "p2idfromdb"])
-        assert game._is_player_valid("p1idfromdb") == True
-        assert game._is_player_valid("p2idfromdb") == True
+        assert game.is_player_valid("p1idfromdb") == True
+        assert game.is_player_valid("p2idfromdb") == True
 
     def test_invalid_player_request(self):
         game = Game(players=["p1idfromdb"])
-        assert game._is_player_valid("p2idfromdb") == {
-            "error": "You are not in the game."
-        }
+        assert game.is_player_valid("p2idfromdb") == False
 
     @pytest.mark.parametrize("game", ["game_regular_configs"], indirect=True)
     def test_returns_true_when_boards_are_placed(self, game):

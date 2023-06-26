@@ -1,5 +1,6 @@
 import random
 import string
+from flask import session
 from .room_object import ROOMS
 from ..database.game import get_game_by_game_id
 from ..database.user import get_user_by_id
@@ -46,3 +47,15 @@ def add_player_to_game(game, player_id):
         return game.add_player(player_id)
     return {"error": "No game specified to join."}
 
+
+def fetch_game(game_id):
+    game = ROOMS.get(game_id)
+    return game if game else None
+
+
+def validate_user_and_game(room):
+    user_id = session.get("user_id")   
+    game = fetch_game(room)
+    if not game or not game.is_player_valid(user_id):
+        return False
+    return True

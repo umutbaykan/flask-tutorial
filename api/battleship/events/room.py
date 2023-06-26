@@ -1,7 +1,8 @@
-from flask_socketio import SocketIO, emit, join_room, leave_room, send
-from flask import request, session
+from flask_socketio import emit, join_room, leave_room, close_room
+from flask import session
 from ..utils.extensions import socketio
 from ..utils.room_object import PLAYERS, ROOMS
+from ..utils.helpers import fetch_game, validate_user_and_game
 
 
 @socketio.on("connect")
@@ -12,89 +13,43 @@ def connect():
 
 
 @socketio.on("disconnect")
-def disconnected():
+def disconnect():
     print("client disconnected")
     PLAYERS["online_users"] = PLAYERS.get("online_users") - 1
 
 
 @socketio.on("join")
-def on_join(room):
-    user_id = session.get("user_id")   
+def on_join(room):   
     username = session.get("username")
-    if not room_event_is_from_users_within_room_object(room, user_id):
+    if not validate_user_and_game(room):
         return
     session["room"] = room
     join_room(room)
-    print(f"{username} has joined {room}")
     emit("user_joined", {"room": room, "username": username}, to=room)
 
 
 @socketio.on('leave')
 def on_leave(room):
-    user_id = session.get("user_id")
     username = session.get("username")
-    if not room_event_is_from_users_within_room_object(room, user_id):
+    if not validate_user_and_game(room):
         return
     session["room"] = ""
+    game = fetch_game(room)
+    game.remove_player(session.get("user_id"))
     leave_room(room)
     print(f"{username} has left {room}")
     emit("user_left", {"room": room, "username": username}, to=room)
+    if game.players == []:
+        del ROOMS[room]
+        close_room(room)
 
 
 @socketio.on('chat')
-def handle_message(data):
+def chat(data):
     """event listener when client types a message"""
     username = session.get("username")
-    user_id = session.get("user_id")   
     message = data.get("message")
     room = data.get("room")
-    if not room_event_is_from_users_within_room_object(room, user_id, message):
+    if not validate_user_and_game(room):
         return
     emit("chat_update", {"username": username, "message": message}, to=room)
-
-
-@socketio.on("create-something")
-def handle_something(data):
-    print(session.get("room"))
-    emit("respond-something", {"response": data}, broadcast=True)
-
-
-@socketio.on("foo")
-def handle_something(data):
-    message = f"Someone triggered the foo event with {data}. This message should only be seen by people in the room"
-    room = session.get("room")
-    # send(message, to=room)
-    emit("foo", {"response": message}, room=room, include_self=False)
-
-
-# @socketio.on("connect")
-# def connect():
-#     room = session.get("room")
-#     user_id = session.get("user_id")
-#     # if not room or not user_id:
-#     #     return
-#     # if room not in rooms:
-#     #     leave_room(room)
-#     #     return
-
-#     join_room(room)
-#     # send({"id": user_id, "message": "has entered the room"})
-#     # rooms[room].get("members", 0) + 1
-#     # print(f"{user_id} joined room {room}")
-#     send(f"{user_id} joined room {room}", to=room)
-
-
-# @socketio.on("disconnect")
-# def disconnect():
-#     room = session.get("room")
-#     user_id = session.get("user_id")
-#     leave_room(room)
-
-#     # if room in rooms:
-#     #     rooms[room]["members"] -= 1
-#     #     if rooms[room]["members"] <= 0:
-#     #         del rooms[room]
-
-#     # send({"name": name, "message": "has left the room"}, to=room)
-#     # print(f"{user_id} has left the room {room}")
-#     send(f"{user_id} has left the room {room}", to=room)

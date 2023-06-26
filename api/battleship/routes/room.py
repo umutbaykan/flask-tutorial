@@ -1,8 +1,8 @@
-from flask import Blueprint, make_response, session, jsonify, request
+from flask import Blueprint, make_response, session, request
 
 from .auth import login_required
 from ..utils.extensions import socketio
-from ..utils.room_object import *
+from ..utils.room_object import ROOMS
 from ..utils.helpers import *
 from ..models.game import Game
 

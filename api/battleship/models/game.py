@@ -53,26 +53,31 @@ class Game:
         self.players.append(player_id)
         return True
         
-
     def fire(self, coordinate):
         result = self._get_opponents_board().shoot(coordinate)
         self.turn += 1
         return result
+    
+    def remove_player(self, user_id):
+        if self.is_player_valid(user_id):
+            self.players.remove(user_id)
+            return True
+        return False
 
     def is_players_turn(self, player_id):
-        if self._is_player_valid(player_id):
+        if self.is_player_valid(player_id):
             player_index = (self.who_started + self.turn) % 2
             return self.players[player_index] == player_id
         return False
 
+    def is_player_valid(self, user_id):
+        if user_id in self.players:
+            return True
+        return False
+    
     def _get_opponents_board(self):
         opponent_index = (self.who_started + self.turn + 1) % 2
         return self.boards[opponent_index]
-
-    def _is_player_valid(self, user_id):
-        if user_id in self.players:
-            return True
-        return {"error": "You are not in the game."}
 
     def _are_boards_placed(self):
         for board in self.boards:
