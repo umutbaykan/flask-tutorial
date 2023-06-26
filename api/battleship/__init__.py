@@ -42,8 +42,3 @@ def create_app(test_config=None):
     sess.init_app(app)
     socketio.init_app(app)
     return app
-
-
-# if __name__ == "__main__":
-#     app = create_app()
-#     socketio.run(app)
