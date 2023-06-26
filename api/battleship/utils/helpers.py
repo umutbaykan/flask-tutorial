@@ -35,7 +35,8 @@ def list_all_available_rooms():
     for game_id, game in ROOMS.items():
         if len(game.players) < 2:
             user = get_user_by_id(game.players[0])
-            available_games[game_id] = {"who_started": game.who_started, "allowed_ships": game.allowed_ships, "players": user["username"]}
+            username = user["username"] if user else "anonymous"
+            available_games[game_id] = {"who_started": game.who_started, "allowed_ships": game.allowed_ships, "players": username}
     return available_games
 
 

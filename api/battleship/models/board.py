@@ -1,4 +1,3 @@
-import json
 from .ship import Ship
 from ..utils.helpers import validate_coordinate_input
 

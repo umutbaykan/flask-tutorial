@@ -1,5 +1,6 @@
 import pytest
 import os
+import json
 from battleship.models.game import *
 from unittest.mock import Mock
 from unittest import TestCase
@@ -47,27 +48,26 @@ def read_json(request):
         yield json_data
 
 
-def test_successful_game_initialization():
-    test_directory = os.path.dirname(os.path.abspath(__file__))
-    json_file_path = os.path.join(
-        test_directory, "..", "seeds", "model_objects", "game_regular_configs.json"
+@pytest.mark.parametrize("read_json", ["game_regular_configs"], indirect=["read_json"])
+def test_successful_game_initialization(read_json):
+    game = Game.create_new_game_from_configs(
+        read_json,
+        server_allocated_room="fkEjOpkL",
+        game_creator="6495822522b4741d1481b1c6",
     )
-    with open(json_file_path) as file:
-        json_data = json.load(file)
-        game = Game.create_new_game_from_configs(json_data, server_allocated_room="fkEjOpkL", game_creator="6495822522b4741d1481b1c6")
-        assert game.game_id == "fkEjOpkL"
-        assert game.players[0] == "6495822522b4741d1481b1c6"
-        assert game.boards[0].size == 8
-        assert game.boards[1].size == 8
-        assert game.ready == False
-        assert game.turn == 1
-        assert game.who_started == 1
-        assert game.allowed_ships == {
-            "Destroyer": 1,
-            "Cruiser": 2,
-            "AircraftCarrier": 1,
-        }
-        assert game.who_won == None
+    assert game.game_id == "fkEjOpkL"
+    assert game.players[0] == "6495822522b4741d1481b1c6"
+    assert game.boards[0].size == 8
+    assert game.boards[1].size == 8
+    assert game.ready == False
+    assert game.turn == 1
+    assert game.who_started == 1
+    assert game.allowed_ships == {
+        "Destroyer": 1,
+        "Cruiser": 2,
+        "AircraftCarrier": 1,
+    }
+    assert game.who_won == None
 
 
 @pytest.mark.parametrize(
@@ -347,16 +347,11 @@ class TestSerializations:
             serialized_game = Game.serialize(game)
             assert serialized_game == state_data
 
-    def test_successful_deserialization(self):
-        test_directory = os.path.dirname(os.path.abspath(__file__))
-        json_game_state = os.path.join(
-            test_directory, "..", "seeds", "model_objects", "game_state_01.json"
-        )
-        with open(json_game_state) as file:
-            json_data_1 = json.load(file)
-            game = Game.deserialize(json_data_1)
-
+    @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
+    def test_successful_deserialization(self, read_json):
+        game = Game.deserialize(read_json)
         from ..seeds.model_states.game_state import state_1
+
         result = Game.serialize(game)
         for key in state_1:
             assert key in result

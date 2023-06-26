@@ -1,4 +1,3 @@
-import json
 from .ship import Ship, ship_classes
 from .board import Board
 

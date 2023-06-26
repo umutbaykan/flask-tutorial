@@ -1,4 +1,3 @@
-import json
 from ..utils.helpers import validate_coordinate_input
 
 
