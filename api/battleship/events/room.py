@@ -2,14 +2,14 @@ from flask_socketio import emit, join_room, leave_room, close_room
 from flask import session
 from ..utils.extensions import socketio
 from ..utils.room_object import PLAYERS, ROOMS
-from ..utils.helpers import fetch_game, validate_user_and_game
+from ..utils.helpers import fetch_game, validate_user_and_game, list_all_available_rooms
 
 
 @socketio.on("connect")
 def connect():
     print("Client connected.")
     PLAYERS["online_users"] = PLAYERS.get("online_users") + 1
-    emit("current_games", ROOMS, broadcast=True)
+    emit("current_games", list_all_available_rooms(), broadcast=True)
 
 
 @socketio.on("disconnect")
