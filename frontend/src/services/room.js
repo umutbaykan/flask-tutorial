@@ -4,7 +4,7 @@ export const createRoom = (gameconfigs) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ gameconfigs }),
+    body: JSON.stringify(gameconfigs),
   })
     .then((response) => response.json())
     .then((data) => {

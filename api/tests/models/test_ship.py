@@ -1,5 +1,6 @@
 import pytest
 import os
+import json
 from battleship.models.ship import *
 
 
@@ -120,7 +121,7 @@ def test_ship_deserialization(
         test_directory, "..", "seeds", "model_objects", json_file
     )
     with open(json_file_path) as file:
-        json_data = file.read()
+        json_data = json.load(file)
         result = Ship.deserialize(json_data)
 
     assert result.name == expected_name
@@ -145,7 +146,7 @@ def test_if_ship_deserialized_input_is_incorrect(json_file, expected_error):
         test_directory, "..", "seeds", "model_objects", json_file
     )
     with open(json_file_path) as file:
-        json_data = file.read()
+        json_data = json.load(file)
         with pytest.raises(ValueError) as e:
             Ship.deserialize(json_data)
         assert str(e.value) == expected_error

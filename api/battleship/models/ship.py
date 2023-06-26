@@ -1,4 +1,3 @@
-import json
 from ..utils.helpers import validate_coordinate_input
 
 
@@ -56,15 +55,11 @@ class Ship:
 
     @staticmethod
     def deserialize(ship_state):
-        if isinstance(ship_state, str):
-            ship_dict = json.loads(ship_state)
-        else:
-            ship_dict = ship_state
-        name = ship_dict.get("name")
+        name = ship_state.get("name")
         ship_class = ship_classes.get(name)
         size = ship_class.size if ship_class else None
-        coordinates = ship_dict.get("coordinates")
-        alive_override = ship_dict.get("alive")
+        coordinates = ship_state.get("coordinates")
+        alive_override = ship_state.get("alive")
         Ship._validate_ship_data(name, size, coordinates, alive_override)
         return ship_class(coordinates, alive_override=alive_override)
 

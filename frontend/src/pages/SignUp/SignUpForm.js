@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
 import { auth } from "../../services/auth";
+import { LoggedInContext } from "../../App";
 
 const SignUpForm = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [ , setLoggedIn] = useContext(LoggedInContext)
 
   const validate = Yup.object({
     username: Yup.string()
@@ -26,6 +28,7 @@ const SignUpForm = () => {
   const handleSubmit = async (values) => {
     const result = await auth(values.username, values.password, "register");
     if (result.success) {
+      setLoggedIn(true)
       navigate("/");
     } else {
       setError(result.error);

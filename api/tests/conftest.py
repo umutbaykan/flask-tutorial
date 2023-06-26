@@ -4,6 +4,7 @@ import json
 import pytest
 from battleship import create_app
 from battleship.database.db import seed_test_database
+from battleship.utils.room_object import ROOMS
 
 
 @pytest.fixture
@@ -44,6 +45,13 @@ def client(app):
 @pytest.fixture
 def runner(app):
     return app.test_cli_runner()
+
+
+@pytest.fixture(autouse=True)
+def reset_global_rooms():
+    global ROOMS
+    yield
+    ROOMS.clear()
 
 
 class AuthActions(object):

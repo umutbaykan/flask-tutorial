@@ -10,7 +10,8 @@ from flask import (
 )
 import json
 from bson import json_util, ObjectId
-from .database import db
+from .database.game import *
+from .database.user import get_user_by_id
 from .routes.auth import login_required
 from .utils.helpers import generate_unique_code
 from flask_socketio import join_room, leave_room, send, SocketIO
@@ -20,7 +21,7 @@ bp = Blueprint("response", __name__, url_prefix="/")
 
 @bp.route("/callme", methods=["GET"])
 def call():
-    data = {"data": "This text was fetched using an HTTP call to server on render"}
+    data = get_game_by_game_id("aFKeajFE")
     return data
 
 
@@ -29,7 +30,7 @@ def find_my_room():
     room = session.get("room")
     user_id = session.get("user_id")
     if user_id:
-        username = db.get_user_by_id(user_id)["username"]
+        username = get_user_by_id(user_id)["username"]
     else:
         username = ""
     response = make_response({"room": room, "user_id": user_id, "username": username}, 200)
@@ -96,12 +97,13 @@ def get_game():
 
 
 @bp.route("/check")
-@login_required
+# @login_required
 def check():
-    user = db.get_user_by_id("648b11f9c40f246ab314cd03")
-    return make_response(
-        json_util.dumps(user), 200, {"Content-Type": "application/json"}
-    )
+    headers = {"Content-Type": "application/json"}
+    data = request.json
+    user = get_user_by_id(data["user_id"])
+    name = user["username"]
+    return {"data": name}
 
 
 @bp.route("/putme", methods=["POST"])
