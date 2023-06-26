@@ -47,10 +47,13 @@ class Game:
         return False
 
     def add_player(self, player_id):
-        if len(self.players) < 2:
-            self.players.append(player_id)
-            return True
-        return {"error": "Game is full."}
+        if player_id in self.players:
+            return {"error": "You are already in this game."}
+        elif len(self.players) > 1:
+            return {"error": "Game is full."}
+        self.players.append(player_id)
+        return True
+        
 
     def fire(self, coordinate):
         result = self._get_opponents_board().shoot(coordinate)

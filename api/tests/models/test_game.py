@@ -165,6 +165,10 @@ class TestIfPlayersCanBeAddedToGame:
         game = Game(players=["player_1", "player_2"])
         assert game.add_player("player_3") == {"error": "Game is full."}
 
+    def test_adding_the_same_player_when_they_are_already_in(self):
+        game = Game(players=["player_1"])
+        assert game.add_player("player_1") == {"error": "You are already in this game."}
+
 
 class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
     def test_returns_true_if_it_is_your_turn(self):
