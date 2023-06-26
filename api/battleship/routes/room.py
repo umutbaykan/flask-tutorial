@@ -23,7 +23,6 @@ def create_room():
     room_id = generate_unique_code()
     new_game = Game.create_new_game_from_configs(configs, server_allocated_room=room_id, game_creator=game_creator)
     ROOMS[room_id] = new_game
-    
     # # Sends the updated list of games to the lobby
     socketio.emit("current_games", list_all_available_rooms())
     return make_response({"room": room_id}, 200)
@@ -40,7 +39,6 @@ def join_room():
     room = request.json["room"]  
     response = add_player_to_game(room, session["user_id"])
     if response == True:
-        session["room"] = room
         return {}, 200
     else:
         return make_response({"error": response["error"]}, 400)

@@ -2,7 +2,6 @@ import os
 
 from flask import Flask
 from flask_cors import CORS
-from flask_session import Session
 ### Dont forget to remove thingy 
 from . import thingy
 ### Dont forget to remove thingy

@@ -54,7 +54,7 @@ def fetch_game(game_id):
 
 
 def validate_user_and_game(room):
-    user_id = session.get("user_id")   
+    user_id = session.get("user_id") 
     game = fetch_game(room)
     if not game or not game.is_player_valid(user_id):
         return False

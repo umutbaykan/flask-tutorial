@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import NavButton from "../../components/NavButton/NavButton";
 import CurrentGames from "./components/CurrentGames/CurrentGames";
@@ -6,17 +6,22 @@ import CreateGameButton from "./components/CreateGameButton/CreateGameButton";
 
 // TODO remove
 import { auth, logout } from "../../services/auth";
+import { LoggedInContext } from "../../App";
 import WhereAmI from "../../components/whereami/whereami"
 
 const Home = () => {
   //// This section will be removed later
   const fastLogin = async () => {
     await auth("Roger", "password", "login");
+    setLoggedIn(true)
   };
 
   const handleLogout = async () => {
     await logout();
+    setLoggedIn(false)
   };
+
+  const [, setLoggedIn] = useContext(LoggedInContext)
   ///// This section will be removed later
 
   return (

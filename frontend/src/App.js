@@ -11,11 +11,13 @@ import Profile from "./pages/Profile/Profile";
 
 export const LobbyContext = createContext({})
 export const ChatContext = createContext([])
+export const LoggedInContext = createContext()
 
 const App = () => {
   
   const [currentGames, setCurrentGames] = useState({});
   const [chats, setChats] = useState([])
+  const [loggedIn, setLoggedIn] = useState(false)
 
   const onCurrentGames = (games) => {
     setCurrentGames((previous) => {
@@ -29,7 +31,6 @@ const App = () => {
       return updatedGames;
     });
   };
-  
 
   const onJoiningRoom = (user) => {
     setChats((previous) => [ ...previous, `${user.username} has joined the ${user.room}`])
@@ -63,10 +64,11 @@ const App = () => {
     return () => {
       socket.disconnect();
     };
-  }, [])
+  }, [loggedIn])
 
   return (
   <LobbyContext.Provider value={currentGames}>
+  <LoggedInContext.Provider value={[loggedIn, setLoggedIn]}>
   <ChatContext.Provider value={[chats, setChats]}>
     <Routes>
       <Route path="/" element={<Home />} />
@@ -77,6 +79,7 @@ const App = () => {
       <Route path="*" element={<NotFound />} />
     </Routes>
   </ChatContext.Provider>
+  </LoggedInContext.Provider>
   </LobbyContext.Provider>
   );
 };

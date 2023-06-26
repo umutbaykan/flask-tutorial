@@ -23,7 +23,6 @@ def on_join(room):
     username = session.get("username")
     if not validate_user_and_game(room):
         return
-    session["room"] = room
     join_room(room)
     emit("user_joined", {"room": room, "username": username}, to=room)
 
@@ -33,7 +32,6 @@ def on_leave(room):
     username = session.get("username")
     if not validate_user_and_game(room):
         return
-    session["room"] = ""
     game = fetch_game(room)
     game.remove_player(session.get("user_id"))
     leave_room(room)
@@ -45,7 +43,7 @@ def on_leave(room):
         emit("current_games", list_all_available_rooms(), broadcast=True)
 
 @socketio.on('chat')
-def chat(data):
+def on_chat(data):
     """event listener when client types a message"""
     username = session.get("username")
     message = data.get("message")
