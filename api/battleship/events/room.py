@@ -25,6 +25,7 @@ def on_join(room):
         return
     join_room(room)
     emit("user_joined", {"room": room, "username": username}, to=room)
+    emit("current_games", list_all_available_rooms(), broadcast=True)
 
 
 @socketio.on('leave')
