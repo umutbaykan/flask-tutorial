@@ -26,8 +26,8 @@ def create_room():
     ROOMS[room_id] = Game.serialize(new_game)
     
     # # Sends the updated list of games to the lobby
-    # socketio.emit("current_games", list_all_rooms())
-    return make_response(configs, 200)
+    socketio.emit("current_games", list_all_available_rooms())
+    return make_response({"room": room_id}, 200)
 
 
 @bp.route("/join", methods=["POST"])
@@ -47,4 +47,4 @@ def join_room():
 
 @bp.route("/list", methods=["GET"])
 def list_rooms():
-    return make_response(get_all_room_data(), 200)
+    return make_response(list_all_available_rooms(), 200)

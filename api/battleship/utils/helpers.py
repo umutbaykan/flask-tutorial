@@ -29,14 +29,14 @@ def validate_coordinate_input(coordinates):
             )
         
 
-def list_all_rooms():
+def list_all_available_rooms():
     """Returns all the available games to join in the global room object"""
     available_games = {}
-    for game_id, game in ROOMS:
-        if len(game.players) < 2:
-            user = get_user_by_id(game.players[0])
-            available_games[game_id] = {"who_started": game.who_started, "allowed_ships": game.allowed_ships, "players": user["username"]}
-    return ROOMS
+    for game_id, game in ROOMS.items():
+        if len(game["players"]) < 2:
+            user = get_user_by_id(game["players"][0])
+            available_games[game_id] = {"who_started": game["who_started"], "allowed_ships": game['allowed_ships'], "players": user["username"]}
+    return available_games
 
 
 def get_all_room_data():
