@@ -18,8 +18,18 @@ const App = () => {
   const [chats, setChats] = useState([])
 
   const onCurrentGames = (games) => {
-    setCurrentGames((previous) => ({ ...previous, ...games }));
-  }
+    setCurrentGames((previous) => {
+      const updatedGames = { ...previous, ...games };
+      for (const gameId in previous) {
+        if (!(gameId in games)) {
+          delete updatedGames[gameId];
+        }
+      }
+  
+      return updatedGames;
+    });
+  };
+  
 
   const onJoiningRoom = (user) => {
     setChats((previous) => [ ...previous, `${user.username} has joined the ${user.room}`])
