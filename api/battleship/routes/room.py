@@ -4,7 +4,8 @@ from .auth import login_required
 from ..utils.extensions import socketio
 from ..utils.room_object import *
 from ..database.db import *
-from ..utils.helpers import generate_unique_code
+from ..utils.helpers import *
+from ..models.game import Game
 
 bp = Blueprint("room", __name__, url_prefix="/room")
 
@@ -14,19 +15,19 @@ bp = Blueprint("room", __name__, url_prefix="/room")
 def create_room():
     """
     Generates a unique ID for a game
-    Adds the creating player to the game object.
-    Returns the room ID as a JSON object
+    Creates a game object with the player in it.
+    Adds the game object to the ongoing games.
+    Returns the game_id as a JSON object
     """
-    while True:
-        room_id = generate_unique_code()
-        if check_global_game_id_is_unique(room_id):
-            break
-    create_new_game_state(room_id, {"gamestate": "someconfigs"})
-    add_player_to_game(room_id, session["user_id"])
-
-    # Sends the updated list of games to the lobby
-    socketio.emit("current_games", list_all_rooms())
-    return make_response({"room": room_id}, 200)
+    configs = request.json
+    game_creator = session["user_id"]
+    room_id = generate_unique_code()
+    new_game = Game.create_new_game_from_configs(configs, server_allocated_room=room_id, game_creator=game_creator)
+    ROOMS[room_id] = Game.serialize(new_game)
+    
+    # # Sends the updated list of games to the lobby
+    # socketio.emit("current_games", list_all_rooms())
+    return make_response(configs, 200)
 
 
 @bp.route("/join", methods=["POST"])
@@ -46,4 +47,4 @@ def join_room():
 
 @bp.route("/list", methods=["GET"])
 def list_rooms():
-    return make_response(list_all_rooms(), 200)
+    return make_response(get_all_room_data(), 200)

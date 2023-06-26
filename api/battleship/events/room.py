@@ -1,29 +1,29 @@
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
 from flask import request, session
 from ..utils.extensions import socketio
-from ..utils.room_object import *
+from ..utils.room_object import PLAYERS, ROOMS
 
 
 @socketio.on("connect")
 def connect():
-    print("client connected")
+    print("Client connected.")
+    PLAYERS["online_users"] = PLAYERS.get("online_users") + 1
     emit("current_games", ROOMS, broadcast=True)
 
 
 @socketio.on("disconnect")
 def disconnected():
-    """event listener when client disconnects to the server"""
     print("client disconnected")
-    # emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
+    PLAYERS["online_users"] = PLAYERS.get("online_users") - 1
 
 
 @socketio.on("join")
 def on_join(room):
     user_id = session.get("user_id")   
     username = session.get("username")
-    session["room"] = room
     if not room_event_is_from_users_within_room_object(room, user_id):
         return
+    session["room"] = room
     join_room(room)
     print(f"{username} has joined {room}")
     emit("user_joined", {"room": room, "username": username}, to=room)
@@ -35,8 +35,8 @@ def on_leave(room):
     username = session.get("username")
     if not room_event_is_from_users_within_room_object(room, user_id):
         return
-    leave_room(room)
     session["room"] = ""
+    leave_room(room)
     print(f"{username} has left {room}")
     emit("user_left", {"room": room, "username": username}, to=room)
 

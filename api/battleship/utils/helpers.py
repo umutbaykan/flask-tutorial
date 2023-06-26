@@ -1,14 +1,20 @@
 import random
 import string
-
+from .room_object import ROOMS
+from ..database.game import get_game_by_game_id
+from ..database.user import get_user_by_id
 
 def generate_unique_code():
     """
     Generates a unique code for the room
     """
-    characters = string.ascii_letters + string.digits
-    code = "".join(random.choice(characters) for _ in range(8))
-    return code
+    while True:
+        characters = string.ascii_letters + string.digits
+        code = "".join(random.choice(characters) for _ in range(8))
+        if get_game_by_game_id(code) or code in ROOMS:
+            code = ""
+        else:
+            return code
 
 
 def validate_coordinate_input(coordinates):
@@ -21,3 +27,17 @@ def validate_coordinate_input(coordinates):
             raise ValueError(
                 "Invalid coordinate value. Coordinates must be non-negative integers."
             )
+        
+
+def list_all_rooms():
+    """Returns all the available games to join in the global room object"""
+    available_games = {}
+    for game_id, game in ROOMS:
+        if len(game.players) < 2:
+            user = get_user_by_id(game.players[0])
+            available_games[game_id] = {"who_started": game.who_started, "allowed_ships": game.allowed_ships, "players": user["username"]}
+    return ROOMS
+
+
+def get_all_room_data():
+    return ROOMS

@@ -3,9 +3,12 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from flask_session import Session
+### Dont forget to remove thingy 
 from . import thingy
+### Dont forget to remove thingy
 from .routes import auth, room
-from .events.events import socketio
+from .events.room import socketio
+from .events.game import socketio
 from .utils.extensions import sess
 
 
@@ -34,6 +37,7 @@ def create_app(test_config=None):
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(room.bp)
+    ### Dont forget to remove thingy
     app.register_blueprint(thingy.bp)
     CORS(app, supports_credentials=True)
     sess.init_app(app)

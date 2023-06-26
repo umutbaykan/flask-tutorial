@@ -27,8 +27,8 @@ def game(request):
         test_directory, "..", "seeds", "model_objects", f"{configs}.json"
     )
     with open(json_file_path) as file:
-        json_data = file.read()
-    game = Game.create_new_game_from_configs(json_data)
+        json_data = json.load(file)
+        game = Game.create_new_game_from_configs(json_data)
     yield game
     game.boards[0].ships, game.boards[1].ships = [], []
     game.boards[0].missed_shots, game.boards[1].missed_shots = [], []
@@ -43,7 +43,7 @@ def read_json(request):
         test_directory, "..", "seeds", "model_objects", f"{configs}.json"
     )
     with open(json_file_path) as file:
-        json_data = file.read()
+        json_data = json.load(file)
         yield json_data
 
 
@@ -53,8 +53,8 @@ def test_successful_game_initialization():
         test_directory, "..", "seeds", "model_objects", "game_regular_configs.json"
     )
     with open(json_file_path) as file:
-        json_data = file.read()
-        game = Game.create_new_game_from_configs(json_data)
+        json_data = json.load(file)
+        game = Game.create_new_game_from_configs(json_data, server_allocated_room="fkEjOpkL", game_creator="6495822522b4741d1481b1c6")
         assert game.game_id == "fkEjOpkL"
         assert game.players[0] == "6495822522b4741d1481b1c6"
         assert game.boards[0].size == 8
@@ -325,10 +325,10 @@ class TestSerializations:
             test_directory, "..", "seeds", "model_objects", "game_state_01.json"
         )
         with open(json_file_path_1) as file:
-            json_data_1 = file.read()
+            json_data_1 = json.load(file)
             board_1 = Board.deserialize(json_data_1)
         with open(json_file_path_2) as file:
-            json_data_2 = file.read()
+            json_data_2 = json.load(file)
             board_2 = Board.deserialize(json_data_2)
 
         game = Game(game_id="aFKeajFE")
@@ -341,7 +341,7 @@ class TestSerializations:
         with open(result_path) as file:
             state_data = json.load(file)
             serialized_game = Game.serialize(game)
-            assert serialized_game == json.dumps(state_data)
+            assert serialized_game == state_data
 
     def test_successful_deserialization(self):
         test_directory = os.path.dirname(os.path.abspath(__file__))
@@ -349,9 +349,11 @@ class TestSerializations:
             test_directory, "..", "seeds", "model_objects", "game_state_01.json"
         )
         with open(json_game_state) as file:
-            json_data_1 = file.read()
+            json_data_1 = json.load(file)
             game = Game.deserialize(json_data_1)
 
         from ..seeds.model_states.game_state import state_1
-
-        assert json.loads(Game.serialize(game)) == state_1
+        result = Game.serialize(game)
+        for key in state_1:
+            assert key in result
+            assert state_1[key] == result[key]

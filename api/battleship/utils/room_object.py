@@ -1,5 +1,5 @@
 ROOMS = {}
-
+PLAYERS = {"online_users": 0}
 
 def create_new_game_state(room_id, configurations):
     """
@@ -48,11 +48,6 @@ def room_event_is_from_users_within_room_object(room_id=None, player_id=None, *a
     current_players = ROOMS[room_id].get("players", [])
     return True if player_id in current_players else False
         
-
-def list_all_rooms():
-    """Returns all the available rooms in the global room object"""
-    return ROOMS
-
 
 def check_global_game_id_is_unique(room_id):
     """

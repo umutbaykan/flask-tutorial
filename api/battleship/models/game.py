@@ -88,24 +88,21 @@ class Game:
         return ship_occurrence == self.allowed_ships
 
     @staticmethod
-    def _validate_ship_json(ships_json):
-        ships_array = json.loads(ships_json)
+    def _validate_ship_json(ships_array):
         if ships_array.get("ships"):
             return ships_array["ships"]
         return False
 
     @staticmethod
-    def _validate_firing_coordinates_json(fire_json):
-        fire_dict = json.loads(fire_json)
+    def _validate_firing_coordinates_json(fire_dict):
         if fire_dict.get("coordinates") and fire_dict.get("user_id"):
             return fire_dict
         return False
 
     @staticmethod
     def _validate_configurations(configs):
-        configs_dict = json.loads(configs)
         # Throw an error if configs are corrupted, otherwise return as dictionary
-        return configs_dict
+        return configs
 
     @staticmethod
     def _get_allowed_ships(validated_ship_dict):
@@ -117,13 +114,13 @@ class Game:
         return chosen_ships
 
     @staticmethod
-    def create_new_game_from_configs(configs):
+    def create_new_game_from_configs(configs, server_allocated_room=None, game_creator=None):
         new_game = Game()
         parsed_configs = Game._validate_configurations(configs)
         [new_game.boards.append(Board(size=parsed_configs["size"])) for _ in range(2)]
         new_game.allowed_ships = Game._get_allowed_ships(parsed_configs["ships"])
-        new_game.players.append(parsed_configs["p1_id"])
-        new_game.game_id = parsed_configs["game_id"]
+        new_game.players.append(game_creator)
+        new_game.game_id = server_allocated_room
         new_game.who_started = parsed_configs["who_started"]
         return new_game
 
@@ -142,22 +139,21 @@ class Game:
             "allowed_ships": game.allowed_ships,
             "who_won": game.who_won,
         }
-        return json.dumps(data)
+        return data
 
     @staticmethod
     def deserialize(game_state):
-        game_dict = json.loads(game_state)
-        unparsed_boards = game_dict.get("boards")
+        unparsed_boards = game_state.get("boards")
         board_objects = []
         for board in unparsed_boards:
             board_objects.append(Board.deserialize(board))
-        game_id = game_dict.get("game_id")
-        players = game_dict.get("players", [])
-        ready = game_dict.get("ready", False)
-        turn = game_dict.get("turn", 1)
-        who_started = game_dict.get("who_started", 1)
-        allowed_ships = game_dict.get("allowed_ships", {})
-        who_won = game_dict.get("who_won")
+        game_id = game_state.get("game_id")
+        players = game_state.get("players", [])
+        ready = game_state.get("ready", False)
+        turn = game_state.get("turn", 1)
+        who_started = game_state.get("who_started", 1)
+        allowed_ships = game_state.get("allowed_ships", {})
+        who_won = game_state.get("who_won")
         return Game(
             boards=board_objects,
             game_id=game_id,

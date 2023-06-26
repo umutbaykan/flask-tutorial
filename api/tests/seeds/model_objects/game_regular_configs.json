@@ -6,7 +6,5 @@
     { "Battleship": 0 },
     { "AircraftCarrier": 1 }
   ],
-  "who_started": 1,
-  "p1_id": "6495822522b4741d1481b1c6",
-  "game_id": "fkEjOpkL"
+  "who_started": 1
 }

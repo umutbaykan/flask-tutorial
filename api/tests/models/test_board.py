@@ -1,20 +1,20 @@
 import pytest
 import os
 from battleship.models.board import *
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from unittest import TestCase
 
 
 class FakeShips(TestCase):
     def setUp(self):
-        self.fake_cruiser = MagicMock()
+        self.fake_cruiser = Mock()
         self.fake_cruiser.name = "Cruiser"
         self.fake_cruiser.size = 3
         self.fake_cruiser.coordinates = [[0, 0], [0, 1], [0, 2]]
         self.fake_cruiser.alive = [True, True, False]
         self.fake_cruiser.hit.return_value = True
 
-        self.fake_destroyer = MagicMock()
+        self.fake_destroyer = Mock()
         self.fake_destroyer.name = "Destroyer"
         self.fake_destroyer.hit.return_value = False
 
@@ -145,7 +145,7 @@ class TestSerializations:
             test_directory, "..", "seeds", "model_objects", "board_regular.json"
         )
         with open(json_file_path) as file:
-            json_data = file.read()
+            json_data = json.load(file)
             result = Board.deserialize(json_data)
 
         assert result.missed_shots == [[0, 4], [2, 3], [5, 5]]
@@ -163,7 +163,7 @@ class TestSerializations:
             test_directory, "..", "seeds", "model_objects", "board_empty.json"
         )
         with open(json_file_path) as file:
-            json_data = file.read()
+            json_data = json.load(file)
             result = Board.deserialize(json_data)
 
         assert result.ships == []
@@ -192,7 +192,7 @@ class TestSerializations:
             test_directory, "..", "seeds", "model_objects", json_file
         )
         with open(json_file_path) as file:
-            json_data = file.read()
+            json_data = json.load(file)
             with pytest.raises(ValueError) as e:
                 Board.deserialize(json_data)
             assert str(e.value) == expected_error
