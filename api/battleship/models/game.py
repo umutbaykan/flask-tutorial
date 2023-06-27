@@ -6,23 +6,23 @@ class Game:
     def __init__(
         self,
         game_id=None,
-        players=[],
-        allowed_ships={},
-        boards=[],
+        players=None,
+        allowed_ships=None,
+        boards=None,
         who_started=1,
         turn=1,
         ready=False,
         who_won=None,
     ):
         self.game_id = game_id
-        self.players = players
-        self.boards = boards
+        self.players = players if players is not None else []
+        self.boards = boards if boards is not None else []
         self.ready = ready
         self.turn = turn
         self.who_started = who_started
-        self.allowed_ships = allowed_ships
+        self.allowed_ships = allowed_ships if allowed_ships is not None else {}
         self.who_won = who_won
-
+        
     def place_ships(self, player_id, ships_array):
         player_index = self.players.index(player_id)
         current_board = self.boards[player_index]
@@ -125,9 +125,7 @@ class Game:
     def create_new_game_from_configs(configs, server_allocated_room=None, game_creator=None):
         new_game = Game()
         parsed_configs = Game._validate_configurations(configs)
-        for _ in range(2):
-            board = Board(size=parsed_configs["size"])
-            new_game.boards.append(board)
+        [new_game.boards.append(Board(size=parsed_configs["size"])) for _ in range(2)]
         new_game.allowed_ships = Game._get_allowed_ships(parsed_configs["ships"])
         new_game.players.append(game_creator)
         new_game.game_id = server_allocated_room

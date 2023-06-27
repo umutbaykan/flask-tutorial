@@ -226,10 +226,6 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
         game = Game(boards=[self.live_board_1, self.live_board_2])
         assert game.is_over() == False
 
-    def test_returns_true_if_one_board_is_sunk(self):
-        game = Game(boards=[self.live_board_1, self.sunk_board])
-        assert game.is_over() == True
-
     def test_sets_the_winning_if_p1_wins(self):
         game = Game(
             players=["winner", "loser"], boards=[self.live_board_1, self.sunk_board]

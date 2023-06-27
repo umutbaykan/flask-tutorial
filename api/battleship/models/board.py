@@ -3,10 +3,10 @@ from ..utils.helpers import validate_coordinate_input
 
 
 class Board:
-    def __init__(self, size=10, ships=[], missed_shots=[]):
+    def __init__(self, size=10, ships=None, missed_shots=None):
         self.size = size
-        self.ships = ships
-        self.missed_shots = missed_shots
+        self.ships = ships if ships is not None else []
+        self.missed_shots = missed_shots if missed_shots is not None else []
 
     def place(self, ship):
         if self.can_place(ship):
