@@ -1,3 +1,4 @@
+import "./ChatForm.css"
 import { React, useState } from "react";
 import { Formik, Form } from "formik";
 import { useLocation } from "react-router-dom";
@@ -32,13 +33,14 @@ const ChatForm = () => {
         }}
       >
         {() => (
-          <div>
-            <h5>Chat here:</h5>
+          <>
             <Form>
-              <TextField label="chat" name="chat" type="text" />
+            <div className="form-row">
+              <TextField name="chat" type="text" />
               <button type="submit">Send</button>
+            </div>
             </Form>
-          </div>
+          </>
         )}
       </Formik>
     </>

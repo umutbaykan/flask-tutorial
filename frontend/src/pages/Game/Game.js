@@ -13,25 +13,10 @@ const Game = () => {
 
   const navigate = useNavigate();
 
-  // const [roomInfo, setRoomInfo] = useState("");
-
-  // useEffect(() => {
-  //   function onRoomInfo(value) {
-  //     setRoomInfo(() => value);
-  //   }
-
-  //   socket.emit("roomevent", () => {});
-
-  //   socket.on("join-room", onRoomInfo);
-
-  //   return () => {
-  //     socket.off("join-room", onRoomInfo);
-  //   };
-  // }, []);
 
   useEffect(() => {
     const handleUserLeaving = () => {
-      socket.emit("leave", game_id); // Replace with your desired socket event name
+      socket.emit("leave", game_id); 
       setChats([]);
     };
 

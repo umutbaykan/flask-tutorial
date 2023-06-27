@@ -58,4 +58,4 @@ def validate_user_and_game(room):
     game = fetch_game(room)
     if not game or not game.is_player_valid(user_id):
         return False
-    return True
+    return game
