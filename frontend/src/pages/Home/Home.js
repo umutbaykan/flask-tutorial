@@ -21,12 +21,13 @@ const Home = () => {
     setLoggedIn(false)
   };
 
-  const [, setLoggedIn] = useContext(LoggedInContext)
+  const [loggedIn, setLoggedIn] = useContext(LoggedInContext)
   ///// This section will be removed later
 
   return (
     <>
       <h1>welcome home</h1>
+      <h5>You are currently logged {loggedIn ? <h5>in</h5> : <h5>out</h5>}</h5>
       <CurrentGames />
       <div>
         <NavButton to={"/signup"} text={"Sign Up"} />

@@ -8,6 +8,10 @@ import SignUpForm from "./pages/SignUp/SignUpForm";
 import LoginForm from "./pages/Login/LoginForm";
 import NotFound from "./pages/NotFound/NotFound";
 import Profile from "./pages/Profile/Profile";
+import PublicRoutes from "./components/PublicRoutes/PublicRoutes";
+import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
+
+import { amLoggedIn } from "./services/auth";
 
 export const LobbyContext = createContext({})
 export const ChatContext = createContext([])
@@ -66,16 +70,28 @@ const App = () => {
     };
   }, [loggedIn])
 
+  // Authenticate whether you are already logged in
+  useEffect(async () => {
+    const result = await amLoggedIn();
+    if (result.success) {
+      setLoggedIn(true)
+    }
+  }, [])
+
   return (
   <LobbyContext.Provider value={currentGames}>
   <LoggedInContext.Provider value={[loggedIn, setLoggedIn]}>
   <ChatContext.Provider value={[chats, setChats]}>
     <Routes>
+      <Route element={<PublicRoutes />}>
+        <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/login" element={<LoginForm />} />
+      </Route>
+      <Route element={<PrivateRoutes />}>
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/game/:gameId" element={<Game />} />
+      </Route>
       <Route path="/" element={<Home />} />
-      <Route path="/signup" element={<SignUpForm />} />
-      <Route path="/login" element={<LoginForm />} />
-      <Route path="/game/:gameId" element={<Game />} />
-      <Route path="/profile" element={<Profile />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </ChatContext.Provider>

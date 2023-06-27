@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
+import NavButton from "../../components/NavButton/NavButton";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
@@ -49,6 +50,7 @@ const LoginForm = () => {
               <TextField label="password" name="password" type="password" />
               <button type="submit">Login</button>
             </Form>
+            <NavButton to={'/'} text={"Home"} />
           </div>
         )}
       </Formik>
