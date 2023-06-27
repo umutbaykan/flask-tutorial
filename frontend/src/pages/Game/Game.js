@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { socket } from "../../socket";
 
 import { GameStateContext } from "../../App";
@@ -7,14 +7,14 @@ import { ChatContext } from "../../App";
 
 import WhereAmI from "../../components/whereami/whereami";
 import ChatBox from "./components/ChatBox/ChatBox";
+import ShipPlacer from "./components/ShipPlacer/ShipPlacer";
+
 
 const Game = () => {
   const { pathname } = useLocation();
   const [game_id] = useState(pathname.substring(pathname.lastIndexOf("/") + 1));
   const [ , setChats] = useContext(ChatContext);
-  const [gameState, setGameState] = useContext(GameStateContext);
-
-  const navigate = useNavigate();
+  const [gameState, ] = useContext(GameStateContext);
 
   useEffect(() => {
     const handleUserLeaving = () => {
@@ -35,22 +35,14 @@ const Game = () => {
     event.preventDefault();
     console.log(gameState)
   }
-
   ////
 
   return (
     <>
       <h1>Welcome to game {game_id}</h1>
-      {/* <h3>{roomInfo}</h3> */}
       <ChatBox />
-      <br></br>
-      <button
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        Leave game and go back to lobby
-      </button>
+      <ShipPlacer />
+      <h3>Development section</h3>
       <button onClick={handleClick}>print game state</button>
       <WhereAmI />
     </>

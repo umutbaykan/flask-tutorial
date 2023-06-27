@@ -57,17 +57,23 @@ const App = () => {
     setChats((previous) => [...previous, `${chat.username}: ${chat.message}`]);
   };
 
+  const onGameUpdate = (data) => {
+    setGameState(() => data.game)
+  }
+
   // Event listeners
   useEffect(() => {
     socket.on("current_games", onCurrentGames);
     socket.on("user_joined", onJoiningRoom);
     socket.on("user_left", onLeavingRoom);
     socket.on("chat_update", onChatUpdate);
+    socket.on("update", onGameUpdate)
     return () => {
       socket.off("current_games", onCurrentGames);
       socket.off("user_joined", onJoiningRoom);
       socket.off("user_left", onLeavingRoom);
       socket.off("chat_update", onChatUpdate);
+      socket.off("update", onGameUpdate)
     };
   }, []);
 

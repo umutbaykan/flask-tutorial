@@ -6,18 +6,19 @@ from ..utils.helpers import fetch_game, validate_user_and_game
 
 
 @socketio.on("place_ships")
-def place_ships():
+def on_place_ships(ship_positions):
+    # game = validate_user_and_game(room)
     pass
 
 @socketio.on("update")
-def update():
+def on_update():
     pass
 
 @socketio.on("fire")
-def fire():
+def on_fire():
     pass
 
 @socketio.on("game_over")
-def game_over():
+def on_game_over():
     pass
 
