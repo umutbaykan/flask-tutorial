@@ -97,7 +97,6 @@ def login_required(view):
     """
     Wrapper function to protect routes
     """
-
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

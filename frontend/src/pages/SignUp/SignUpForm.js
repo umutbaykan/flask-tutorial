@@ -3,14 +3,16 @@ import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 import { auth } from "../../services/auth";
 import { LoggedInContext } from "../../App";
 
 const SignUpForm = () => {
   const [error, setError] = useState("");
+  const [, setCookie, removeCookie] = useCookies(["user_id"]);
   const navigate = useNavigate();
-  const [ , setLoggedIn] = useContext(LoggedInContext)
+  const [, setLoggedIn] = useContext(LoggedInContext);
 
   const validate = Yup.object({
     username: Yup.string()
@@ -28,7 +30,9 @@ const SignUpForm = () => {
   const handleSubmit = async (values) => {
     const result = await auth(values.username, values.password, "register");
     if (result.success) {
-      setLoggedIn(true)
+      setLoggedIn(true);
+      removeCookie("user_id");
+      setCookie("user_id", result.user_id);
       navigate("/");
     } else {
       setError(result.error);

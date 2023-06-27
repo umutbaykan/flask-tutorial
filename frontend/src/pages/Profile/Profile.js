@@ -1,12 +1,11 @@
-import React from 'react';
-import NavButton from '../../components/NavButton/NavButton';
+import React from "react";
 
 const Profile = () => {
   return (
-  <div>
-          <h1>profile page</h1>
-          <NavButton to={"/"} text={"Go home"} />
-    </div>)
-}
+    <div>
+      <h1>profile page</h1>
+    </div>
+  );
+};
 
-export default Profile
+export default Profile;

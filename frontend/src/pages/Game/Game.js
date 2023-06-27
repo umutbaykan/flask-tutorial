@@ -3,15 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { socket } from "../../socket";
 import { ChatContext } from "../../App";
 
-import WhereAmI from "../../components/whereami/whereami"
+import WhereAmI from "../../components/whereami/whereami";
 import ChatBox from "./components/ChatBox/ChatBox";
-
 
 const Game = () => {
   const { pathname } = useLocation();
   const [game_id] = useState(pathname.substring(pathname.lastIndexOf("/") + 1));
-  const [ , setChats] = useContext(ChatContext);
-  
+  const [, setChats] = useContext(ChatContext);
+
   const navigate = useNavigate();
 
   // const [roomInfo, setRoomInfo] = useState("");
@@ -30,17 +29,16 @@ const Game = () => {
   //   };
   // }, []);
 
-
   useEffect(() => {
     const handleUserLeaving = () => {
-      socket.emit('leave', game_id); // Replace with your desired socket event name
-      setChats([])
+      socket.emit("leave", game_id); // Replace with your desired socket event name
+      setChats([]);
     };
 
-    window.addEventListener('beforeunload', handleUserLeaving);
+    window.addEventListener("beforeunload", handleUserLeaving);
 
     return () => {
-      window.removeEventListener('beforeunload', handleUserLeaving);
+      window.removeEventListener("beforeunload", handleUserLeaving);
       handleUserLeaving();
     };
   }, []);
@@ -51,7 +49,13 @@ const Game = () => {
       {/* <h3>{roomInfo}</h3> */}
       <ChatBox />
       <br></br>
-      <button onClick={() => {navigate('/')}}>Leave game and go back to lobby</button>
+      <button
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        Leave game and go back to lobby
+      </button>
       <WhereAmI />
     </>
   );

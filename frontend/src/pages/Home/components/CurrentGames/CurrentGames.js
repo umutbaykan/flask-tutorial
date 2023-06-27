@@ -7,9 +7,7 @@ import { LobbyContext } from "../../../../App";
 export const CurrentGames = () => {
   const currentGames = useContext(LobbyContext);
 
-  useEffect(() => {
-    
-  }, [])
+  useEffect(() => {}, []);
 
   return (
     <>
