@@ -1,4 +1,4 @@
-import React, {useState, useEffect, createContext} from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import { socket } from "./socket";
 import { useCookies } from "react-cookie";
@@ -11,18 +11,17 @@ import NotFound from "./pages/NotFound/NotFound";
 import Profile from "./pages/Profile/Profile";
 import PublicRoutes from "./components/PublicRoutes/PublicRoutes";
 import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
+import NavBar from "./components/NavBar/NavBar";
 
-
-export const LobbyContext = createContext({})
-export const ChatContext = createContext([])
-export const LoggedInContext = createContext()
+export const LobbyContext = createContext({});
+export const ChatContext = createContext([]);
+export const LoggedInContext = createContext();
 
 const App = () => {
-  
   const [currentGames, setCurrentGames] = useState({});
-  const [chats, setChats] = useState([])
-  const [loggedIn, setLoggedIn] = useState(false)
-  const [cookies, , ] = useCookies(['user_id']);
+  const [chats, setChats] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [cookies, ,] = useCookies(["user_id"]);
 
   const onCurrentGames = (games) => {
     setCurrentGames((previous) => {
@@ -32,22 +31,28 @@ const App = () => {
           delete updatedGames[gameId];
         }
       }
-  
+
       return updatedGames;
     });
   };
 
   const onJoiningRoom = (user) => {
-    setChats((previous) => [ ...previous, `${user.username} has joined the ${user.room}`])
-  }
+    setChats((previous) => [
+      ...previous,
+      `${user.username} has joined the ${user.room}`,
+    ]);
+  };
 
   const onLeavingRoom = (user) => {
-    setChats((previous) => [ ...previous, `${user.username} has left the ${user.room}`])
-  }
+    setChats((previous) => [
+      ...previous,
+      `${user.username} has left the ${user.room}`,
+    ]);
+  };
 
   const onChatUpdate = (chat) => {
-    setChats((previous) => [ ...previous, `${chat.username}: ${chat.message}`])
-  }
+    setChats((previous) => [...previous, `${chat.username}: ${chat.message}`]);
+  };
 
   // Event listeners
   useEffect(() => {
@@ -58,7 +63,7 @@ const App = () => {
     return () => {
       socket.off("current_games", onCurrentGames);
       socket.off("user_joined", onJoiningRoom);
-      socket.off('user_left', onLeavingRoom);
+      socket.off("user_left", onLeavingRoom);
       socket.off("chat_update", onChatUpdate);
     };
   }, []);
@@ -69,7 +74,7 @@ const App = () => {
     return () => {
       socket.disconnect();
     };
-  }, [loggedIn])
+  }, [loggedIn]);
 
   // Authenticate whether you are already logged in
   useEffect(() => {
@@ -77,27 +82,29 @@ const App = () => {
       setLoggedIn(true);
     } else {
       setLoggedIn(false);
-  }  }, []);
+    }
+  }, []);
 
   return (
-  <LobbyContext.Provider value={currentGames}>
-  <LoggedInContext.Provider value={[loggedIn, setLoggedIn]}>
-  <ChatContext.Provider value={[chats, setChats]}>
-    <Routes>
-      <Route element={<PublicRoutes />}>
-        <Route path="/signup" element={<SignUpForm />} />
-        <Route path="/login" element={<LoginForm />} />
-      </Route>
-      <Route element={<PrivateRoutes />}>
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/game/:gameId" element={<Game />} />
-      </Route>
-      <Route path="/" element={<Home />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  </ChatContext.Provider>
-  </LoggedInContext.Provider>
-  </LobbyContext.Provider>
+    <LobbyContext.Provider value={currentGames}>
+      <LoggedInContext.Provider value={[loggedIn, setLoggedIn]}>
+        <ChatContext.Provider value={[chats, setChats]}>
+          <NavBar />
+          <Routes>
+            <Route element={<PublicRoutes />}>
+              <Route path="/signup" element={<SignUpForm />} />
+              <Route path="/login" element={<LoginForm />} />
+            </Route>
+            <Route element={<PrivateRoutes />}>
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/game/:gameId" element={<Game />} />
+            </Route>
+            <Route path="/" element={<Home />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ChatContext.Provider>
+      </LoggedInContext.Provider>
+    </LobbyContext.Provider>
   );
 };
 

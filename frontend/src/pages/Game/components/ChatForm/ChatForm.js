@@ -1,4 +1,4 @@
-import {React, useState} from "react";
+import { React, useState } from "react";
 import { Formik, Form } from "formik";
 import { useLocation } from "react-router-dom";
 import * as Yup from "yup";
@@ -16,7 +16,7 @@ const ChatForm = () => {
   });
 
   const handleSubmit = (message) => {
-    socket.emit('chat', {message: message.chat, room: game_id})
+    socket.emit("chat", { message: message.chat, room: game_id });
   };
 
   return (

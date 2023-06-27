@@ -14,7 +14,7 @@ def connect():
 
 @socketio.on("disconnect")
 def disconnect():
-    print("client disconnected")
+    print("Client disconnected.")
     PLAYERS["online_users"] = PLAYERS.get("online_users") - 1
 
 

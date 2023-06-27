@@ -93,23 +93,10 @@ def logout():
     return {}, 204
 
 
-@bp.route("/isloggedin")
-def isloggedin():
-    """
-    Returns whether the user is logged in
-    """
-    user_id = session.get("user_id")
-    if user_id:
-        return {}, 200
-    else:
-        return {}, 400
-
-
 def login_required(view):
     """
     Wrapper function to protect routes
     """
-
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

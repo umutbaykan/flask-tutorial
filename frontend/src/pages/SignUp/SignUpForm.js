@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
-import NavButton from "../../components/NavButton/NavButton";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -11,9 +10,9 @@ import { LoggedInContext } from "../../App";
 
 const SignUpForm = () => {
   const [error, setError] = useState("");
-  const [, setCookie, removeCookie] = useCookies(['user_id']);
+  const [, setCookie, removeCookie] = useCookies(["user_id"]);
   const navigate = useNavigate();
-  const [ , setLoggedIn] = useContext(LoggedInContext)
+  const [, setLoggedIn] = useContext(LoggedInContext);
 
   const validate = Yup.object({
     username: Yup.string()
@@ -31,7 +30,7 @@ const SignUpForm = () => {
   const handleSubmit = async (values) => {
     const result = await auth(values.username, values.password, "register");
     if (result.success) {
-      setLoggedIn(true)
+      setLoggedIn(true);
       removeCookie("user_id");
       setCookie("user_id", result.user_id);
       navigate("/");
@@ -68,7 +67,6 @@ const SignUpForm = () => {
               />
               <button type="submit">Register</button>
             </Form>
-            <NavButton to={'/'} text={"Home"} />
           </div>
         )}
       </Formik>
