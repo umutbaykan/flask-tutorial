@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { GameStateContext } from "../../../../App";
 
 // Remove import from below //
-const shipPositions = require("../../../model_objects/ship_placement_multiple_but_clashing.json");
+const shipPositions = require("../../../model_objects/ship_placement_multiple.json");
 // REvemo import from above
 
 import { socket } from "../../../../socket";

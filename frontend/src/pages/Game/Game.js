@@ -9,18 +9,20 @@ import { ErrorContext } from "../../App";
 import WhereAmI from "../../components/whereami/whereami";
 import ChatBox from "./components/ChatBox/ChatBox";
 import ShipPlacer from "./components/ShipPlacer/ShipPlacer";
+import Board from "./components/Board/Board";
 
 
 const Game = () => {
   const { pathname } = useLocation();
   const [game_id] = useState(pathname.substring(pathname.lastIndexOf("/") + 1));
   const [ , setChats] = useContext(ChatContext);
-  const [gameState, ] = useContext(GameStateContext);
+  const [gameState, setGameState] = useContext(GameStateContext);
   const [error, ] = useContext(ErrorContext)
 
   useEffect(() => {
     const handleUserLeaving = () => {
-      socket.emit("leave", game_id); 
+      socket.emit("leave", game_id);
+      setGameState() 
       setChats([]);
     };
 
@@ -44,6 +46,8 @@ const Game = () => {
       <h1>Welcome to game {game_id}</h1>
       <ChatBox />
       <ShipPlacer />
+      <Board />
+      <br></br>
       <h3>Development section</h3>
       <button onClick={handleClick}>print game state</button>
       <h3>{error}</h3>
