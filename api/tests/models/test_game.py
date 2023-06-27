@@ -76,7 +76,8 @@ def test_successful_game_initialization(read_json):
 )
 def test_successful_ship_placement(game, read_json):
     parsed_ships = Game._validate_ship_json(read_json)
-    result = game.place_ships(0, parsed_ships)
+    player_id = game.players[0]
+    result = game.place_ships(player_id, parsed_ships)
     assert result == True
     assert len(game.boards[0].ships) == 4
     for ship in game.boards[0].ships:
@@ -104,7 +105,8 @@ def test_unsuccessful_ship_placement_due_to_ship_corruption(
     game, read_json, expected_error
 ):
     parsed_ships = Game._validate_ship_json(read_json)
-    result = game.place_ships(0, parsed_ships)
+    player_id = game.players[0]
+    result = game.place_ships(player_id, parsed_ships)
     assert result == expected_error
     assert game.boards[0].ships == []
 
@@ -118,9 +120,9 @@ def test_successful_hit(game, read_json):
     parsed_ships = Game._validate_ship_json(read_json)
     game.players = []
     game.add_player("player_1")
-    game.place_ships(0, parsed_ships)
+    game.place_ships("player_1", parsed_ships)
     game.add_player("player_2")
-    game.place_ships(1, parsed_ships)
+    game.place_ships("player_2", parsed_ships)
     assert game.fire([4, 4]) == True
     assert game.turn == 2
     assert game.who_started == 1
@@ -137,9 +139,9 @@ def test_unsuccessful_hit(game, read_json):
     parsed_ships = Game._validate_ship_json(read_json)
     game.players = []
     game.add_player("player_1")
-    game.place_ships(0, parsed_ships)
+    game.place_ships("player_1", parsed_ships)
     game.add_player("player_2")
-    game.place_ships(1, parsed_ships)
+    game.place_ships("player_2", parsed_ships)
     assert game.players == ["player_1", "player_2"]
     assert game.is_players_turn("player_1") == True
     assert game.is_players_turn("player_2") == False

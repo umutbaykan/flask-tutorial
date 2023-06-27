@@ -3,18 +3,13 @@ import { createRoom } from "../../../../services/room";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../../../socket";
 
+// Remove import from below //
+const gameConfigurations = require("../../../model_objects/game_regular_configs.json");
+// REvemo import from above
+
 const CreateGameButton = () => {
   //TODO - forms to pick game configurations and save it as a state to send to server
-  const gameconfigs = {
-    size: 8,
-    ships: [
-      { Destroyer: 1 },
-      { Cruiser: 2 },
-      { Battleship: 0 },
-      { AircraftCarrier: 1 },
-    ],
-    who_started: 1,
-  };
+  const gameconfigs = gameConfigurations
   const navigate = useNavigate();
   const [error, setError] = useState("");
 

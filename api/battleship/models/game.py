@@ -23,7 +23,8 @@ class Game:
         self.allowed_ships = allowed_ships
         self.who_won = who_won
 
-    def place_ships(self, player_index, ships_array):
+    def place_ships(self, player_id, ships_array):
+        player_index = self.players.index(player_id)
         current_board = self.boards[player_index]
         current_board_state = Board.serialize(self.boards[player_index])
         for ship in ships_array:
@@ -124,7 +125,9 @@ class Game:
     def create_new_game_from_configs(configs, server_allocated_room=None, game_creator=None):
         new_game = Game()
         parsed_configs = Game._validate_configurations(configs)
-        [new_game.boards.append(Board(size=parsed_configs["size"])) for _ in range(2)]
+        for _ in range(2):
+            board = Board(size=parsed_configs["size"])
+            new_game.boards.append(board)
         new_game.allowed_ships = Game._get_allowed_ships(parsed_configs["ships"])
         new_game.players.append(game_creator)
         new_game.game_id = server_allocated_room
