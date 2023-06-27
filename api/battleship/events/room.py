@@ -41,7 +41,7 @@ def on_leave(room):
     if game.players == []:
         del ROOMS[room]
         close_room(room)
-        emit("current_games", list_all_available_rooms(), broadcast=True)
+    emit("current_games", list_all_available_rooms(), broadcast=True)
 
 @socketio.on('chat')
 def on_chat(data):
