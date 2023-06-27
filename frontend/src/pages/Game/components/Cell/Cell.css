@@ -12,3 +12,21 @@
     text-align: center;
     width: 34px;
   }
+
+.cell-Destroyer {
+  background: rgb(183, 255, 0);
+}
+
+.cell-Cruiser {
+  background: rgb(255, 0, 132);
+}
+
+.cell-Battleship {
+  background: rgb(0, 247, 255);
+}
+
+.cell-AircraftCarrier {
+  background: rgb(47, 0, 255);
+
+}
+
