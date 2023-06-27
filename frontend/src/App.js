@@ -1,6 +1,7 @@
 import React, {useState, useEffect, createContext} from "react";
 import { Routes, Route } from "react-router-dom";
 import { socket } from "./socket";
+import { useCookies } from "react-cookie";
 
 import Home from "./pages/Home/Home";
 import Game from "./pages/Game/Game";
@@ -11,7 +12,6 @@ import Profile from "./pages/Profile/Profile";
 import PublicRoutes from "./components/PublicRoutes/PublicRoutes";
 import PrivateRoutes from "./components/PrivateRoutes/PrivateRoutes";
 
-import { amLoggedIn } from "./services/auth";
 
 export const LobbyContext = createContext({})
 export const ChatContext = createContext([])
@@ -22,6 +22,7 @@ const App = () => {
   const [currentGames, setCurrentGames] = useState({});
   const [chats, setChats] = useState([])
   const [loggedIn, setLoggedIn] = useState(false)
+  const [cookies, , ] = useCookies(['user_id']);
 
   const onCurrentGames = (games) => {
     setCurrentGames((previous) => {
@@ -71,12 +72,12 @@ const App = () => {
   }, [loggedIn])
 
   // Authenticate whether you are already logged in
-  useEffect(async () => {
-    const result = await amLoggedIn();
-    if (result.success) {
-      setLoggedIn(true)
-    }
-  }, [])
+  useEffect(() => {
+    if (cookies.user_id) {
+      setLoggedIn(true);
+    } else {
+      setLoggedIn(false);
+  }  }, []);
 
   return (
   <LobbyContext.Provider value={currentGames}>

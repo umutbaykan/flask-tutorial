@@ -21,16 +21,3 @@ export const logout = () => {
     method: "get",
   });
 };
-
-export const amLoggedIn = () => {
-  return fetch('/auth/isloggedin', {
-    method: "get"
-  })
-  .then((response) => {
-    if (response.ok) {
-      return { success: true }
-    } else {
-      return { success: false }
-    }
-  })
-};
