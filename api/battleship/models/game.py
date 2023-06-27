@@ -134,8 +134,8 @@ class Game:
     @staticmethod
     def serialize(game):
         serialized_boards = []
-        for board in game.boards:
-            serialized_boards.append(Board.serialize(board))
+        for i in range(2):
+            serialized_boards.append(Board.serialize(game.boards[i]))
         data = {
             "game_id": game.game_id,
             "players": game.players,

@@ -16,10 +16,12 @@ import NavBar from "./components/NavBar/NavBar";
 export const LobbyContext = createContext({});
 export const ChatContext = createContext([]);
 export const LoggedInContext = createContext();
+export const GameStateContext = createContext();
 
 const App = () => {
   const [currentGames, setCurrentGames] = useState({});
   const [chats, setChats] = useState([]);
+  const [gameState, setGameState] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
   const [cookies, ,] = useCookies(["user_id"]);
 
@@ -36,11 +38,12 @@ const App = () => {
     });
   };
 
-  const onJoiningRoom = (user) => {
+  const onJoiningRoom = (data) => {
     setChats((previous) => [
       ...previous,
-      `${user.username} has joined ${user.room}`,
+      `${data.username} has joined ${data.room}`,
     ]);
+    setGameState(() => data.game)
   };
 
   const onLeavingRoom = (user) => {
@@ -89,19 +92,21 @@ const App = () => {
     <LobbyContext.Provider value={currentGames}>
       <LoggedInContext.Provider value={[loggedIn, setLoggedIn]}>
         <ChatContext.Provider value={[chats, setChats]}>
-          <NavBar />
-          <Routes>
-            <Route element={<PublicRoutes />}>
-              <Route path="/signup" element={<SignUpForm />} />
-              <Route path="/login" element={<LoginForm />} />
-            </Route>
-            <Route element={<PrivateRoutes />}>
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/game/:gameId" element={<Game />} />
-            </Route>
-            <Route path="/" element={<Home />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <GameStateContext.Provider value={[gameState, setGameState]}>
+            <NavBar />
+            <Routes>
+              <Route element={<PublicRoutes />}>
+                <Route path="/signup" element={<SignUpForm />} />
+                <Route path="/login" element={<LoginForm />} />
+              </Route>
+              <Route element={<PrivateRoutes />}>
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/game/:gameId" element={<Game />} />
+              </Route>
+              <Route path="/" element={<Home />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </GameStateContext.Provider>
         </ChatContext.Provider>
       </LoggedInContext.Provider>
     </LobbyContext.Provider>
