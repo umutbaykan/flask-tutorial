@@ -17,12 +17,14 @@ export const LobbyContext = createContext({});
 export const ChatContext = createContext([]);
 export const LoggedInContext = createContext();
 export const GameStateContext = createContext();
+export const ErrorContext = createContext();
 
 const App = () => {
   const [currentGames, setCurrentGames] = useState({});
   const [chats, setChats] = useState([]);
   const [gameState, setGameState] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
+  const [error, setError] = useState("")
   const [cookies, ,] = useCookies(["user_id"]);
 
   const onCurrentGames = (games) => {
@@ -61,6 +63,10 @@ const App = () => {
     setGameState(() => data.game)
   }
 
+  const onError = (data) => {
+    setError(() => data.error)
+  }
+
   // Event listeners
   useEffect(() => {
     socket.on("current_games", onCurrentGames);
@@ -68,12 +74,14 @@ const App = () => {
     socket.on("user_left", onLeavingRoom);
     socket.on("chat_update", onChatUpdate);
     socket.on("update", onGameUpdate)
+    socket.on("error", onError)
     return () => {
       socket.off("current_games", onCurrentGames);
       socket.off("user_joined", onJoiningRoom);
       socket.off("user_left", onLeavingRoom);
       socket.off("chat_update", onChatUpdate);
       socket.off("update", onGameUpdate)
+      socket.off("error", onError)
     };
   }, []);
 
@@ -99,19 +107,21 @@ const App = () => {
       <LoggedInContext.Provider value={[loggedIn, setLoggedIn]}>
         <ChatContext.Provider value={[chats, setChats]}>
           <GameStateContext.Provider value={[gameState, setGameState]}>
-            <NavBar />
-            <Routes>
-              <Route element={<PublicRoutes />}>
-                <Route path="/signup" element={<SignUpForm />} />
-                <Route path="/login" element={<LoginForm />} />
-              </Route>
-              <Route element={<PrivateRoutes />}>
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/game/:gameId" element={<Game />} />
-              </Route>
-              <Route path="/" element={<Home />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <ErrorContext.Provider value={[error, setError]}>
+              <NavBar />
+              <Routes>
+                <Route element={<PublicRoutes />}>
+                  <Route path="/signup" element={<SignUpForm />} />
+                  <Route path="/login" element={<LoginForm />} />
+                </Route>
+                <Route element={<PrivateRoutes />}>
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/game/:gameId" element={<Game />} />
+                </Route>
+                <Route path="/" element={<Home />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ErrorContext.Provider>
           </GameStateContext.Provider>
         </ChatContext.Provider>
       </LoggedInContext.Provider>

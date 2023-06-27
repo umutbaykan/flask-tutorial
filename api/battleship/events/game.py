@@ -19,7 +19,7 @@ def on_place_ships(data):
     if result is True:
         emit('update', {"game": Game.serialize(game)}, to=room)
     else:
-        emit('error', result["error"], to=room)
+        emit('error', result, to=room)
 
 
 @socketio.on("update")
