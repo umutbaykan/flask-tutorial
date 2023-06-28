@@ -30,14 +30,10 @@ def save_game(serialized_game):
         serialized_game.get("boards"),
         serialized_game.get("who_won"),
     )
-    existing_game = get_game_by_game_id(game_id)
-    if existing_game:
-        response = db.games.update_one(
-            {"game_id": game_id}, {"$set": {"turn": turn, "boards": boards, "who_won": who_won}}
-        )
-        return response
-    else:
-        raise ValueError("No such game exists")
+    response = db.games.update_one(
+        {"game_id": game_id}, {"$set": {"turn": turn, "boards": boards, "who_won": who_won}}
+    )
+    return response
     
 
 def load_game(game_id):

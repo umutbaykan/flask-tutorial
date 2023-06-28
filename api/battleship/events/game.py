@@ -2,8 +2,7 @@ from flask_socketio import emit
 from flask import session, request
 from ..models.game import Game
 from ..utils.extensions import socketio
-from ..utils.helpers import validate_user_and_game
-from ..database.game import create_game
+from ..utils.helpers import validate_user_and_game, save_game_state
 
 
 @socketio.on("place_ships")
@@ -38,7 +37,7 @@ def on_fire(data):
         return
     
     game.fire(coordinates)
-    ### Save game here ###
+    save_game_state(Game.serialize(game))
     emit('update', {"game": Game.serialize(game)}, to=room)
 
 

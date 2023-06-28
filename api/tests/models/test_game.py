@@ -47,6 +47,7 @@ def read_json(request):
         json_data = json.load(file)
         yield json_data
 
+
 @pytest.mark.parametrize("read_json", ["game_regular_configs"], indirect=["read_json"])
 def test_successful_game_initialization(read_json):
     game = Game.create_new_game_from_configs(
@@ -173,26 +174,26 @@ class TestIfPlayersCanBeAddedToGame:
 
 class TestIfPlayersCanBeRemovedFromGame:
     def test_removing_existing_player_1(self):
-        game = Game(players=['player_1', 'player_2'])
-        assert game.remove_player('player_1') == True
-        assert game.players == ['player_2']
+        game = Game(players=["player_1", "player_2"])
+        assert game.remove_player("player_1") == True
+        assert game.players == ["player_2"]
 
     def test_removing_existing_player_2(self):
-            game = Game(players=['player_1', 'player_2'])
-            assert game.remove_player('player_2') == True
-            assert game.players == ['player_1']
+        game = Game(players=["player_1", "player_2"])
+        assert game.remove_player("player_2") == True
+        assert game.players == ["player_1"]
 
     def test_removing_a_player_not_in_the_game(self):
-        game = Game(players=['player_1', 'player_2'])
-        assert game.remove_player('player_3') == False
-        assert game.players == ['player_1', 'player_2']
+        game = Game(players=["player_1", "player_2"])
+        assert game.remove_player("player_3") == False
+        assert game.players == ["player_1", "player_2"]
 
     def test_removing_both_players(self):
-        game = Game(players=['player_1', 'player_2'])
-        game.remove_player('player_1')
-        game.remove_player('player_2')
+        game = Game(players=["player_1", "player_2"])
+        game.remove_player("player_1")
+        game.remove_player("player_2")
         assert game.players == []
-        
+
 
 class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
     def test_returns_true_if_it_is_your_turn(self):
@@ -242,20 +243,20 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
 
 
 @pytest.mark.parametrize(
-"game, read_json",
-[("game_simple_configs", "ship_placement_single_small")],
-indirect=["game", "read_json"],
+    "game, read_json",
+    [("game_simple_configs", "ship_placement_single_small")],
+    indirect=["game", "read_json"],
 )
 def test_setting_winner_with_actual_objects(game, read_json):
     parsed_ships = Game._validate_ship_json(read_json)
     game.players = ["player_1", "player_2"]
     p1_id, p2_id = game.players[0], game.players[1]
     game.place_ships(p1_id, parsed_ships), game.place_ships(p2_id, parsed_ships)
-    game.fire([2,3]), game.fire([2,3])
+    game.fire([2, 3]), game.fire([2, 3])
     assert game.who_won == None
-    game.fire([2,4])
+    game.fire([2, 4])
     assert game.who_won == "player_2"
-        
+
 
 class TestValidators:
     def test_valid_player_request(self):

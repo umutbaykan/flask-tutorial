@@ -44,7 +44,7 @@ state_1 = {
 
 state_2 = {
             "game_id": "jDKwRo12",
-            "players": ["player_1", "player_2"],
+            "players": ["64996f8cc2857ad5fc390acf", "6499c321ba4bf0c9214432b0"],
             "boards": [
                 {
                     "size": 7,
@@ -88,7 +88,7 @@ state_2 = {
 
 state_3 = {
             "game_id": "aFKeajFE",
-            "players": ["player_1", "player_2"],
+            "players": ["64996f8cc2857ad5fc390acf", "6499c321ba4bf0c9214432b0"],
             "boards": [
                 {
                     "size": 7,

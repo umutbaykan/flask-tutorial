@@ -37,7 +37,6 @@ def on_leave(room):
     if not game:
         return
     leave_room(room)
-    print(f"{username} has left {room}")
     emit("user_left", {"room": room, "username": username}, to=room)
     if game.who_won:
         ### Save game here
