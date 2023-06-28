@@ -1,12 +1,11 @@
 .grid-container {
-    /* Define grid layout properties */
-    display: grid;
-    /* Add other styling as needed */
-  }
-  
+  /* Define grid layout properties */
+  display: grid;
+  /* Add other styling as needed */
+}
+
 .row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-  
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}

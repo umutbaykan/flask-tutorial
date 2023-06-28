@@ -8,12 +8,12 @@ const shipPositions = require("../../../model_objects/ship_placement_multiple.js
 import { socket } from "../../../../socket";
 
 const ShipPlacer = () => {
-  const [gameState, ] = useContext(GameStateContext);
+  const [gameState] = useContext(GameStateContext);
   const shipConfigs = shipPositions;
 
   const handleShipPlacement = (event) => {
     event.preventDefault();
-    socket.emit('place_ships', {ships: shipConfigs, room: gameState.game_id} )
+    socket.emit("place_ships", { ships: shipConfigs, room: gameState.game_id });
   };
 
   return (

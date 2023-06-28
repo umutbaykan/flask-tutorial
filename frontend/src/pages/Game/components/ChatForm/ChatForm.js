@@ -1,4 +1,4 @@
-import "./ChatForm.css"
+import "./ChatForm.css";
 import { React, useContext } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -9,7 +9,7 @@ import { GameStateContext } from "../../../../App";
 import { socket } from "../../../../socket";
 
 const ChatForm = () => {
-  const [gameState, ] = useContext(GameStateContext);
+  const [gameState] = useContext(GameStateContext);
 
   const validate = Yup.object({
     chat: Yup.string().required(""),
@@ -34,10 +34,10 @@ const ChatForm = () => {
         {() => (
           <>
             <Form>
-            <div className="form-row">
-              <TextField name="chat" type="text" />
-              <button type="submit">Send</button>
-            </div>
+              <div className="form-row">
+                <TextField name="chat" type="text" />
+                <button type="submit">Send</button>
+              </div>
             </Form>
           </>
         )}
