@@ -1,0 +1,37 @@
+{
+  "ships": [
+    {
+      "name": "Destroyer",
+      "coordinates": [
+        [2, 4],
+        [2, 3]
+      ]
+    },
+    {
+      "name": "Cruiser",
+      "coordinates": [
+        [0, 0],
+        [1, 0],
+        [2, 0]
+      ]
+    },
+    {
+      "name": "Cruiser",
+      "coordinates": [
+        [5, 5],
+        [5, 6],
+        [5, 7]
+      ]
+    },
+    {
+      "name": "AircraftCarrier",
+      "coordinates": [
+        [7, 1],
+        [7, 2],
+        [7, 3],
+        [7, 4],
+        [7, 5]
+      ]
+    }
+  ]
+}

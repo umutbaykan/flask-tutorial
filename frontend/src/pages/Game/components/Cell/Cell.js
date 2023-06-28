@@ -2,9 +2,9 @@ import "./Cell.css";
 import propTypes from "prop-types";
 import React from "react";
 
-const Cell = ({ coordinates, display, type }) => {
+const Cell = ({ coordinates, display, type, action }) => {
   const handleCellPress = () => {
-    console.log(coordinates);
+    action(coordinates);
   };
 
   return (
@@ -18,6 +18,7 @@ Cell.propTypes = {
   coordinates: propTypes.array,
   display: propTypes.string,
   type: propTypes.string,
+  action: propTypes.func,
 };
 
 export default Cell;

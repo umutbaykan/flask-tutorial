@@ -143,15 +143,15 @@ def test_unsuccessful_hit(game, read_json):
     game.add_player("player_2")
     game.place_ships("player_2", parsed_ships)
     assert game.players == ["player_1", "player_2"]
-    assert game.is_players_turn("player_1") == True
-    assert game.is_players_turn("player_2") == False
+    assert game.is_player_turn("player_1") == True
+    assert game.is_player_turn("player_2") == False
     assert game.fire([5, 5]) == False
     assert game.turn == 2
     assert game.who_started == 1
     assert game.boards[1].missed_shots == [[5, 5]]
     assert game.boards[0].missed_shots == []
-    assert game.is_players_turn("player_1") == False
-    assert game.is_players_turn("player_2") == True
+    assert game.is_player_turn("player_1") == False
+    assert game.is_player_turn("player_2") == True
 
 
 class TestIfPlayersCanBeAddedToGame:
@@ -204,9 +204,9 @@ class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
             turn=1,
             players=["player_1", "player_2"],
         )
-        assert game.is_players_turn("player_1") == True
-        assert game.is_players_turn("player_2") == False
-        assert game.is_players_turn("player_3") == False
+        assert game.is_player_turn("player_1") == True
+        assert game.is_player_turn("player_2") == False
+        assert game.is_player_turn("player_3") == False
 
     def test_returns_the_opponents_board_to_shoot_at_when_its_your_turn(self):
         # Game instance - Player 1 should start and its the first turn.
@@ -217,7 +217,7 @@ class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
             turn=1,
             players=["player_1", "player_2"],
         )
-        assert game.is_players_turn("player_1") == True
+        assert game.is_player_turn("player_1") == True
         assert game._get_opponents_board() == self.live_board_2
 
 

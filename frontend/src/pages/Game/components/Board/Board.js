@@ -5,14 +5,14 @@ import Cell from "../Cell/Cell";
 
 import { GameStateContext } from "../../../../App";
 
-const Board = ({ boardIndex, action }) => {
+const Board = ({ boardInfo, action }) => {
   const [gameState] = useContext(GameStateContext);
 
   const parsedBoard = useMemo(() => {
     if (!gameState) {
       return {};
     }
-    const ships = gameState.boards[boardIndex].ships;
+    const ships = gameState.boards[boardInfo.index].ships;
     let result = {};
     ships.forEach((ship) => {
       const { coordinates, alive } = ship;
@@ -33,14 +33,14 @@ const Board = ({ boardIndex, action }) => {
 
   return (
     <>
-      <h1>Board</h1>
+      <h1>{boardInfo.owner} Board</h1>
       <div className="grid-container">
         {Array.from(
-          { length: gameState.boards[boardIndex].size },
+          { length: gameState.boards[boardInfo.index].size },
           (_, rowIndex) => (
             <div className="row" key={rowIndex}>
               {Array.from(
-                { length: gameState.boards[boardIndex].size },
+                { length: gameState.boards[boardInfo.index].size },
                 (_, colIndex) => (
                   <Cell
                     key={colIndex}
@@ -65,6 +65,10 @@ const Board = ({ boardIndex, action }) => {
   );
 };
 
-Board.propTypes = { boardIndex: propTypes.number, action: propTypes.func };
+Board.propTypes = {
+  boardInfo: propTypes.object,
+  action: propTypes.func,
+  owner: propTypes.string,
+};
 
 export default Board;

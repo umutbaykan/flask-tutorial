@@ -11,6 +11,7 @@ import WhereAmI from "../../components/whereami/whereami";
 import ChatBox from "./components/ChatBox/ChatBox";
 import ShipPlacer from "./components/ShipPlacer/ShipPlacer";
 import Board from "./components/Board/Board";
+import Win from "./components/Win/Win";
 
 const Game = () => {
   const { pathname } = useLocation();
@@ -42,15 +43,21 @@ const Game = () => {
   };
   ////
 
-  const findBoardIndex = (input) => {
-    const own = gameState.players.indexOf(cookies.user_id);
-    const opponent = own === 0 ? 1 : 0;
-    if (input === "own") {
-      return own;
-    } else if (input === "opponent") {
-      return opponent;
+  const findBoardInfo = (input) => {
+    const your = gameState.players.indexOf(cookies.user_id);
+    const opponent = your === 0 ? 1 : 0;
+    if (input === "Your") {
+      return { index: your, owner: input };
+    } else if (input === "Opponent") {
+      return { index: opponent, owner: input };
     }
   };
+
+  const fire = (coordinates) => {
+    socket.emit("fire", {coordinates: coordinates, room: gameState.game_id})
+  };
+
+
 
   if (!gameState) {
     return null;
@@ -61,20 +68,25 @@ const Game = () => {
       <h1>Welcome to game {game_id}</h1>
       <ChatBox />
       {gameState.ready ? (
-        <>
-          <Board boardIndex={findBoardIndex("own")} action={() => {}} />
-          <Board boardIndex={findBoardIndex("opponent")} action={() => {}} />
-        </>
+        gameState.who_won ? (
+          <Win winner={"somedude"}/>
+        ) : (
+          <>
+            <h3>Turn: {gameState.turn}</h3>
+            <Board boardInfo={findBoardInfo("Your")} action={console.log} />
+            <Board boardInfo={findBoardInfo("Opponent")} action={fire} />
+          </>
+        )
       ) : (
         <>
           <ShipPlacer />
-          <Board boardIndex={findBoardIndex("own")} action={() => {}} />
+          <Board boardInfo={findBoardInfo("Your")} action={console.log} />
         </>
       )}
+      <h3>{error}</h3>
       <br></br>
       <h3>Development section</h3>
       <button onClick={handleClick}>print game state</button>
-      <h3>{error}</h3>
       <WhereAmI />
     </>
   );

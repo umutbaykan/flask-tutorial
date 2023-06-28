@@ -27,8 +27,23 @@ def on_update():
     pass
 
 @socketio.on("fire")
-def on_fire():
-    pass
+def on_fire(data):
+    room = data.get("room")
+    coordinates = data.get("coordinates")
+    user_id = session.get("user_id")
+
+    game = validate_user_and_game(room)
+    if not game or not coordinates:
+        return
+    
+    player_turn = game.is_player_turn(user_id)
+    if not player_turn:
+        emit('error', {"error": "Not your turn to shoot."}, to=room)
+    
+    game.fire(coordinates)
+    ### Save game here ###
+    emit('update', {"game": Game.serialize(game)}, to=room)
+    
 
 @socketio.on("game_over")
 def on_game_over():

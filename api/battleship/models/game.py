@@ -65,7 +65,7 @@ class Game:
             return True
         return False
 
-    def is_players_turn(self, player_id):
+    def is_player_turn(self, player_id):
         if self.is_player_valid(player_id):
             player_index = (self.who_started + self.turn) % 2
             return self.players[player_index] == player_id
