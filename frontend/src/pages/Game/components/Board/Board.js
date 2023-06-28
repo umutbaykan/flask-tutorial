@@ -13,15 +13,19 @@ const Board = ({ boardInfo, action }) => {
       return {};
     }
     const ships = gameState.boards[boardInfo.index].ships;
+    const missed_shots = gameState.boards[boardInfo.index].missed_shots;
     let result = {};
     ships.forEach((ship) => {
       const { coordinates, alive } = ship;
       coordinates.forEach((coordinate, index) => {
         const status = alive[index]
           ? { class: ship.name, symbol: "" }
-          : { class: ship.class, symbol: "X" };
+          : { class: ship.name, symbol: "X" };
         result[JSON.stringify(coordinate)] = status;
       });
+    });
+    missed_shots.forEach((coordinate) => {
+      result[JSON.stringify(coordinate)] = { class: "miss", symbol: " · " };
     });
     return result;
   }, [gameState]);
