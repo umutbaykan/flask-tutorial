@@ -2,8 +2,8 @@ from flask_socketio import emit
 from flask import session, request
 from ..models.game import Game
 from ..utils.extensions import socketio
-from ..utils.room_object import PLAYERS, ROOMS
-from ..utils.helpers import fetch_game, validate_user_and_game
+from ..utils.helpers import validate_user_and_game
+from ..database.game import create_game
 
 
 @socketio.on("place_ships")
