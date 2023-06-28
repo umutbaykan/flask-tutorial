@@ -241,6 +241,22 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
         assert game.who_won == "winner"
 
 
+@pytest.mark.parametrize(
+"game, read_json",
+[("game_simple_configs", "ship_placement_single_small")],
+indirect=["game", "read_json"],
+)
+def test_setting_winner_with_actual_objects(game, read_json):
+    parsed_ships = Game._validate_ship_json(read_json)
+    game.players = ["player_1", "player_2"]
+    p1_id, p2_id = game.players[0], game.players[1]
+    game.place_ships(p1_id, parsed_ships), game.place_ships(p2_id, parsed_ships)
+    game.fire([2,3]), game.fire([2,3])
+    assert game.who_won == None
+    game.fire([2,4])
+    assert game.who_won == "player_2"
+        
+
 class TestValidators:
     def test_valid_player_request(self):
         game = Game(players=["p1idfromdb", "p2idfromdb"])

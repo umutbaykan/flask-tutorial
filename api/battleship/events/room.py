@@ -33,17 +33,23 @@ def on_join(room):
 @socketio.on('leave')
 def on_leave(room):
     username = session.get("username")
-    if not validate_user_and_game(room):
+    game = validate_user_and_game(room)
+    if not game:
         return
-    game = fetch_game(room)
-    game.remove_player(session.get("user_id"))
     leave_room(room)
     print(f"{username} has left {room}")
     emit("user_left", {"room": room, "username": username}, to=room)
-    if game.players == []:
+    if game.who_won:
+        ### Save game here
         del ROOMS[room]
         close_room(room)
-    emit("current_games", list_all_available_rooms(), broadcast=True)
+    else:
+        game.remove_player(session.get("user_id"))
+        if game.players == []:
+            del ROOMS[room]
+            close_room(room)
+        emit("current_games", list_all_available_rooms(), broadcast=True)
+
 
 @socketio.on('chat')
 def on_chat(data):

@@ -22,10 +22,6 @@ def on_place_ships(data):
         emit('error', result, to=request.sid)
 
 
-@socketio.on("update")
-def on_update():
-    pass
-
 @socketio.on("fire")
 def on_fire(data):
     room = data.get("room")
@@ -44,9 +40,5 @@ def on_fire(data):
     game.fire(coordinates)
     ### Save game here ###
     emit('update', {"game": Game.serialize(game)}, to=room)
-    
 
-@socketio.on("game_over")
-def on_game_over():
-    pass
 

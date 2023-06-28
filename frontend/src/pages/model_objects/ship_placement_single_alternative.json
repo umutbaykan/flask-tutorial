@@ -3,8 +3,8 @@
     {
       "name": "Destroyer",
       "coordinates": [
-        [2, 4],
-        [2, 3]
+        [0, 0],
+        [1, 0]
       ]
     }
   ]

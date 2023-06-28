@@ -1,0 +1,7 @@
+{
+  "size": 5,
+  "ships": [
+    { "Destroyer": 1 }
+  ],
+  "who_started": 2
+}

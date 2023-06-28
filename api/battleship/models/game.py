@@ -57,6 +57,7 @@ class Game:
     def fire(self, coordinate):
         result = self._get_opponents_board().shoot(coordinate)
         self.turn += 1
+        self.is_over()
         return result
     
     def remove_player(self, user_id):

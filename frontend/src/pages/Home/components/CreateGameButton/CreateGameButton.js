@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { socket } from "../../../../socket";
 
 // Remove import from below //
-const gameConfigurations = require("../../../model_objects/game_regular_configs.json");
+const gameConfigurations = require("../../../model_objects/game_simple_configs.json");
 // REvemo import from above
 
 const CreateGameButton = () => {

@@ -11,7 +11,7 @@ import WhereAmI from "../../components/whereami/whereami";
 import ChatBox from "./components/ChatBox/ChatBox";
 import ShipPlacer from "./components/ShipPlacer/ShipPlacer";
 import Board from "./components/Board/Board";
-import Win from "./components/Win/Win";
+import GameEnd from "./components/GameEnd/GameEnd";
 
 const Game = () => {
   const { pathname } = useLocation();
@@ -67,6 +67,10 @@ const Game = () => {
       : "Opponent";
   };
 
+  const didIwin = () => {
+    return gameState.who_won === cookies.user_id ? true : false
+  }
+
   if (!gameState) {
     return null;
   }
@@ -77,7 +81,7 @@ const Game = () => {
       <ChatBox />
       {gameState.ready ? (
         gameState.who_won ? (
-          <Win winner={"somedude"} />
+          <GameEnd didIwin={didIwin()} />
         ) : (
           <>
             <h3>{whoseTurnIsIt(gameState)} turn.</h3>
