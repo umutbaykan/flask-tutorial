@@ -4,6 +4,7 @@ import json
 from battleship.models.game import *
 from unittest.mock import Mock
 from unittest import TestCase
+from ..seeds.model_states.game_state import state_1
 
 
 class FakeBoards(TestCase):
@@ -392,13 +393,14 @@ class TestSerializations:
             assert key in result
             assert state_1[key] == result[key]
 
+
+class TestHidingBoards:
     @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
     def test_successful_board_hiding_for_p1(self, read_json):
         game = Game.deserialize(read_json)
-        from ..seeds.model_states.game_state import state_1
-
         serialized_game = Game.serialize(game)
-        game_with_hidden_board = Game.hide_opponent_board_info(serialized_game, "player_1")
+
+        game_with_hidden_board = Game.hide_board_info(serialized_game, "player_1", opponent=True)
         p1_board, p2_board = game_with_hidden_board["boards"][0], game_with_hidden_board["boards"][1]
         assert p1_board == state_1["boards"][0]
         assert p2_board != state_1["boards"][1]
@@ -410,10 +412,23 @@ class TestSerializations:
     @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
     def test_successful_board_hiding_for_p2(self, read_json):
         game = Game.deserialize(read_json)
-        from ..seeds.model_states.game_state import state_1
-
         serialized_game = Game.serialize(game)
-        game_with_hidden_board = Game.hide_opponent_board_info(serialized_game, "player_2")
+        
+        game_with_hidden_board = Game.hide_board_info(serialized_game, "player_2", opponent=True)
+        p1_board, p2_board = game_with_hidden_board["boards"][0], game_with_hidden_board["boards"][1]
+        assert p1_board != state_1["boards"][0]
+        assert p2_board == state_1["boards"][1]
+
+        for ship in p1_board["ships"]:
+            assert True not in ship["alive"]
+            assert len(ship["alive"]) == len(ship["coordinates"])
+
+    @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
+    def test_successful_board_hiding_for_self(self, read_json):
+        game = Game.deserialize(read_json)
+        serialized_game = Game.serialize(game)
+
+        game_with_hidden_board = Game.hide_board_info(serialized_game, "player_1", opponent=False)
         p1_board, p2_board = game_with_hidden_board["boards"][0], game_with_hidden_board["boards"][1]
         assert p1_board != state_1["boards"][0]
         assert p2_board == state_1["boards"][1]

@@ -16,7 +16,7 @@ def on_place_ships(data):
     ships = ship_positions["ships"]
     result = game.place_ships(user_id, ships)
     if result is True:
-        emit('update', {"game": Game.serialize(game)}, to=room)
+        hide_and_emit_boards(room, game)
     else:
         emit('error', result, to=request.sid)
 
@@ -38,6 +38,11 @@ def on_fire(data):
     
     game.fire(coordinates)
     save_game_state(Game.serialize(game))
-    emit('update', {"game": Game.serialize(game)}, to=room)
+    hide_and_emit_boards(room, game)
 
 
+def hide_and_emit_boards(room, game):
+    masked_opponent_board = Game.hide_board_info(Game.serialize(game), session.get("user_id"), opponent=True)
+    emit('update', {"game": masked_opponent_board}, to=request.sid)
+    masked_my_board = Game.hide_board_info(Game.serialize(game), session.get("user_id"))
+    emit('update', {"game": masked_my_board}, to=room, include_self=False)

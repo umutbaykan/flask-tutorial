@@ -1,3 +1,4 @@
+import copy
 from .ship import Ship, ship_classes
 from .board import Board
 
@@ -134,10 +135,16 @@ class Game:
         return new_game
 
     @staticmethod
-    def hide_opponent_board_info(serialized_game, player_id):
-        opponent_index = serialized_game.get("players").index(player_id) - 1
-        opponent_board = serialized_game["boards"][opponent_index]
-        serialized_game["boards"][opponent_index] = Board.hide_ship_coordinates(opponent_board)
+    def hide_board_info(serialized_game, player_id, opponent=False):
+        if len(serialized_game["players"]) == 2:
+            masked_game_info = copy.deepcopy(serialized_game)
+            if opponent is True:
+                index = masked_game_info.get("players").index(player_id) - 1
+            else:
+                index = masked_game_info.get("players").index(player_id)
+            opponent_board = masked_game_info["boards"][index]
+            masked_game_info["boards"][index] = Board.hide_ship_coordinates(opponent_board)
+            return masked_game_info
         return serialized_game
 
     @staticmethod
