@@ -60,6 +60,7 @@ const App = () => {
   };
 
   const onGameUpdate = (data) => {
+    setError("")
     setGameState(() => data.game)
   }
 

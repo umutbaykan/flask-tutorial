@@ -1,5 +1,5 @@
 from flask_socketio import emit
-from flask import session
+from flask import session, request
 from ..models.game import Game
 from ..utils.extensions import socketio
 from ..utils.room_object import PLAYERS, ROOMS
@@ -19,7 +19,7 @@ def on_place_ships(data):
     if result is True:
         emit('update', {"game": Game.serialize(game)}, to=room)
     else:
-        emit('error', result, to=room)
+        emit('error', result, to=request.sid)
 
 
 @socketio.on("update")
@@ -38,7 +38,8 @@ def on_fire(data):
     
     player_turn = game.is_player_turn(user_id)
     if not player_turn:
-        emit('error', {"error": "Not your turn to shoot."}, to=room)
+        emit('error', {"error": "Not your turn to shoot."}, to=request.sid)
+        return
     
     game.fire(coordinates)
     ### Save game here ###

@@ -18,7 +18,7 @@ const Game = () => {
   const [game_id] = useState(pathname.substring(pathname.lastIndexOf("/") + 1));
   const [, setChats] = useContext(ChatContext);
   const [gameState, setGameState] = useContext(GameStateContext);
-  const [error] = useContext(ErrorContext);
+  const [error, setError] = useContext(ErrorContext);
   const [cookies, ,] = useCookies(["user_id"]);
 
   useEffect(() => {
@@ -26,6 +26,7 @@ const Game = () => {
       socket.emit("leave", game_id);
       setGameState();
       setChats([]);
+      setError("");
     };
 
     window.addEventListener("beforeunload", handleUserLeaving);
@@ -35,13 +36,6 @@ const Game = () => {
       handleUserLeaving();
     };
   }, []);
-
-  //// Remove section below
-  const handleClick = (event) => {
-    event.preventDefault();
-    console.log(gameState);
-  };
-  ////
 
   const findBoardInfo = (input) => {
     const your = gameState.players.indexOf(cookies.user_id);
@@ -54,10 +48,24 @@ const Game = () => {
   };
 
   const fire = (coordinates) => {
-    socket.emit("fire", {coordinates: coordinates, room: gameState.game_id})
+    if (error) {
+      return;
+    } else
+      socket.emit("fire", {
+        coordinates: coordinates,
+        room: gameState.game_id,
+      });
   };
 
-
+  const whoseTurnIsIt = (gameState) => {
+    return (gameState.players.indexOf(cookies.user_id) +
+      gameState.turn +
+      gameState.who_started) %
+      2 ===
+      0
+      ? "Your"
+      : "Opponent";
+  };
 
   if (!gameState) {
     return null;
@@ -69,10 +77,10 @@ const Game = () => {
       <ChatBox />
       {gameState.ready ? (
         gameState.who_won ? (
-          <Win winner={"somedude"}/>
+          <Win winner={"somedude"} />
         ) : (
           <>
-            <h3>Turn: {gameState.turn}</h3>
+            <h3>{whoseTurnIsIt(gameState)} turn.</h3>
             <Board boardInfo={findBoardInfo("Your")} action={console.log} />
             <Board boardInfo={findBoardInfo("Opponent")} action={fire} />
           </>
@@ -85,8 +93,6 @@ const Game = () => {
       )}
       <h3>{error}</h3>
       <br></br>
-      <h3>Development section</h3>
-      <button onClick={handleClick}>print game state</button>
       <WhereAmI />
     </>
   );
