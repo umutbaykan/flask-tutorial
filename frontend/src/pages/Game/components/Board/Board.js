@@ -20,7 +20,9 @@ const Board = ({ boardInfo, action }) => {
       coordinates.forEach((coordinate, index) => {
         const status = alive[index]
           ? { class: ship.name, symbol: "" }
-          : { class: ship.name, symbol: "X" };
+          : boardInfo.owner === "Your"
+          ? { class: ship.name, symbol: "X" }
+          : { class: "hit", symbol: "X" };
         result[JSON.stringify(coordinate)] = status;
       });
     });

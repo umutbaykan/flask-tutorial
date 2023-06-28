@@ -13,6 +13,14 @@
   width: 34px;
 }
 
+.cell-miss {
+  background: rgb(130, 130, 130);
+}
+
+.cell-hit {
+  background: rgb(255, 0, 0);
+}
+
 .cell-Destroyer {
   background: rgb(183, 255, 0);
 }
