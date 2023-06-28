@@ -76,7 +76,7 @@ class Game:
         if user_id in self.players:
             return True
         return False
-    
+
     def _get_opponents_board(self):
         opponent_index = (self.who_started + self.turn + 1) % 2
         return self.boards[opponent_index]
@@ -132,6 +132,13 @@ class Game:
         new_game.game_id = server_allocated_room
         new_game.who_started = parsed_configs["who_started"]
         return new_game
+
+    @staticmethod
+    def hide_opponent_board_info(serialized_game, player_id):
+        opponent_index = serialized_game.get("players").index(player_id) - 1
+        opponent_board = serialized_game["boards"][opponent_index]
+        serialized_game["boards"][opponent_index] = Board.hide_ship_coordinates(opponent_board)
+        return serialized_game
 
     @staticmethod
     def serialize(game):

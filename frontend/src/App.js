@@ -45,7 +45,6 @@ const App = () => {
       ...previous,
       `${data.username} has joined ${data.room}`,
     ]);
-    setGameState(() => data.game)
   };
 
   const onLeavingRoom = (user) => {

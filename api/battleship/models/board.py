@@ -51,6 +51,20 @@ class Board:
     def _validate_board_size(size):
         if type(size) != int or size > 16 or size < 5:
             raise ValueError("Invalid board size.")
+        
+    @staticmethod
+    def hide_ship_coordinates(serialized_board):
+        ships_array = serialized_board.get("ships")
+        for ship in ships_array:
+            i = 0
+            while i < len(ship["coordinates"]):
+                if ship["alive"][i] is True:
+                    del ship["alive"][i]
+                    del ship["coordinates"][i]
+                else:
+                    i += 1
+        serialized_board["ships"] = ships_array
+        return serialized_board
 
     @staticmethod
     def serialize(board):

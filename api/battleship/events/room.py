@@ -1,9 +1,9 @@
 from flask_socketio import emit, join_room, leave_room, close_room
-from flask import session
+from flask import session, request
 from ..models.game import Game
 from ..utils.extensions import socketio
 from ..utils.room_object import PLAYERS, ROOMS
-from ..utils.helpers import fetch_game, validate_user_and_game, list_all_available_rooms
+from ..utils.helpers import save_game_state, validate_user_and_game, list_all_available_rooms
 
 
 @socketio.on("connect")
@@ -26,7 +26,8 @@ def on_join(room):
     if not game:
         return
     join_room(room)
-    emit("user_joined", {"room": room, "username": username, "game": Game.serialize(game)}, to=room)
+    emit("update", {"game": Game.serialize(game)}, to=request.sid)
+    emit("user_joined", {"room": room, "username": username}, to=room)
     emit("current_games", list_all_available_rooms(), broadcast=True)
 
 
@@ -39,7 +40,7 @@ def on_leave(room):
     leave_room(room)
     emit("user_left", {"room": room, "username": username}, to=room)
     if game.who_won:
-        ### Save game here
+        save_game_state(Game.serialize(game))
         del ROOMS[room]
         close_room(room)
     else:
