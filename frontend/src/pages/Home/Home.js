@@ -7,7 +7,6 @@ import GameConfigForm from "./components/GameConfigForm/GameConfigForm";
 import { auth } from "../../services/auth";
 import { LoggedInContext } from "../../App";
 import { useCookies } from "react-cookie";
-import WhereAmI from "../../components/whereami/whereami";
 
 const Home = () => {
   //// This section will be removed later
@@ -27,11 +26,9 @@ const Home = () => {
     <>
       <CurrentGames />
       <GameConfigForm />
-      {/* <CreateGameButton /> */}
       {/* Remove the button below */}
       <button onClick={fastLogin}>Fast Login</button>
       {/* Remove the button above */}
-      <WhereAmI />
     </>
   );
 };

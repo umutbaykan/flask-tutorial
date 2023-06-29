@@ -7,7 +7,6 @@ import { GameStateContext } from "../../App";
 import { ChatContext } from "../../App";
 import { ErrorContext } from "../../App";
 
-import WhereAmI from "../../components/whereami/whereami";
 import ChatBox from "./components/ChatBox/ChatBox";
 import ShipPlacer from "./components/ShipPlacer/ShipPlacer";
 import Board from "./components/Board/Board";
@@ -100,8 +99,6 @@ const Game = () => {
         </>
       )}
       <h3>{error}</h3>
-      <br></br>
-      <WhereAmI />
     </>
   );
 };

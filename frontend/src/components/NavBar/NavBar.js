@@ -8,12 +8,13 @@ import { LoggedInContext } from "../../App";
 
 const NavBar = () => {
   const [loggedIn, setLoggedIn] = useContext(LoggedInContext);
-  const [, , removeCookie] = useCookies(["user_id"]);
+  const [cookies, , removeCookie] = useCookies(["user_id", "username"]);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
     removeCookie("user_id");
+    removeCookie("username");
     setLoggedIn(false);
     navigate('/')
   };
@@ -28,7 +29,7 @@ const NavBar = () => {
           <button className="topnav-button" onClick={handleLogout}>
             Logout
           </button>
-          <NavLink to={"/profile"}>Profile</NavLink>
+          <NavLink to={"/profile"}>{cookies.username}</NavLink>
         </div>
       ) : (
         <div className="topnav-container">

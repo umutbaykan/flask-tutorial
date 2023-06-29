@@ -38,7 +38,7 @@ def register():
             session.clear()
             session["user_id"] = new_user_id
             session["username"] = username
-            return {}, 201
+            return {"user_id": session["user_id"], "username": session["username"]}, 201
 
     return make_response({"error": error}, 400)
 
@@ -66,7 +66,7 @@ def login():
         session.clear()
         session["user_id"] = str(user["_id"])
         session["username"] = user["username"]
-        return {"user_id": session["user_id"]}, 200
+        return {"user_id": session["user_id"], "username": session["username"]}, 200
 
     return make_response({"error": error}, 400)
 
