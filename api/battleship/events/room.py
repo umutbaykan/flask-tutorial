@@ -3,7 +3,11 @@ from flask import session, request
 from ..models.game import Game
 from ..utils.extensions import socketio
 from ..utils.room_object import PLAYERS, ROOMS
-from ..utils.helpers import save_game_state, validate_user_and_game, list_all_available_rooms
+from ..utils.helpers import (
+    save_game_state,
+    validate_user_and_game,
+    list_all_available_rooms,
+)
 
 
 @socketio.on("connect")
@@ -20,19 +24,21 @@ def disconnect():
 
 
 @socketio.on("join")
-def on_join(room):   
+def on_join(room):
     username = session.get("username")
     game = validate_user_and_game(room)
     if not game:
         return
     join_room(room)
-    masked_game_info = Game.hide_board_info(Game.serialize(game), session.get("user_id"), opponent=True)
+    masked_game_info = Game.hide_board_info(
+        Game.serialize(game), session.get("user_id"), opponent=True
+    )
     emit("update", {"game": masked_game_info}, to=request.sid)
     emit("user_joined", {"room": room, "username": username}, to=room)
     emit("current_games", list_all_available_rooms(), broadcast=True)
 
 
-@socketio.on('leave')
+@socketio.on("leave")
 def on_leave(room):
     username = session.get("username")
     game = validate_user_and_game(room)
@@ -52,7 +58,7 @@ def on_leave(room):
         emit("current_games", list_all_available_rooms(), broadcast=True)
 
 
-@socketio.on('chat')
+@socketio.on("chat")
 def on_chat(data):
     """event listener when client types a message"""
     username = session.get("username")

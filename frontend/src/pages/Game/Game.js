@@ -68,8 +68,8 @@ const Game = () => {
   };
 
   const didIwin = () => {
-    return gameState.who_won === cookies.user_id ? true : false
-  }
+    return gameState.who_won === cookies.user_id ? true : false;
+  };
 
   if (!gameState) {
     return null;
@@ -81,18 +81,22 @@ const Game = () => {
       <ChatBox />
       {gameState.ready ? (
         gameState.who_won ? (
-          <GameEnd didIwin={didIwin()} />
+          <>
+            <GameEnd didIwin={didIwin()} />
+            <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
+            <Board boardInfo={findBoardInfo("Opponent")} action={() => {}} />
+          </>
         ) : (
           <>
             <h3>{whoseTurnIsIt(gameState)} turn.</h3>
-            <Board boardInfo={findBoardInfo("Your")} action={console.log} />
+            <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
             <Board boardInfo={findBoardInfo("Opponent")} action={fire} />
           </>
         )
       ) : (
         <>
           <ShipPlacer />
-          <Board boardInfo={findBoardInfo("Your")} action={console.log} />
+          <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
         </>
       )}
       <h3>{error}</h3>
