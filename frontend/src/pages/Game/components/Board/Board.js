@@ -34,7 +34,6 @@ const Board = ({ boardInfo, action }) => {
 
   useEffect(() => {
     console.log(gameState);
-    console.log(parsedBoard);
   }, [gameState]);
 
   return (

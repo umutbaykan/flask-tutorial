@@ -94,8 +94,7 @@ const Game = () => {
         )
       ) : (
         <>
-          <ShipPlacer />
-          <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
+          <ShipPlacer boardInfo={findBoardInfo("Your")}/>
         </>
       )}
       <h3>{error}</h3>
