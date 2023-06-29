@@ -12,13 +12,13 @@ class Game:
         boards=None,
         who_started=1,
         turn=1,
-        ready=False,
+        ready=None,
         who_won=None,
     ):
         self.game_id = game_id
         self.players = players if players is not None else []
         self.boards = boards if boards is not None else []
-        self.ready = ready
+        self.ready = ready if ready is not None else [False, False]
         self.turn = turn
         self.who_started = who_started
         self.allowed_ships = allowed_ships if allowed_ships is not None else {}
@@ -37,7 +37,6 @@ class Game:
             except ValueError as ve:
                 self.boards[player_index] = Board.deserialize(current_board_state)
                 return {"error": str(ve.args[0])}
-        self._are_boards_placed()
         return True
 
     def is_over(self):
@@ -63,6 +62,12 @@ class Game:
     
     def remove_player(self, user_id):
         if self.is_player_valid(user_id):
+            player_index = self.players.index(user_id)
+            if player_index == 0:
+                del self.ready[0]
+                self.ready.append(False)
+            else:
+                self.ready[player_index] = False
             self.players.remove(user_id)
             return True
         return False
@@ -84,17 +89,21 @@ class Game:
         if user_id in self.players:
             return True
         return False
+    
+    def is_ready(self):
+        if all(self.ready):
+            self.ready = True
+            return True
+        return False
+    
+    def set_ready(self, user_id):
+        player_index = self.players.index(user_id)
+        self.ready[player_index] = True
+        return
 
     def _get_opponents_board(self):
         opponent_index = (self.who_started + self.turn + 1) % 2
         return self.boards[opponent_index]
-
-    def _are_boards_placed(self):
-        for board in self.boards:
-            if len(board.ships) == 0:
-                return False
-        self.ready = True
-        return True
 
     def _check_incoming_ships_match_with_configs(self, ships_array):
         ship_occurrence = {}
@@ -179,7 +188,7 @@ class Game:
             board_objects.append(Board.deserialize(board))
         game_id = game_state.get("game_id")
         players = game_state.get("players", [])
-        ready = game_state.get("ready", False)
+        ready = game_state.get("ready", [False, False])
         turn = game_state.get("turn", 1)
         who_started = game_state.get("who_started", 1)
         allowed_ships = game_state.get("allowed_ships", {})

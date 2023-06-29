@@ -45,6 +45,22 @@ def on_fire(data):
         hide_and_emit_boards(room, game)
 
 
+@socketio.on("ready")
+def on_ready(data):
+    room = data.get("room")
+    user_id = session.get("user_id")
+
+    game = validate_user_and_game(room)
+    if not game:
+        return
+    
+    game.set_ready(user_id)
+    if game.is_ready():
+        hide_and_emit_boards(room, game)
+
+    emit("error", {"error": "Waiting for your opponent to start."}, to=request.sid)
+
+
 def hide_and_emit_boards(room, game):
     masked_opponent_board = Game.hide_board_info(
         Game.serialize(game), session.get("user_id"), opponent=True

@@ -51,6 +51,7 @@ def on_leave(room):
         del ROOMS[room]
         close_room(room)
     else:
+        game.remove_player_ships(session.get("user_id"))
         game.remove_player(session.get("user_id"))
         if game.players == []:
             del ROOMS[room]

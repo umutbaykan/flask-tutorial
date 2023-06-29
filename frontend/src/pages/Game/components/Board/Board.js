@@ -7,7 +7,7 @@ import { GameStateContext } from "../../../../App";
 
 const Board = ({ boardInfo, action }) => {
   const [gameState] = useContext(GameStateContext);
-  const { index, owner } = boardInfo
+  const { index, owner } = boardInfo;
 
   const parsedBoard = useMemo(() => {
     if (!gameState) {
@@ -41,31 +41,28 @@ const Board = ({ boardInfo, action }) => {
     <>
       <h1>{owner} Board</h1>
       <div className="grid-container">
-        {Array.from(
-          { length: gameState.boards[index].size },
-          (_, rowIndex) => (
-            <div className="row" key={rowIndex}>
-              {Array.from(
-                { length: gameState.boards[index].size },
-                (_, colIndex) => (
-                  <Cell
-                    key={colIndex}
-                    coordinates={[rowIndex, colIndex]}
-                    display={
-                      (parsedBoard[JSON.stringify([rowIndex, colIndex])] || {})
-                        .symbol
-                    }
-                    type={
-                      (parsedBoard[JSON.stringify([rowIndex, colIndex])] || {})
-                        .class
-                    }
-                    action={action}
-                  />
-                )
-              )}
-            </div>
-          )
-        )}
+        {Array.from({ length: gameState.boards[index].size }, (_, rowIndex) => (
+          <div className="row" key={rowIndex}>
+            {Array.from(
+              { length: gameState.boards[index].size },
+              (_, colIndex) => (
+                <Cell
+                  key={colIndex}
+                  coordinates={[rowIndex, colIndex]}
+                  display={
+                    (parsedBoard[JSON.stringify([rowIndex, colIndex])] || {})
+                      .symbol
+                  }
+                  type={
+                    (parsedBoard[JSON.stringify([rowIndex, colIndex])] || {})
+                      .class
+                  }
+                  action={action}
+                />
+              )
+            )}
+          </div>
+        ))}
       </div>
     </>
   );

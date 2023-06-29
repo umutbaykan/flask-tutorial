@@ -78,7 +78,7 @@ const Game = () => {
     <>
       <h1>Welcome to game {game_id}</h1>
       <ChatBox />
-      {gameState.ready ? (
+      {gameState.ready === true ? (
         gameState.who_won ? (
           <>
             <GameEnd didIwin={didIwin()} />
@@ -94,7 +94,7 @@ const Game = () => {
         )
       ) : (
         <>
-          <ShipPlacer boardInfo={findBoardInfo("Your")}/>
+          <ShipPlacer boardInfo={findBoardInfo("Your")} />
         </>
       )}
       <h3>{error}</h3>

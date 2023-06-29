@@ -35,6 +35,7 @@ def game(request):
     game.boards[0].ships, game.boards[1].ships = [], []
     game.boards[0].missed_shots, game.boards[1].missed_shots = [], []
     game.players == []
+    game.ready == [False, False]
 
 
 @pytest.fixture
@@ -60,7 +61,7 @@ def test_successful_game_initialization(read_json):
     assert game.players[0] == "6495822522b4741d1481b1c6"
     assert game.boards[0].size == 8
     assert game.boards[1].size == 8
-    assert game.ready == False
+    assert game.ready == [False, False]
     assert game.turn == 1
     assert game.who_started == 1
     assert game.allowed_ships == {
@@ -243,6 +244,38 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
         assert game.who_won == "winner"
 
 
+class TestIfGameIsReady:
+    def test_return_false_if_game_ready_is_all_false(self):
+        game = Game(players=["player_1", "player_2"])
+        assert game.ready == [False, False]
+        assert game.is_ready() == False
+
+    @pytest.mark.parametrize("player_to_ready, expected", [
+        ("player_1", [True, False]),
+        ("player_2", [False, True])
+    ])
+    def test_set_player_ready(self, player_to_ready, expected):
+        game = Game(players=["player_1", "player_2"], ready=[False, False])
+        game.set_ready(player_to_ready)
+        assert game.ready == expected
+
+    @pytest.mark.parametrize("ready, player_to_remove, expected", [
+        ([False, False], "player_2", [False, False]),
+        ([True, False], "player_1", [False, False]),
+        ([False, True], "player_2", [False, False]),
+        ([False, True], "player_1", [True, False])
+    ])
+    def test_player_removal(self, ready, player_to_remove, expected):
+        game = Game(players=["player_1", "player_2"], ready=ready)
+        game.remove_player(player_to_remove)
+        assert game.ready == expected
+
+    def test_is_ready(self):
+        game = Game(ready=[True, True])
+        assert game.is_ready() == True
+        assert game.ready == True
+
+
 @pytest.mark.parametrize(
     "game, read_json",
     [("game_simple_configs", "ship_placement_single_small")],
@@ -268,20 +301,6 @@ class TestValidators:
     def test_invalid_player_request(self):
         game = Game(players=["p1idfromdb"])
         assert game.is_player_valid("p2idfromdb") == False
-
-    @pytest.mark.parametrize("game", ["game_regular_configs"], indirect=True)
-    def test_returns_true_when_boards_are_placed(self, game):
-        game.boards[0].ships = ["someshipobject"]
-        game.boards[1].ships = ["someshipobject"]
-        assert game._are_boards_placed() == True
-        assert game.ready == True
-
-    @pytest.mark.parametrize("game", ["game_regular_configs"], indirect=True)
-    def test_returns_false_if_one_board_is_empty(self, game):
-        game.boards[0].ships = []
-        game.boards[1].ships = ["someshipobject"]
-        assert game._are_boards_placed() == False
-        assert game.ready == False
 
     @pytest.mark.parametrize(
         "parsed_configs_ships, expected_result",
