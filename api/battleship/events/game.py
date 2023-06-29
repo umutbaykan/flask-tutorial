@@ -8,12 +8,11 @@ from ..utils.helpers import validate_user_and_game, save_game_state
 @socketio.on("place_ships")
 def on_place_ships(data):
     room = data.get("room")
-    ship_positions = data.get("ships")
+    ships = data.get("ships")
     game = validate_user_and_game(room)
     if not game:
         return
     user_id = session.get("user_id")
-    ships = ship_positions["ships"]
     game.remove_player_ships(user_id)
     result = game.place_ships(user_id, ships)
     if result is True:
