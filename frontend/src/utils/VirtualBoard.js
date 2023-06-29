@@ -9,6 +9,7 @@ class VirtualBoard {
     };
     this.allowedShips = allowedShips;
     this.ships = [];
+    this.existingPositions = [];
   }
 
   generateRandomValues = () => {
@@ -31,10 +32,6 @@ class VirtualBoard {
     return shipCoordinates;
   };
 
-  retrieveShipCoordinates = () => {
-    return;
-  };
-
   checkIfShipCanFit = (startingPosition, orientation, shipSize) => {
     let [x, y] = startingPosition;
     if (orientation) {
@@ -44,47 +41,57 @@ class VirtualBoard {
     }
   };
 
-  checkForClash = () => {};
+  isClashing = (coords) => {
+    const clash = coords.some((coordinate) =>
+      this.existingPositions.some((existingCoord) =>
+        existingCoord.every((value, index) => value === coordinate[index])
+      )
+    );
+    return clash;
+  };
+
+  generatePlaceableShip = (shipName) => {
+    let coords;
+    const shipSize = this.shipSizes[shipName];
+    let notFit = true;
+    while (notFit) {
+      const { orientation, x, y } = this.generateRandomValues(this.boardSize);
+      const canFit = this.checkIfShipCanFit([x, y], orientation, shipSize);
+      if (canFit) {
+        coords = this.generateShipCoordinates([x, y], orientation, shipSize);
+        notFit = false;
+      }
+    }
+    return coords;
+  };
 
   placeShip = (shipName) => {
-    const shipSize = this.shipSizes[shipName];
-    const { orientation, x, y } = this.generateRandomValues(this.boardSize);
-    const canFit = this.checkIfShipCanFit([x, y], orientation, shipSize);
-    if (canFit) {
-      this.ships.push(
-        this.generateShipCoordinates([x, y], orientation, shipSize)
-      );
-      this.checkForClash();
+    const shipCoordsToCheck = this.generatePlaceableShip(shipName);
+
+    if (this.isClashing(shipCoordsToCheck)) {
+      return false;
+    } else {
+      this.existingPositions = this.existingPositions.concat(shipCoordsToCheck);
+      this.ships.push({
+        name: shipName,
+        coordinates: shipCoordsToCheck,
+      });
+      return true;
     }
   };
 
   randomize = () => {
     Object.keys(this.allowedShips).forEach((shipName) => {
       for (let i = 0; i < this.allowedShips[shipName]; i++) {
-        //   while (true) {
-        //     if (placeShip(grid, shipName)) {break};
-        //   }
-        this.placeShip(shipName);
+        let notPlaced = true;
+        while (notPlaced) {
+          if (this.placeShip(shipName)) {
+            notPlaced = false;
+          }
+        }
       }
     });
   };
 }
 
-const allowed_ships = {
-  Destroyer: 1,
-  Cruiser: 0,
-  Battleship: 1,
-  AircraftCarrier: 2,
-};
-
-const vb = new VirtualBoard(10, allowed_ships);
-vb.randomize();
-console.log(vb.ships);
-
-// define starting position and orientation
-// check if ship can fit on board on sheer size
-// if ok, pass the starting position and size inside to generate coordinates
-// check if a ship is already there
-// if it is, go back to step one
-
-// if not, move onto the next ship
+module.exports = VirtualBoard;

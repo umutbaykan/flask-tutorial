@@ -4,7 +4,7 @@ import { GameStateContext } from "../../../../App";
 
 import Board from "../Board/Board";
 
-import { randomize } from "../../../../utils/randomize";
+import { randomize } from "../../../../utils/VirtualBoard";
 
 // Remove import from below //
 const shipPositions = require("../../../model_objects/ship_placement_single.json");
