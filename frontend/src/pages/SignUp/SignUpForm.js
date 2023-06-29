@@ -10,7 +10,7 @@ import { LoggedInContext } from "../../App";
 
 const SignUpForm = () => {
   const [error, setError] = useState("");
-  const [, setCookie, removeCookie] = useCookies(["user_id"]);
+  const [, setCookie, ] = useCookies(["user_id"]);
   const navigate = useNavigate();
   const [, setLoggedIn] = useContext(LoggedInContext);
 
@@ -31,8 +31,8 @@ const SignUpForm = () => {
     const result = await auth(values.username, values.password, "register");
     if (result.success) {
       setLoggedIn(true);
-      removeCookie("user_id");
       setCookie("user_id", result.user_id);
+      setCookie("username", result.username);
       navigate("/");
     } else {
       setError(result.error);

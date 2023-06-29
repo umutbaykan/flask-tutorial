@@ -1,3 +1,4 @@
+import copy
 from .ship import Ship, ship_classes
 from .board import Board
 
@@ -6,24 +7,25 @@ class Game:
     def __init__(
         self,
         game_id=None,
-        players=[],
-        allowed_ships={},
-        boards=[],
+        players=None,
+        allowed_ships=None,
+        boards=None,
         who_started=1,
         turn=1,
-        ready=False,
+        ready=None,
         who_won=None,
     ):
         self.game_id = game_id
-        self.players = players
-        self.boards = boards
-        self.ready = ready
+        self.players = players if players is not None else []
+        self.boards = boards if boards is not None else []
+        self.ready = ready if ready is not None else [False, False]
         self.turn = turn
         self.who_started = who_started
-        self.allowed_ships = allowed_ships
+        self.allowed_ships = allowed_ships if allowed_ships is not None else {}
         self.who_won = who_won
-
-    def place_ships(self, player_index, ships_array):
+        
+    def place_ships(self, user_id, ships_array):
+        player_index = self.players.index(user_id)
         current_board = self.boards[player_index]
         current_board_state = Board.serialize(self.boards[player_index])
         for ship in ships_array:
@@ -35,7 +37,6 @@ class Game:
             except ValueError as ve:
                 self.boards[player_index] = Board.deserialize(current_board_state)
                 return {"error": str(ve.args[0])}
-        self._are_boards_placed()
         return True
 
     def is_over(self):
@@ -45,29 +46,43 @@ class Game:
                 return True
         return False
 
-    def add_player(self, player_id):
-        if player_id in self.players:
+    def add_player(self, user_id):
+        if user_id in self.players:
             return {"error": "You are already in this game."}
         elif len(self.players) > 1:
             return {"error": "Game is full."}
-        self.players.append(player_id)
+        self.players.append(user_id)
         return True
         
     def fire(self, coordinate):
         result = self._get_opponents_board().shoot(coordinate)
         self.turn += 1
+        self.is_over()
         return result
     
     def remove_player(self, user_id):
         if self.is_player_valid(user_id):
+            player_index = self.players.index(user_id)
+            if player_index == 0:
+                del self.ready[0]
+                self.ready.append(False)
+            else:
+                self.ready[player_index] = False
             self.players.remove(user_id)
             return True
         return False
+    
+    def remove_player_ships(self, user_id):
+        if self.is_player_valid(user_id):
+            player_index = self.players.index(user_id)
+            self.boards[player_index].ships = []
+            return True
+        return False
 
-    def is_players_turn(self, player_id):
-        if self.is_player_valid(player_id):
+    def is_player_turn(self, user_id):
+        if self.is_player_valid(user_id):
             player_index = (self.who_started + self.turn) % 2
-            return self.players[player_index] == player_id
+            return self.players[player_index] == user_id
         return False
 
     def is_player_valid(self, user_id):
@@ -75,16 +90,20 @@ class Game:
             return True
         return False
     
+    def is_ready(self):
+        if all(self.ready):
+            self.ready = True
+            return True
+        return False
+    
+    def set_ready(self, user_id):
+        player_index = self.players.index(user_id)
+        self.ready[player_index] = True
+        return
+
     def _get_opponents_board(self):
         opponent_index = (self.who_started + self.turn + 1) % 2
         return self.boards[opponent_index]
-
-    def _are_boards_placed(self):
-        for board in self.boards:
-            if len(board.ships) == 0:
-                return False
-        self.ready = True
-        return True
 
     def _check_incoming_ships_match_with_configs(self, ships_array):
         ship_occurrence = {}
@@ -132,10 +151,23 @@ class Game:
         return new_game
 
     @staticmethod
+    def hide_board_info(serialized_game, user_id, opponent=False):
+        if len(serialized_game["players"]) == 2:
+            masked_game_info = copy.deepcopy(serialized_game)
+            if opponent is True:
+                index = masked_game_info.get("players").index(user_id) - 1
+            else:
+                index = masked_game_info.get("players").index(user_id)
+            opponent_board = masked_game_info["boards"][index]
+            masked_game_info["boards"][index] = Board.hide_ship_coordinates(opponent_board)
+            return masked_game_info
+        return serialized_game
+
+    @staticmethod
     def serialize(game):
         serialized_boards = []
-        for board in game.boards:
-            serialized_boards.append(Board.serialize(board))
+        for i in range(2):
+            serialized_boards.append(Board.serialize(game.boards[i]))
         data = {
             "game_id": game.game_id,
             "players": game.players,
@@ -156,7 +188,7 @@ class Game:
             board_objects.append(Board.deserialize(board))
         game_id = game_state.get("game_id")
         players = game_state.get("players", [])
-        ready = game_state.get("ready", False)
+        ready = game_state.get("ready", [False, False])
         turn = game_state.get("turn", 1)
         who_started = game_state.get("who_started", 1)
         allowed_ships = game_state.get("allowed_ships", {})

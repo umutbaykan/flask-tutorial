@@ -4,6 +4,7 @@ import json
 from battleship.models.game import *
 from unittest.mock import Mock
 from unittest import TestCase
+from ..seeds.model_states.game_state import state_1
 
 
 class FakeBoards(TestCase):
@@ -34,6 +35,7 @@ def game(request):
     game.boards[0].ships, game.boards[1].ships = [], []
     game.boards[0].missed_shots, game.boards[1].missed_shots = [], []
     game.players == []
+    game.ready == [False, False]
 
 
 @pytest.fixture
@@ -47,6 +49,7 @@ def read_json(request):
         json_data = json.load(file)
         yield json_data
 
+
 @pytest.mark.parametrize("read_json", ["game_regular_configs"], indirect=["read_json"])
 def test_successful_game_initialization(read_json):
     game = Game.create_new_game_from_configs(
@@ -58,7 +61,7 @@ def test_successful_game_initialization(read_json):
     assert game.players[0] == "6495822522b4741d1481b1c6"
     assert game.boards[0].size == 8
     assert game.boards[1].size == 8
-    assert game.ready == False
+    assert game.ready == [False, False]
     assert game.turn == 1
     assert game.who_started == 1
     assert game.allowed_ships == {
@@ -76,7 +79,8 @@ def test_successful_game_initialization(read_json):
 )
 def test_successful_ship_placement(game, read_json):
     parsed_ships = Game._validate_ship_json(read_json)
-    result = game.place_ships(0, parsed_ships)
+    player_id = game.players[0]
+    result = game.place_ships(player_id, parsed_ships)
     assert result == True
     assert len(game.boards[0].ships) == 4
     for ship in game.boards[0].ships:
@@ -104,7 +108,8 @@ def test_unsuccessful_ship_placement_due_to_ship_corruption(
     game, read_json, expected_error
 ):
     parsed_ships = Game._validate_ship_json(read_json)
-    result = game.place_ships(0, parsed_ships)
+    player_id = game.players[0]
+    result = game.place_ships(player_id, parsed_ships)
     assert result == expected_error
     assert game.boards[0].ships == []
 
@@ -118,9 +123,9 @@ def test_successful_hit(game, read_json):
     parsed_ships = Game._validate_ship_json(read_json)
     game.players = []
     game.add_player("player_1")
-    game.place_ships(0, parsed_ships)
+    game.place_ships("player_1", parsed_ships)
     game.add_player("player_2")
-    game.place_ships(1, parsed_ships)
+    game.place_ships("player_2", parsed_ships)
     assert game.fire([4, 4]) == True
     assert game.turn == 2
     assert game.who_started == 1
@@ -137,19 +142,19 @@ def test_unsuccessful_hit(game, read_json):
     parsed_ships = Game._validate_ship_json(read_json)
     game.players = []
     game.add_player("player_1")
-    game.place_ships(0, parsed_ships)
+    game.place_ships("player_1", parsed_ships)
     game.add_player("player_2")
-    game.place_ships(1, parsed_ships)
+    game.place_ships("player_2", parsed_ships)
     assert game.players == ["player_1", "player_2"]
-    assert game.is_players_turn("player_1") == True
-    assert game.is_players_turn("player_2") == False
+    assert game.is_player_turn("player_1") == True
+    assert game.is_player_turn("player_2") == False
     assert game.fire([5, 5]) == False
     assert game.turn == 2
     assert game.who_started == 1
     assert game.boards[1].missed_shots == [[5, 5]]
     assert game.boards[0].missed_shots == []
-    assert game.is_players_turn("player_1") == False
-    assert game.is_players_turn("player_2") == True
+    assert game.is_player_turn("player_1") == False
+    assert game.is_player_turn("player_2") == True
 
 
 class TestIfPlayersCanBeAddedToGame:
@@ -171,26 +176,26 @@ class TestIfPlayersCanBeAddedToGame:
 
 class TestIfPlayersCanBeRemovedFromGame:
     def test_removing_existing_player_1(self):
-        game = Game(players=['player_1', 'player_2'])
-        assert game.remove_player('player_1') == True
-        assert game.players == ['player_2']
+        game = Game(players=["player_1", "player_2"])
+        assert game.remove_player("player_1") == True
+        assert game.players == ["player_2"]
 
     def test_removing_existing_player_2(self):
-            game = Game(players=['player_1', 'player_2'])
-            assert game.remove_player('player_2') == True
-            assert game.players == ['player_1']
+        game = Game(players=["player_1", "player_2"])
+        assert game.remove_player("player_2") == True
+        assert game.players == ["player_1"]
 
     def test_removing_a_player_not_in_the_game(self):
-        game = Game(players=['player_1', 'player_2'])
-        assert game.remove_player('player_3') == False
-        assert game.players == ['player_1', 'player_2']
+        game = Game(players=["player_1", "player_2"])
+        assert game.remove_player("player_3") == False
+        assert game.players == ["player_1", "player_2"]
 
     def test_removing_both_players(self):
-        game = Game(players=['player_1', 'player_2'])
-        game.remove_player('player_1')
-        game.remove_player('player_2')
+        game = Game(players=["player_1", "player_2"])
+        game.remove_player("player_1")
+        game.remove_player("player_2")
         assert game.players == []
-        
+
 
 class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
     def test_returns_true_if_it_is_your_turn(self):
@@ -202,9 +207,9 @@ class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
             turn=1,
             players=["player_1", "player_2"],
         )
-        assert game.is_players_turn("player_1") == True
-        assert game.is_players_turn("player_2") == False
-        assert game.is_players_turn("player_3") == False
+        assert game.is_player_turn("player_1") == True
+        assert game.is_player_turn("player_2") == False
+        assert game.is_player_turn("player_3") == False
 
     def test_returns_the_opponents_board_to_shoot_at_when_its_your_turn(self):
         # Game instance - Player 1 should start and its the first turn.
@@ -215,7 +220,7 @@ class TestIfGameUnderstandsWhoseTurnIsIt(FakeBoards):
             turn=1,
             players=["player_1", "player_2"],
         )
-        assert game.is_players_turn("player_1") == True
+        assert game.is_player_turn("player_1") == True
         assert game._get_opponents_board() == self.live_board_2
 
 
@@ -223,10 +228,6 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
     def test_returns_false_if_both_boards_are_alive(self):
         game = Game(boards=[self.live_board_1, self.live_board_2])
         assert game.is_over() == False
-
-    def test_returns_true_if_one_board_is_sunk(self):
-        game = Game(boards=[self.live_board_1, self.sunk_board])
-        assert game.is_over() == True
 
     def test_sets_the_winning_if_p1_wins(self):
         game = Game(
@@ -243,6 +244,54 @@ class TestIfGameUnderstandsItsOver(FakeBoards):
         assert game.who_won == "winner"
 
 
+class TestIfGameIsReady:
+    def test_return_false_if_game_ready_is_all_false(self):
+        game = Game(players=["player_1", "player_2"])
+        assert game.ready == [False, False]
+        assert game.is_ready() == False
+
+    @pytest.mark.parametrize("player_to_ready, expected", [
+        ("player_1", [True, False]),
+        ("player_2", [False, True])
+    ])
+    def test_set_player_ready(self, player_to_ready, expected):
+        game = Game(players=["player_1", "player_2"], ready=[False, False])
+        game.set_ready(player_to_ready)
+        assert game.ready == expected
+
+    @pytest.mark.parametrize("ready, player_to_remove, expected", [
+        ([False, False], "player_2", [False, False]),
+        ([True, False], "player_1", [False, False]),
+        ([False, True], "player_2", [False, False]),
+        ([False, True], "player_1", [True, False])
+    ])
+    def test_player_removal(self, ready, player_to_remove, expected):
+        game = Game(players=["player_1", "player_2"], ready=ready)
+        game.remove_player(player_to_remove)
+        assert game.ready == expected
+
+    def test_is_ready(self):
+        game = Game(ready=[True, True])
+        assert game.is_ready() == True
+        assert game.ready == True
+
+
+@pytest.mark.parametrize(
+    "game, read_json",
+    [("game_simple_configs", "ship_placement_single_small")],
+    indirect=["game", "read_json"],
+)
+def test_setting_winner_with_actual_objects(game, read_json):
+    parsed_ships = Game._validate_ship_json(read_json)
+    game.players = ["player_1", "player_2"]
+    p1_id, p2_id = game.players[0], game.players[1]
+    game.place_ships(p1_id, parsed_ships), game.place_ships(p2_id, parsed_ships)
+    game.fire([2, 3]), game.fire([2, 3])
+    assert game.who_won == None
+    game.fire([2, 4])
+    assert game.who_won == "player_2"
+
+
 class TestValidators:
     def test_valid_player_request(self):
         game = Game(players=["p1idfromdb", "p2idfromdb"])
@@ -252,20 +301,6 @@ class TestValidators:
     def test_invalid_player_request(self):
         game = Game(players=["p1idfromdb"])
         assert game.is_player_valid("p2idfromdb") == False
-
-    @pytest.mark.parametrize("game", ["game_regular_configs"], indirect=True)
-    def test_returns_true_when_boards_are_placed(self, game):
-        game.boards[0].ships = ["someshipobject"]
-        game.boards[1].ships = ["someshipobject"]
-        assert game._are_boards_placed() == True
-        assert game.ready == True
-
-    @pytest.mark.parametrize("game", ["game_regular_configs"], indirect=True)
-    def test_returns_false_if_one_board_is_empty(self, game):
-        game.boards[0].ships = []
-        game.boards[1].ships = ["someshipobject"]
-        assert game._are_boards_placed() == False
-        assert game.ready == False
 
     @pytest.mark.parametrize(
         "parsed_configs_ships, expected_result",
@@ -376,3 +411,47 @@ class TestSerializations:
         for key in state_1:
             assert key in result
             assert state_1[key] == result[key]
+
+
+class TestHidingBoards:
+    @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
+    def test_successful_board_hiding_for_p1(self, read_json):
+        game = Game.deserialize(read_json)
+        serialized_game = Game.serialize(game)
+
+        game_with_hidden_board = Game.hide_board_info(serialized_game, "player_1", opponent=True)
+        p1_board, p2_board = game_with_hidden_board["boards"][0], game_with_hidden_board["boards"][1]
+        assert p1_board == state_1["boards"][0]
+        assert p2_board != state_1["boards"][1]
+
+        for ship in p2_board["ships"]:
+            assert True not in ship["alive"]
+            assert len(ship["alive"]) == len(ship["coordinates"])
+
+    @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
+    def test_successful_board_hiding_for_p2(self, read_json):
+        game = Game.deserialize(read_json)
+        serialized_game = Game.serialize(game)
+        
+        game_with_hidden_board = Game.hide_board_info(serialized_game, "player_2", opponent=True)
+        p1_board, p2_board = game_with_hidden_board["boards"][0], game_with_hidden_board["boards"][1]
+        assert p1_board != state_1["boards"][0]
+        assert p2_board == state_1["boards"][1]
+
+        for ship in p1_board["ships"]:
+            assert True not in ship["alive"]
+            assert len(ship["alive"]) == len(ship["coordinates"])
+
+    @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
+    def test_successful_board_hiding_for_self(self, read_json):
+        game = Game.deserialize(read_json)
+        serialized_game = Game.serialize(game)
+
+        game_with_hidden_board = Game.hide_board_info(serialized_game, "player_1", opponent=False)
+        p1_board, p2_board = game_with_hidden_board["boards"][0], game_with_hidden_board["boards"][1]
+        assert p1_board != state_1["boards"][0]
+        assert p2_board == state_1["boards"][1]
+
+        for ship in p1_board["ships"]:
+            assert True not in ship["alive"]
+            assert len(ship["alive"]) == len(ship["coordinates"])

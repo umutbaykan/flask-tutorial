@@ -1,13 +1,12 @@
 import React, { useContext } from "react";
 
 import CurrentGames from "./components/CurrentGames/CurrentGames";
-import CreateGameButton from "./components/CreateGameButton/CreateGameButton";
+import GameConfigForm from "./components/GameConfigForm/GameConfigForm";
 
 // TODO remove
 import { auth } from "../../services/auth";
 import { LoggedInContext } from "../../App";
 import { useCookies } from "react-cookie";
-import WhereAmI from "../../components/whereami/whereami";
 
 const Home = () => {
   //// This section will be removed later
@@ -20,17 +19,17 @@ const Home = () => {
 
   const [, setCookie, removeCookie] = useCookies(["user_id"]);
 
-  const [, setLoggedIn] = useContext(LoggedInContext);
   ///// This section will be removed later
+
+  const [loggedIn, setLoggedIn] = useContext(LoggedInContext);
 
   return (
     <>
       <CurrentGames />
-      <CreateGameButton />
+      {loggedIn && <GameConfigForm />}
       {/* Remove the button below */}
       <button onClick={fastLogin}>Fast Login</button>
       {/* Remove the button above */}
-      <WhereAmI />
     </>
   );
 };

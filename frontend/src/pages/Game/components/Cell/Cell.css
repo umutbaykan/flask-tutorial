@@ -1,0 +1,38 @@
+.cell {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 34px;
+}
+
+.cell-miss {
+  background: rgb(130, 130, 130);
+}
+
+.cell-hit {
+  background: rgb(255, 0, 0);
+}
+
+.cell-Destroyer {
+  background: rgb(183, 255, 0);
+}
+
+.cell-Cruiser {
+  background: rgb(255, 0, 132);
+}
+
+.cell-Battleship {
+  background: rgb(0, 247, 255);
+}
+
+.cell-AircraftCarrier {
+  background: rgb(47, 0, 255);
+}

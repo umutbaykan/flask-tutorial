@@ -10,9 +10,9 @@ import { LoggedInContext } from "../../App";
 
 const LoginForm = () => {
   const [error, setError] = useState("");
-  const [, setCookie, removeCookie] = useCookies(["user_id"]);
+  const [ , setCookie, ] = useCookies(["user_id", "username"]);
   const navigate = useNavigate();
-  const [, setLoggedIn] = useContext(LoggedInContext);
+  const [ , setLoggedIn] = useContext(LoggedInContext);
 
   const validate = Yup.object({
     username: Yup.string().required("Required"),
@@ -23,8 +23,8 @@ const LoginForm = () => {
     const result = await auth(values.username, values.password, "login");
     if (result.success) {
       setLoggedIn(true);
-      removeCookie("user_id");
       setCookie("user_id", result.user_id);
+      setCookie("username", result.username);
       navigate("/");
     } else {
       setError(result.error);

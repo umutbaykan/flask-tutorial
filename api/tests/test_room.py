@@ -78,17 +78,3 @@ def test_unlogged_room_join(client):
     )
     assert response.json == {"error": "You need to login."}
     assert response.status_code == 401
-
-
-@pytest.mark.parametrize(
-    "read_json, expected_result",
-    [("game_state_02", 1), ("game_state_03", 0)],
-    indirect=["read_json"],
-)
-def test_available_games_in_lobby(client, read_json, expected_result):
-    game = Game.deserialize(json.load(read_json))
-    ROOMS[game.game_id] = game
-    response = client.get("/room/available")
-    assert response.status_code == 200
-    assert len(response.json) == expected_result
-

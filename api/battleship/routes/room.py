@@ -44,14 +44,9 @@ def join_room():
         return make_response({"error": response["error"]}, 400)
     
 
-@bp.route("/available", methods=["GET"])
-def list_all_rooms_in_lobby():
-    """
-    Retrieves a list of available games and sends it as a JSON.
-    JSON is formatted to reflect the host, game ID and configurations.
-    Availability is determined on how many players are currently in the game object.
-    """
-    return make_response(list_all_available_rooms(), 200)
+@bp.route("/load", methods=["POST"])
+def load_game():
+    pass
 
 
 ### Development methods - To be removed later

@@ -17,13 +17,24 @@ class FakeShips(TestCase):
 
         self.fake_destroyer = Mock()
         self.fake_destroyer.name = "Destroyer"
+        self.fake_destroyer.coordinates = [[2, 2], [2, 1]]
+        self.fake_destroyer.alive = [False, True]
         self.fake_destroyer.hit.return_value = False
 
         self.sunk_cruiser = Mock()
+        self.sunk_cruiser.coordinates = [[3, 3], [3, 4], [3, 5]]
         self.sunk_cruiser.alive = [False, False, False]
 
         self.sunk_destroyer = Mock()
         self.sunk_destroyer.alive = [False, False]
+        
+        self.damaged_cruiser = Mock()
+        self.damaged_cruiser.coordinates = [[5, 5], [5, 4], [5, 3]]
+        self.damaged_cruiser.alive = [True, False, True]
+
+        self.live_destroyer = Mock()
+        self.live_destroyer.coordinates = [[3, 6], [3, 7]]
+        self.live_destroyer.alive = [True, True]
 
 
 def test_board_initialization():
@@ -92,6 +103,17 @@ class TestIfShipsAreAlive(FakeShips):
     def test_all_ships_sunk(self):
         board = Board(ships=[self.sunk_cruiser, self.sunk_destroyer])
         assert board.ships_alive() == False
+
+
+class TestIfBoardHidesCoordinates(FakeShips):
+    def test_if_ships_are_successfully_hidden(self):
+        board = Board(ships=[self.fake_cruiser, self.fake_destroyer, self.sunk_cruiser, self.damaged_cruiser, self.live_destroyer])
+        serialized_board = Board.serialize(board)
+        hidden_board = Board.hide_ship_coordinates(serialized_board)
+        ships = hidden_board["ships"]
+        for ship in ships:
+            assert True not in ship["alive"]
+            assert len(ship["alive"]) == len(ship["coordinates"])
 
 
 from battleship.models.ship import *

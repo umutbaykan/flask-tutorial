@@ -16,11 +16,15 @@ import NavBar from "./components/NavBar/NavBar";
 export const LobbyContext = createContext({});
 export const ChatContext = createContext([]);
 export const LoggedInContext = createContext();
+export const GameStateContext = createContext();
+export const ErrorContext = createContext();
 
 const App = () => {
   const [currentGames, setCurrentGames] = useState({});
   const [chats, setChats] = useState([]);
+  const [gameState, setGameState] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
+  const [error, setError] = useState("")
   const [cookies, ,] = useCookies(["user_id"]);
 
   const onCurrentGames = (games) => {
@@ -36,17 +40,17 @@ const App = () => {
     });
   };
 
-  const onJoiningRoom = (user) => {
+  const onJoiningRoom = (data) => {
     setChats((previous) => [
       ...previous,
-      `${user.username} has joined the ${user.room}`,
+      `${data.username} has joined ${data.room}`,
     ]);
   };
 
   const onLeavingRoom = (user) => {
     setChats((previous) => [
       ...previous,
-      `${user.username} has left the ${user.room}`,
+      `${user.username} has left ${user.room}`,
     ]);
   };
 
@@ -54,17 +58,30 @@ const App = () => {
     setChats((previous) => [...previous, `${chat.username}: ${chat.message}`]);
   };
 
+  const onGameUpdate = (data) => {
+    setError("")
+    setGameState(() => data.game)
+  }
+
+  const onError = (data) => {
+    setError(() => data.error)
+  }
+
   // Event listeners
   useEffect(() => {
     socket.on("current_games", onCurrentGames);
     socket.on("user_joined", onJoiningRoom);
     socket.on("user_left", onLeavingRoom);
     socket.on("chat_update", onChatUpdate);
+    socket.on("update", onGameUpdate)
+    socket.on("error", onError)
     return () => {
       socket.off("current_games", onCurrentGames);
       socket.off("user_joined", onJoiningRoom);
       socket.off("user_left", onLeavingRoom);
       socket.off("chat_update", onChatUpdate);
+      socket.off("update", onGameUpdate)
+      socket.off("error", onError)
     };
   }, []);
 
@@ -89,19 +106,23 @@ const App = () => {
     <LobbyContext.Provider value={currentGames}>
       <LoggedInContext.Provider value={[loggedIn, setLoggedIn]}>
         <ChatContext.Provider value={[chats, setChats]}>
-          <NavBar />
-          <Routes>
-            <Route element={<PublicRoutes />}>
-              <Route path="/signup" element={<SignUpForm />} />
-              <Route path="/login" element={<LoginForm />} />
-            </Route>
-            <Route element={<PrivateRoutes />}>
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/game/:gameId" element={<Game />} />
-            </Route>
-            <Route path="/" element={<Home />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <GameStateContext.Provider value={[gameState, setGameState]}>
+            <ErrorContext.Provider value={[error, setError]}>
+              <NavBar />
+              <Routes>
+                <Route element={<PublicRoutes />}>
+                  <Route path="/signup" element={<SignUpForm />} />
+                  <Route path="/login" element={<LoginForm />} />
+                </Route>
+                <Route element={<PrivateRoutes />}>
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/game/:gameId" element={<Game />} />
+                </Route>
+                <Route path="/" element={<Home />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ErrorContext.Provider>
+          </GameStateContext.Provider>
         </ChatContext.Provider>
       </LoggedInContext.Provider>
     </LobbyContext.Provider>

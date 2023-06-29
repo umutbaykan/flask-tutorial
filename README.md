@@ -1,6 +1,6 @@
 Battleships
 
-![doodling](https://imgflip.com/i/7pgsm9)
+![doodling](https://i.imgflip.com/7pgsm9.jpg)
 
 
 Why MongoDB?

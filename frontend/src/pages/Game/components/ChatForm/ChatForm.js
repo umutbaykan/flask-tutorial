@@ -1,22 +1,22 @@
-import { React, useState } from "react";
+import "./ChatForm.css";
+import { React, useContext } from "react";
 import { Formik, Form } from "formik";
-import { useLocation } from "react-router-dom";
 import * as Yup from "yup";
 
 import TextField from "../../../../components/TextField/TextField";
 
+import { GameStateContext } from "../../../../App";
 import { socket } from "../../../../socket";
 
 const ChatForm = () => {
-  const { pathname } = useLocation();
-  const [game_id] = useState(pathname.substring(pathname.lastIndexOf("/") + 1));
+  const [gameState] = useContext(GameStateContext);
 
   const validate = Yup.object({
     chat: Yup.string().required(""),
   });
 
   const handleSubmit = (message) => {
-    socket.emit("chat", { message: message.chat, room: game_id });
+    socket.emit("chat", { message: message.chat, room: gameState.game_id });
   };
 
   return (
@@ -32,13 +32,14 @@ const ChatForm = () => {
         }}
       >
         {() => (
-          <div>
-            <h5>Chat here:</h5>
+          <>
             <Form>
-              <TextField label="chat" name="chat" type="text" />
-              <button type="submit">Send</button>
+              <div className="form-row">
+                <TextField name="chat" type="text" />
+                <button type="submit">Send</button>
+              </div>
             </Form>
-          </div>
+          </>
         )}
       </Formik>
     </>
