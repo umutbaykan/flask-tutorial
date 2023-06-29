@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 
 import CurrentGames from "./components/CurrentGames/CurrentGames";
-import CreateGameButton from "./components/CreateGameButton/CreateGameButton";
+import GameConfigForm from "./components/GameConfigForm/GameConfigForm";
 
 // TODO remove
 import { auth } from "../../services/auth";
@@ -26,7 +26,8 @@ const Home = () => {
   return (
     <>
       <CurrentGames />
-      <CreateGameButton />
+      <GameConfigForm />
+      {/* <CreateGameButton /> */}
       {/* Remove the button below */}
       <button onClick={fastLogin}>Fast Login</button>
       {/* Remove the button above */}

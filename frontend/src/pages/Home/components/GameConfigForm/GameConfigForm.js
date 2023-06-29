@@ -1,11 +1,18 @@
-import React, { useState } from "react";
-import propTypes from "prop-types";
+import React, { useState, useContext } from "react";
 import { Formik, Form, Field } from "formik";
 import NumberField from "../../../../components/NumberField/NumberField";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 
-const GameConfigForm = ({ handleSubmit }) => {
-  const [error] = useState("");
+import { socket } from "../../../../socket";
+import { createRoom } from "../../../../services/room";
+import { LoggedInContext } from "../../../../App";
+
+
+const GameConfigForm = () => {
+    const [loggedIn] = useContext(LoggedInContext);
+    const navigate = useNavigate();
+    const [error, setError] = useState("");
 
   const validate = Yup.object({
     size: Yup.number()
@@ -24,6 +31,20 @@ const GameConfigForm = ({ handleSubmit }) => {
       .min(0, "Cant have negative ships")
       .max(5, "Lets not go crazy captain"),
   });
+
+  const handleSubmit = async (gameconfigs) => {
+    if (!loggedIn) {
+      navigate("/login");
+    }
+    const result = await createRoom(gameconfigs
+      );
+    if (result.room) {
+      socket.emit("join", result.room);
+      navigate(`/game/${result.room}`);
+    } else {
+      setError(result.error);
+    }
+  };
 
   return (
     <>
@@ -48,12 +69,12 @@ const GameConfigForm = ({ handleSubmit }) => {
           } = values;
           const formattedValues = {
             size,
-            ships: {
-              Destroyer: destroyer,
-              Cruiser: cruiser,
-              Battleship: battleship,
-              AircraftCarrier: aircraftCarrier,
-            },
+            ships: [
+              {Destroyer: destroyer},
+              {Cruiser: cruiser},
+              {Battleship: battleship},
+              {AircraftCarrier: aircraftCarrier},
+            ],
             who_started: parseInt(who_started),
           };
           handleSubmit(formattedValues);
@@ -91,7 +112,5 @@ const GameConfigForm = ({ handleSubmit }) => {
     </>
   );
 };
-
-GameConfigForm.propTypes = { handleSubmit: propTypes.func };
 
 export default GameConfigForm;
