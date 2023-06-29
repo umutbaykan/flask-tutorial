@@ -14,6 +14,7 @@ def on_place_ships(data):
         return
     user_id = session.get("user_id")
     ships = ship_positions["ships"]
+    game.remove_player_ships(user_id)
     result = game.place_ships(user_id, ships)
     if result is True:
         hide_and_emit_boards(room, game)

@@ -24,8 +24,8 @@ class Game:
         self.allowed_ships = allowed_ships if allowed_ships is not None else {}
         self.who_won = who_won
         
-    def place_ships(self, player_id, ships_array):
-        player_index = self.players.index(player_id)
+    def place_ships(self, user_id, ships_array):
+        player_index = self.players.index(user_id)
         current_board = self.boards[player_index]
         current_board_state = Board.serialize(self.boards[player_index])
         for ship in ships_array:
@@ -47,12 +47,12 @@ class Game:
                 return True
         return False
 
-    def add_player(self, player_id):
-        if player_id in self.players:
+    def add_player(self, user_id):
+        if user_id in self.players:
             return {"error": "You are already in this game."}
         elif len(self.players) > 1:
             return {"error": "Game is full."}
-        self.players.append(player_id)
+        self.players.append(user_id)
         return True
         
     def fire(self, coordinate):
@@ -66,11 +66,18 @@ class Game:
             self.players.remove(user_id)
             return True
         return False
+    
+    def remove_player_ships(self, user_id):
+        if self.is_player_valid(user_id):
+            player_index = self.players.index(user_id)
+            self.boards[player_index].ships = []
+            return True
+        return False
 
-    def is_player_turn(self, player_id):
-        if self.is_player_valid(player_id):
+    def is_player_turn(self, user_id):
+        if self.is_player_valid(user_id):
             player_index = (self.who_started + self.turn) % 2
-            return self.players[player_index] == player_id
+            return self.players[player_index] == user_id
         return False
 
     def is_player_valid(self, user_id):
@@ -135,13 +142,13 @@ class Game:
         return new_game
 
     @staticmethod
-    def hide_board_info(serialized_game, player_id, opponent=False):
+    def hide_board_info(serialized_game, user_id, opponent=False):
         if len(serialized_game["players"]) == 2:
             masked_game_info = copy.deepcopy(serialized_game)
             if opponent is True:
-                index = masked_game_info.get("players").index(player_id) - 1
+                index = masked_game_info.get("players").index(user_id) - 1
             else:
-                index = masked_game_info.get("players").index(player_id)
+                index = masked_game_info.get("players").index(user_id)
             opponent_board = masked_game_info["boards"][index]
             masked_game_info["boards"][index] = Board.hide_ship_coordinates(opponent_board)
             return masked_game_info

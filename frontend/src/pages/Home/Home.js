@@ -19,13 +19,14 @@ const Home = () => {
 
   const [, setCookie, removeCookie] = useCookies(["user_id"]);
 
-  const [, setLoggedIn] = useContext(LoggedInContext);
   ///// This section will be removed later
+
+  const [loggedIn, setLoggedIn] = useContext(LoggedInContext);
 
   return (
     <>
       <CurrentGames />
-      <GameConfigForm />
+      {loggedIn && <GameConfigForm />}
       {/* Remove the button below */}
       <button onClick={fastLogin}>Fast Login</button>
       {/* Remove the button above */}
