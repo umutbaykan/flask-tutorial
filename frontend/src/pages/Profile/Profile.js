@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import "./Profile.css";
 import GamesPlayed from "./components/GamesPlayed/GamesPlayed";
+import Statistics from "./components/Statistics/Statistics";
 
 import { getHistory } from "../../services/profile";
 
@@ -20,8 +22,9 @@ const Profile = () => {
   }
 
   return (
-    <div>
+    <div className="profile-container">
       <GamesPlayed gamesHistory={gamesHistory} />
+      <Statistics gamesHistory={gamesHistory} />
     </div>
   );
 };
