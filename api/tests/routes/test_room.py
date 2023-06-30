@@ -4,6 +4,7 @@ import os
 from flask import g, session
 from battleship.utils.room_object import ROOMS
 from battleship.models.game import Game
+from battleship.database.game import db
 
 
 @pytest.fixture
@@ -11,7 +12,7 @@ def read_json(request):
     configs = request.param
     test_directory = os.path.dirname(os.path.abspath(__file__))
     json_file_path = os.path.join(
-        test_directory, ".", "seeds", "model_objects", f"{configs}.json"
+        test_directory, "..", "seeds", "model_objects", f"{configs}.json"
     )
     with open(json_file_path) as file:
         yield file
@@ -78,3 +79,18 @@ def test_unlogged_room_join(client):
     )
     assert response.json == {"error": "You need to login."}
     assert response.status_code == 401
+
+
+@pytest.mark.parametrize("room, expected_error", [
+    ({"room": "somegameid"}, {"error": "No such game to load."}),
+    ({"room": "aFKeajFE"}, {"error": "You are not a player in this game."})
+])
+def test_loading_games_unsuccessfully(client, auth, room, expected_error):
+    with client:
+        auth.login()
+        response = client.post(
+            "/room/load", data=json.dumps(room), content_type="application/json"
+        )
+        assert response.json == expected_error
+        assert response.status_code == 400
+        assert "aFKeajFE" not in ROOMS

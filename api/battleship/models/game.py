@@ -61,23 +61,22 @@ class Game:
         return result
     
     def remove_player(self, user_id):
-        if self.is_player_valid(user_id):
-            player_index = self.players.index(user_id)
-            if player_index == 0:
-                del self.ready[0]
-                self.ready.append(False)
-            else:
-                self.ready[player_index] = False
-            self.players.remove(user_id)
-            return True
-        return False
+        player_index = self.players.index(user_id)
+        if player_index == 1:
+            self.remove_player_ships(user_id)
+            self.ready[1] = False
+        else:
+            existing_board = copy.deepcopy(self.boards[0])
+            existing_board.ships = []
+            del self.boards[0] 
+            self.boards.append(existing_board)
+            del self.ready[0]
+            self.ready.append(False)
+        self.players.remove(user_id)
     
     def remove_player_ships(self, user_id):
-        if self.is_player_valid(user_id):
-            player_index = self.players.index(user_id)
-            self.boards[player_index].ships = []
-            return True
-        return False
+        player_index = self.players.index(user_id)
+        self.boards[player_index].ships = []
 
     def is_player_turn(self, user_id):
         if self.is_player_valid(user_id):

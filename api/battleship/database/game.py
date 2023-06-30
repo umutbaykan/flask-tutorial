@@ -1,6 +1,7 @@
 from . import db
+from .user import get_user_by_id
 from werkzeug.local import LocalProxy
-from flask_pymongo import PyMongo
+from datetime import datetime
 
 from bson.objectid import ObjectId
 
@@ -19,6 +20,7 @@ def create_game(serialized_game):
     """
     Creates the game in the database as an object
     """
+    serialized_game["last_modified"] = datetime.now()
     response = db.games.insert_one(serialized_game)
     return response
 
@@ -31,13 +33,43 @@ def save_game(serialized_game):
         serialized_game.get("who_won"),
     )
     response = db.games.update_one(
-        {"game_id": game_id}, {"$set": {"turn": turn, "boards": boards, "who_won": who_won}}
+        {"game_id": game_id},
+        {"$set": {"turn": turn, "boards": boards, "who_won": who_won, "last_modified": datetime.now()}},
     )
     return response
-    
 
-def load_game(game_id):
-    response = db.games.find_one({"game_id": game_id})
+
+def get_user_game_history(user_id):
+    """
+    Retrieves all the games user has played.
+    """
+    user = get_user_by_id(user_id)
+    game_ids = user["games"]
+    response = db.games.aggregate(
+        [
+            {"$match": {"game_id": {"$in": game_ids}}},
+            {
+                "$addFields": {
+                    "player_ids": {
+                        "$map": {
+                            "input": "$players",
+                            "as": "player",
+                            "in": {"$toObjectId": "$$player"},
+                        }
+                    },
+                },
+            },
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "player_ids",
+                    "foreignField": "_id",
+                    "as": "players_info",
+                    "pipeline": [{"$project": {"_id": 0, "username": 1}}],
+                }
+            },
+            {"$project": {"_id": 0, "boards": 0, "player_ids": 0}},
+            {"$sort": {"last_modified": -1}}
+        ]
+    )
     return response
-        
-

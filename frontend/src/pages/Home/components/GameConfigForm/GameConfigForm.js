@@ -18,18 +18,18 @@ const GameConfigForm = () => {
     size: Yup.number()
       .min(5, "Must be at least 5")
       .max(16, "Must be 16 or less"),
-    Destroyer: Yup.number()
+    destroyer: Yup.number()
       .min(0, "Cant have negative ships")
       .max(5, "Lets not go crazy captain"),
-    Cruiser: Yup.number()
+    cruiser: Yup.number()
       .min(0, "Cant have negative ships")
       .max(5, "Lets not go crazy captain"),
-    Battleship: Yup.number()
+    battleship: Yup.number()
       .min(0, "Cant have negative ships")
       .max(5, "Lets not go crazy captain"),
-    AircraftCarrier: Yup.number()
+    aircraftCarrier: Yup.number()
       .min(0, "Cant have negative ships")
-      .max(5, "Lets not go crazy captain"),
+      .max(5, "Lets not go crazy captain")
   });
 
   const handleSubmit = async (gameconfigs) => {
@@ -50,11 +50,11 @@ const GameConfigForm = () => {
     <>
       <Formik
         initialValues={{
-          size: 10,
+          size: 5,
           destroyer: 1,
-          cruiser: 1,
-          battleship: 1,
-          aircraftCarrier: 1,
+          cruiser: 0,
+          battleship: 0,
+          aircraftCarrier: 0,
           who_started: 0,
         }}
         validationSchema={validate}
@@ -90,7 +90,7 @@ const GameConfigForm = () => {
               <NumberField label="Destroyer" name="destroyer" />
               <NumberField label="Cruiser" name="cruiser" />
               <NumberField label="Battleship" name="battleship" />
-              <NumberField label="Aircraft Carrier" name="aircraftCarrier" />
+              <NumberField label="Aircraft Carrier" name="aircraftCarrier" type="number"/>
               <h3>
                 Who do you want to start? You will be player 1 if you create the
                 game.

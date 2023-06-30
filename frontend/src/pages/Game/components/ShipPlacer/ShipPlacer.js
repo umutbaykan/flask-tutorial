@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import propTypes from "prop-types";
 import { useCookies } from "react-cookie";
 import { GameStateContext } from "../../../../App";
@@ -13,6 +13,7 @@ const ShipPlacer = ({ boardInfo }) => {
   const [gameState] = useContext(GameStateContext);
   const [cookies, ,] = useCookies(["user_id"]);
   const [, setError] = useContext(ErrorContext);
+  const [startClicked, setStartClicked] = useState(false)
 
   const placeShipsRandomly = () => {
     setError("");
@@ -31,6 +32,8 @@ const ShipPlacer = ({ boardInfo }) => {
       socket.emit("ready", {
         room: gameState.game_id,
       });
+      setError("")
+      setStartClicked(true)
     } else {
       setError("You need to place your ships.");
       return;
@@ -41,7 +44,7 @@ const ShipPlacer = ({ boardInfo }) => {
     const index = gameState.players.indexOf(cookies.user_id);
     if (
       gameState.boards[index].ships.length ===
-      Object.keys(gameState.allowed_ships).length
+      Object.values(gameState.allowed_ships).reduce((sum, value) => sum + value, 0)
     ) {
       return true;
     } else {
@@ -49,24 +52,20 @@ const ShipPlacer = ({ boardInfo }) => {
     }
   };
 
-  // This is going to subtract the ships in the game state from the allowed ones to get results
-  const availableShips = gameState.allowed_ships;
+  // TODO
+  // Add a way to display the number of remaining ships in user's allowed ships
+  
 
   return (
     <div>
       <Board boardInfo={boardInfo} action={() => {}} />
-      <div>
-        <h1>Allowed Ships</h1>
-        <ul>
-          {Object.entries(availableShips).map(([ship, quantity]) => (
-            <ul key={ship}>
-              {ship} - {quantity}
-            </ul>
-          ))}
-        </ul>
-      </div>
+      {startClicked ?
+      <h3>Waiting for opponent.</h3> :
+      <>
       <button onClick={placeShipsRandomly}>Randomize!</button>
       <button onClick={setReady}>Start game!</button>
+      </>
+      }
     </div>
   );
 };

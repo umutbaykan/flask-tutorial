@@ -11,9 +11,9 @@ from flask import (
 import json
 from bson import json_util, ObjectId
 from .database.game import *
-from .database.user import get_user_by_id
+from .database.user import get_user_by_id, add_game_to_user_history
 from .routes.auth import login_required
-from .utils.helpers import generate_unique_code
+from .utils.helpers import generate_unique_code, list_all_available_rooms
 from flask_socketio import join_room, leave_room, send, SocketIO
 
 bp = Blueprint("response", __name__, url_prefix="/")
@@ -21,8 +21,8 @@ bp = Blueprint("response", __name__, url_prefix="/")
 
 @bp.route("/callme", methods=["GET"])
 def call():
-    data = get_game_by_game_id("aFKeajFE")
-    return data
+    result = get_user_game_history("649ec5fba941b7cb2d61d9d8")
+    return make_response(list(result), 200)
 
 
 @bp.route("/whereami")

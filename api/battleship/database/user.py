@@ -15,11 +15,11 @@ def get_user_by_username(name):
     return response
 
 
-def get_user_by_id(id):
+def get_user_by_id(user_id):
     """
     Returns the user with the ID
     """
-    response = db.users.find_one({"_id": ObjectId(id)})
+    response = db.users.find_one({"_id": ObjectId(user_id)})
     return response
 
 
@@ -31,5 +31,13 @@ def register_user(username, password):
     if existing_user:
         raise ValueError("Username already exists")
     else:
-        result = db.users.insert_one({"username": username, "password": password})
+        result = db.users.insert_one({"username": username, "password": password, "games":[]})
         return str(result.inserted_id)
+
+
+def add_game_to_user_history(user_id, game_id):
+    """
+    Registers a game_id in user's games. Only invoked if the game has already started.
+    """
+    response = db.users.find_one_and_update({"_id": ObjectId(user_id)}, {'$addToSet': {'games': game_id}})
+    return response

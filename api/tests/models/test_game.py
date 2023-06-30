@@ -174,24 +174,19 @@ class TestIfPlayersCanBeAddedToGame:
         assert game.add_player("player_1") == {"error": "You are already in this game."}
 
 
-class TestIfPlayersCanBeRemovedFromGame:
+class TestIfPlayersCanBeRemovedFromGame(FakeBoards):
     def test_removing_existing_player_1(self):
-        game = Game(players=["player_1", "player_2"])
-        assert game.remove_player("player_1") == True
+        game = Game(players=["player_1", "player_2"], boards=[self.live_board_1, self.live_board_2])
+        game.remove_player("player_1")
         assert game.players == ["player_2"]
 
     def test_removing_existing_player_2(self):
-        game = Game(players=["player_1", "player_2"])
-        assert game.remove_player("player_2") == True
+        game = Game(players=["player_1", "player_2"], boards=[self.live_board_1, self.live_board_2])
+        game.remove_player("player_2")
         assert game.players == ["player_1"]
 
-    def test_removing_a_player_not_in_the_game(self):
-        game = Game(players=["player_1", "player_2"])
-        assert game.remove_player("player_3") == False
-        assert game.players == ["player_1", "player_2"]
-
     def test_removing_both_players(self):
-        game = Game(players=["player_1", "player_2"])
+        game = Game(players=["player_1", "player_2"], boards=[self.live_board_1, self.live_board_2])
         game.remove_player("player_1")
         game.remove_player("player_2")
         assert game.players == []
@@ -250,6 +245,25 @@ class TestIfGameIsReady:
         assert game.ready == [False, False]
         assert game.is_ready() == False
 
+    def test_is_ready(self):
+        game = Game(ready=[True, True])
+        assert game.is_ready() == True
+        assert game.ready == True
+
+    @pytest.mark.parametrize("ready, player_to_remove, expected", [
+    ([False, False], "player_2", [False, False]),
+    ([True, False], "player_1", [False, False]),
+    ([False, True], "player_2", [False, False]),
+    ([False, True], "player_1", [True, False])
+    ])
+    def test_player_removal(self, ready, player_to_remove, expected):
+        b1, b2 = Board(), Board()
+        game = Game(players=["player_1", "player_2"], boards=[b1, b2], ready=ready)
+        game.remove_player(player_to_remove)
+        assert game.ready == expected
+
+
+class TestSetReady:
     @pytest.mark.parametrize("player_to_ready, expected", [
         ("player_1", [True, False]),
         ("player_2", [False, True])
@@ -259,37 +273,21 @@ class TestIfGameIsReady:
         game.set_ready(player_to_ready)
         assert game.ready == expected
 
-    @pytest.mark.parametrize("ready, player_to_remove, expected", [
-        ([False, False], "player_2", [False, False]),
-        ([True, False], "player_1", [False, False]),
-        ([False, True], "player_2", [False, False]),
-        ([False, True], "player_1", [True, False])
-    ])
-    def test_player_removal(self, ready, player_to_remove, expected):
-        game = Game(players=["player_1", "player_2"], ready=ready)
-        game.remove_player(player_to_remove)
-        assert game.ready == expected
 
-    def test_is_ready(self):
-        game = Game(ready=[True, True])
-        assert game.is_ready() == True
-        assert game.ready == True
-
-
-@pytest.mark.parametrize(
-    "game, read_json",
-    [("game_simple_configs", "ship_placement_single_small")],
-    indirect=["game", "read_json"],
-)
-def test_setting_winner_with_actual_objects(game, read_json):
-    parsed_ships = Game._validate_ship_json(read_json)
-    game.players = ["player_1", "player_2"]
-    p1_id, p2_id = game.players[0], game.players[1]
-    game.place_ships(p1_id, parsed_ships), game.place_ships(p2_id, parsed_ships)
-    game.fire([2, 3]), game.fire([2, 3])
-    assert game.who_won == None
-    game.fire([2, 4])
-    assert game.who_won == "player_2"
+    @pytest.mark.parametrize(
+        "game, read_json",
+        [("game_simple_configs", "ship_placement_single_small")],
+        indirect=["game", "read_json"],
+    )
+    def test_setting_winner_with_actual_objects(self, game, read_json):
+        parsed_ships = Game._validate_ship_json(read_json)
+        game.players = ["player_1", "player_2"]
+        p1_id, p2_id = game.players[0], game.players[1]
+        game.place_ships(p1_id, parsed_ships), game.place_ships(p2_id, parsed_ships)
+        game.fire([2, 3]), game.fire([2, 3])
+        assert game.who_won == None
+        game.fire([2, 4])
+        assert game.who_won == "player_2"
 
 
 class TestValidators:

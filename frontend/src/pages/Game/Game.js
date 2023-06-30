@@ -12,6 +12,8 @@ import ShipPlacer from "./components/ShipPlacer/ShipPlacer";
 import Board from "./components/Board/Board";
 import GameEnd from "./components/GameEnd/GameEnd";
 
+import { whoseTurnIsIt } from "../../utils/turn";
+
 const Game = () => {
   const { pathname } = useLocation();
   const [game_id] = useState(pathname.substring(pathname.lastIndexOf("/") + 1));
@@ -56,16 +58,6 @@ const Game = () => {
       });
   };
 
-  const whoseTurnIsIt = (gameState) => {
-    return (gameState.players.indexOf(cookies.user_id) +
-      gameState.turn +
-      gameState.who_started) %
-      2 ===
-      0
-      ? "Your"
-      : "Opponent";
-  };
-
   const didIwin = () => {
     return gameState.who_won === cookies.user_id ? true : false;
   };
@@ -87,7 +79,7 @@ const Game = () => {
           </>
         ) : (
           <>
-            <h3>{whoseTurnIsIt(gameState)} turn.</h3>
+            <h3>{whoseTurnIsIt(gameState, cookies.user_id)} turn.</h3>
             <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
             <Board boardInfo={findBoardInfo("Opponent")} action={fire} />
           </>

@@ -1,6 +1,7 @@
 from flask_socketio import emit
 from flask import session, request
 from ..models.game import Game
+from ..database.user import add_game_to_user_history
 from ..utils.extensions import socketio
 from ..utils.helpers import validate_user_and_game, save_game_state
 
@@ -53,12 +54,12 @@ def on_ready(data):
     game = validate_user_and_game(room)
     if not game:
         return
-    
+
     game.set_ready(user_id)
     if game.is_ready():
+        [add_game_to_user_history(user, room) for user in game.players]
+        save_game_state(Game.serialize(game))
         hide_and_emit_boards(room, game)
-
-    emit("error", {"error": "Waiting for your opponent to start."}, to=request.sid)
 
 
 def hide_and_emit_boards(room, game):

@@ -1,6 +1,7 @@
 from flask_socketio import emit, join_room, leave_room, close_room
 from flask import session, request
 from ..models.game import Game
+from .game import hide_and_emit_boards
 from ..utils.extensions import socketio
 from ..utils.room_object import PLAYERS, ROOMS
 from ..utils.helpers import (
@@ -30,10 +31,7 @@ def on_join(room):
     if not game:
         return
     join_room(room)
-    masked_game_info = Game.hide_board_info(
-        Game.serialize(game), session.get("user_id"), opponent=True
-    )
-    emit("update", {"game": masked_game_info}, to=request.sid)
+    hide_and_emit_boards(room, game)
     emit("user_joined", {"room": room, "username": username}, to=room)
     emit("current_games", list_all_available_rooms(), broadcast=True)
 
@@ -41,18 +39,28 @@ def on_join(room):
 @socketio.on("leave")
 def on_leave(room):
     username = session.get("username")
+    user_id = session.get("user_id")
     game = validate_user_and_game(room)
     if not game:
         return
     leave_room(room)
     emit("user_left", {"room": room, "username": username}, to=room)
-    if game.who_won:
+
+    if game.who_won or game.ready == True:
+        if not game.who_won:
+            emit(
+                "chat_update",
+                {
+                    "username": "Server",
+                    "message": "Your opponent has left an unfinished game. You can load this game later. Closing room now.",
+                },
+                to=room,
+            )
         save_game_state(Game.serialize(game))
         del ROOMS[room]
         close_room(room)
     else:
-        game.remove_player_ships(session.get("user_id"))
-        game.remove_player(session.get("user_id"))
+        game.remove_player(user_id)
         if game.players == []:
             del ROOMS[room]
             close_room(room)

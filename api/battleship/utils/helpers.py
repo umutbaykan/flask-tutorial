@@ -2,7 +2,7 @@ import random
 import string
 from flask import session
 from .room_object import ROOMS
-from ..database.game import get_game_by_game_id, create_game, save_game, load_game
+from ..database.game import get_game_by_game_id, create_game, save_game
 from ..database.user import get_user_by_id
 
 def generate_unique_code():
@@ -63,11 +63,15 @@ def validate_user_and_game(room):
 
 def save_game_state(serialized_game):
     game = get_game_by_game_id(serialized_game.get("game_id"))
-    response = None
     if game is None:
         create_game(serialized_game)
-        response = "Game created in database."
     else:
         save_game(serialized_game)
-        response = "Game state updated."
-    return response
+
+
+def list_load_games(user_id):
+    available_games = {}
+    for game_id, game in ROOMS.items():
+        if user_id in game.players:
+            available_games[game_id] = {"game_id": game.game_id, "who_started": game.who_started, "turn": game.turn}
+    return available_games
