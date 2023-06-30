@@ -55,7 +55,7 @@ const GameConfigForm = () => {
           cruiser: 0,
           battleship: 0,
           aircraftCarrier: 0,
-          who_started: 1,
+          who_started: 0,
         }}
         validationSchema={validate}
         onSubmit={(values) => {
