@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 
 import JoinGameButton from "../JoinGameButton/JoinGameButton";
+import AllowedShipDisplayer from "../../../../components/AllowedShipDisplayer/AllowedShipDisplayer";
 
 import { LobbyContext } from "../../../../App";
 
@@ -13,7 +14,9 @@ export const CurrentGames = () => {
       {Object.keys(currentGames).map((key) => (
         <div key={key}>
           <JoinGameButton game_id={key} load={false} />
-          <p>{currentGames[key].gamestate}</p>
+          <p>Host: {currentGames[key].players}</p>
+          <p>Player {currentGames[key].who_started + 1} starts</p>
+          <AllowedShipDisplayer allowedShips={currentGames[key].allowed_ships}/>
         </div>
       ))}
       <br></br>

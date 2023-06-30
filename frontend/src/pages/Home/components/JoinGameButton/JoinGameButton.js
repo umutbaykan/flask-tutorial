@@ -23,7 +23,7 @@ export const JoinGameButton = ({ game_id, load }) => {
   return (
     <>
       <button key={game_id} onClick={handleJoin}>
-        {game_id}
+        Join!
       </button>
       <p>{error}</p>
     </>

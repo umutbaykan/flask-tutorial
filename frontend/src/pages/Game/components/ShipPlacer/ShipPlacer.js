@@ -52,22 +52,13 @@ const ShipPlacer = ({ boardInfo }) => {
     }
   };
 
-  // This is going to subtract the ships in the game state from the allowed ones to get results
-  const availableShips = gameState.allowed_ships;
+  // TODO
+  // Add a way to display the number of remaining ships in user's allowed ships
+  
 
   return (
     <div>
       <Board boardInfo={boardInfo} action={() => {}} />
-      <div>
-        <h1>Allowed Ships</h1>
-        <ul>
-          {Object.entries(availableShips).map(([ship, quantity]) => (
-            <ul key={ship}>
-              {ship} - {quantity}
-            </ul>
-          ))}
-        </ul>
-      </div>
       {startClicked ?
       <h3>Waiting for opponent.</h3> :
       <>
