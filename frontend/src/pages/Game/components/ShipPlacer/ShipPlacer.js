@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import propTypes from "prop-types";
 import { useCookies } from "react-cookie";
 import { GameStateContext } from "../../../../App";
@@ -13,6 +13,7 @@ const ShipPlacer = ({ boardInfo }) => {
   const [gameState] = useContext(GameStateContext);
   const [cookies, ,] = useCookies(["user_id"]);
   const [, setError] = useContext(ErrorContext);
+  const [startClicked, setStartClicked] = useState(false)
 
   const placeShipsRandomly = () => {
     setError("");
@@ -31,6 +32,8 @@ const ShipPlacer = ({ boardInfo }) => {
       socket.emit("ready", {
         room: gameState.game_id,
       });
+      setError("")
+      setStartClicked(true)
     } else {
       setError("You need to place your ships.");
       return;
@@ -65,8 +68,13 @@ const ShipPlacer = ({ boardInfo }) => {
           ))}
         </ul>
       </div>
+      {startClicked ?
+      <h3>Waiting for opponent.</h3> :
+      <>
       <button onClick={placeShipsRandomly}>Randomize!</button>
       <button onClick={setReady}>Start game!</button>
+      </>
+      }
     </div>
   );
 };

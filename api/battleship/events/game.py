@@ -60,8 +60,6 @@ def on_ready(data):
         [add_game_to_user_history(user, room) for user in game.players]
         hide_and_emit_boards(room, game)
 
-    emit("error", {"error": "Waiting for your opponent to start."}, to=request.sid)
-
 
 def hide_and_emit_boards(room, game):
     masked_opponent_board = Game.hide_board_info(
