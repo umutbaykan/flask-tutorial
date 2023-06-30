@@ -34,9 +34,16 @@ def test_user_already_registered(app_context):
     assert error_message == "Username already exists"
 
 
-def test_adding_game_to_user_history(app_context):
+def test_adding_unique_game_to_user_history(app_context):
+    user = get_user_by_username("admiral_1")
+    add_game_to_user_history(user["_id"], "manual_game_id")
+    user = get_user_by_username("admiral_1")
+    assert user["games"] == ["manual_game_id"]
+
+
+def test_adding_same_game_twice_user_history(app_context):
     user = get_user_by_username("admiral_1")
     for _ in range(2):
         add_game_to_user_history(user["_id"], "manual_game_id")
     user = get_user_by_username("admiral_1")
-    assert user["games"] == ["manual_game_id", "manual_game_id"]
+    assert user["games"] == ["manual_game_id"]

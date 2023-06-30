@@ -41,23 +41,19 @@ def on_join(room):
 @socketio.on("leave")
 def on_leave(room):
     username = session.get("username")
+    user_id =  session.get("user_id")
     game = validate_user_and_game(room)
     if not game:
         return
     leave_room(room)
     emit("user_left", {"room": room, "username": username}, to=room)
-    # If user leaves a started game, game_id is added to their games.
-    if game.ready:
-        pass
-    # If the user leaves a finished game, game_state gets saved.
     if game.who_won:
         save_game_state(Game.serialize(game))
         del ROOMS[room]
         close_room(room)
-    # If the user leaves a non-started game, nothing in the DB gets invoked
     else:
-        game.remove_player_ships(session.get("user_id"))
-        game.remove_player(session.get("user_id"))
+        game.remove_player_ships(user_id)
+        game.remove_player(user_id)
         if game.players == []:
             del ROOMS[room]
             close_room(room)

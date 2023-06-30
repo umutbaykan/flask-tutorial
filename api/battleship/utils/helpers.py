@@ -63,11 +63,7 @@ def validate_user_and_game(room):
 
 def save_game_state(serialized_game):
     game = get_game_by_game_id(serialized_game.get("game_id"))
-    response = None
     if game is None:
         create_game(serialized_game)
-        response = "Game created in database."
     else:
         save_game(serialized_game)
-        response = "Game state updated."
-    return response
