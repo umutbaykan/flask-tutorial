@@ -54,7 +54,7 @@ def on_ready(data):
     game = validate_user_and_game(room)
     if not game:
         return
-    
+
     game.set_ready(user_id)
     if game.is_ready():
         [add_game_to_user_history(user, room) for user in game.players]

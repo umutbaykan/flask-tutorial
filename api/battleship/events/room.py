@@ -39,18 +39,27 @@ def on_join(room):
 @socketio.on("leave")
 def on_leave(room):
     username = session.get("username")
-    user_id =  session.get("user_id")
+    user_id = session.get("user_id")
     game = validate_user_and_game(room)
     if not game:
         return
     leave_room(room)
     emit("user_left", {"room": room, "username": username}, to=room)
-    if game.who_won:
+
+    if game.who_won or game.ready == True:
+        if not game.who_won:
+            emit(
+                "chat_update",
+                {
+                    "username": "Server",
+                    "message": "Your opponent has left an unfinished game. You can load this game later. Closing room now.",
+                },
+                to=room,
+            )
         save_game_state(Game.serialize(game))
         del ROOMS[room]
         close_room(room)
     else:
-        # game.remove_player_ships(user_id)
         game.remove_player(user_id)
         if game.players == []:
             del ROOMS[room]

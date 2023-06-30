@@ -44,7 +44,7 @@ const ShipPlacer = ({ boardInfo }) => {
     const index = gameState.players.indexOf(cookies.user_id);
     if (
       gameState.boards[index].ships.length ===
-      Object.keys(gameState.allowed_ships).length
+      Object.values(gameState.allowed_ships).reduce((sum, value) => sum + value, 0)
     ) {
       return true;
     } else {
