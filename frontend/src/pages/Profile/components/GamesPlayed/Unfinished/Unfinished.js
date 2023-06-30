@@ -2,6 +2,7 @@ import React from "react";
 import "../GamesPlayed.css";
 import propTypes from "prop-types";
 import { useCookies } from "react-cookie";
+import JoinGameButton from "../../../../Home/components/JoinGameButton/JoinGameButton";
 
 import { whoseTurnIsIt } from "../../../../../utils/turn";
 
@@ -28,7 +29,7 @@ const Unfinished = ({ game }) => {
       ))}
       <p>{whoseTurnIsIt(game, cookies.user_id)} plays next.</p>
       <p>Unfinished game</p>
-      <button onClick={console.log("one day")}>Load</button>
+      <JoinGameButton game_id={game_id} load={true} />
     </div>
   );
 };

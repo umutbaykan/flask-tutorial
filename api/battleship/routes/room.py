@@ -59,7 +59,7 @@ def load_game():
     if player not in game["players"]:
         return make_response({"error": "You are not a player in this game."}, 400)
 
-    ROOMS[room] = game
+    ROOMS[room] = Game.deserialize(game)
     return {}, 200
 
 
