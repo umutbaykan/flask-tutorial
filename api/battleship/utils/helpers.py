@@ -2,7 +2,7 @@ import random
 import string
 from flask import session
 from .room_object import ROOMS
-from ..database.game import get_game_by_game_id, create_game, save_game, load_game
+from ..database.game import get_game_by_game_id, create_game, save_game
 from ..database.user import get_user_by_id
 
 def generate_unique_code():

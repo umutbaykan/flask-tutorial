@@ -34,10 +34,4 @@ def save_game(serialized_game):
         {"game_id": game_id}, {"$set": {"turn": turn, "boards": boards, "who_won": who_won}}
     )
     return response
-    
-
-def load_game(game_id):
-    response = db.games.find_one({"game_id": game_id})
-    return response
-        
 

@@ -10,6 +10,7 @@ def test_create_game(app_context):
 def test_get_game_by_game_id(app_context):
     result = get_game_by_game_id("aFKeajFE")
     assert result["game_id"] == "aFKeajFE"
+    assert result["boards"] == state_1["boards"]
 
 
 def test_if_game_id_does_not_exist(app_context):
@@ -30,9 +31,3 @@ def test_save_game_on_nonexistent_game(app_context):
     save_game(state_2)
     result = get_game_by_game_id("jDKwRo12")
     assert result is None
-
-
-def test_load_game(app_context):
-    result = load_game("aFKeajFE")
-    assert result["game_id"] == state_1["game_id"]
-    assert result["boards"] == state_1["boards"]

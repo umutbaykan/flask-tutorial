@@ -5,14 +5,13 @@ import { joinRoom } from "../../../../services/room";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../../../socket";
 
-export const JoinGameButton = ({ game_id }) => {
-  JoinGameButton.propTypes = { game_id: propTypes.string };
-
+export const JoinGameButton = ({ game_id, load }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
   const handleJoin = async () => {
-    const result = await joinRoom(game_id);
+    let result;
+    load ? result = {success: true} : result = await joinRoom(game_id);
     if (result.success) {
       socket.emit("join", game_id);
       navigate(`/game/${game_id}`);
@@ -30,5 +29,7 @@ export const JoinGameButton = ({ game_id }) => {
     </>
   );
 };
+
+JoinGameButton.propTypes = { game_id: propTypes.string, load: propTypes.bool };
 
 export default JoinGameButton;

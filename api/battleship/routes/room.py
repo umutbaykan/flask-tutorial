@@ -5,6 +5,7 @@ from ..utils.extensions import socketio
 from ..utils.room_object import ROOMS
 from ..utils.helpers import *
 from ..models.game import Game
+from ..database.game import get_game_by_game_id
 
 bp = Blueprint("room", __name__, url_prefix="/room")
 
@@ -32,7 +33,6 @@ def create_room():
 @login_required
 def join_room():
     """
-    Sets the room in session object to the room_id received from request
     Adds the joinng player to the game object
     Returns an error if the game state has two players already
     """
@@ -45,8 +45,22 @@ def join_room():
     
 
 @bp.route("/load", methods=["POST"])
+@login_required
 def load_game():
-    pass
+    room = request.json["room"]
+    player = session.get("user_id")
+    game = get_game_by_game_id(room)
+    if not game:
+        return make_response({"error": "No such game to load."}, 400)
+    
+    if room in ROOMS:
+        return make_response({"error": "Game is already ongoing."}, 400)
+    
+    if player not in game["players"]:
+        return make_response({"error": "You are not a player in this game."}, 400)
+
+    ROOMS[room] = game
+    return {}, 200
 
 
 ### Development methods - To be removed later
