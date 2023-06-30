@@ -14,6 +14,7 @@ class Game:
         turn=1,
         ready=None,
         who_won=None,
+        last_modified=None
     ):
         self.game_id = game_id
         self.players = players if players is not None else []
@@ -23,6 +24,7 @@ class Game:
         self.who_started = who_started
         self.allowed_ships = allowed_ships if allowed_ships is not None else {}
         self.who_won = who_won
+        self.last_modified = last_modified
         
     def place_ships(self, user_id, ships_array):
         player_index = self.players.index(user_id)
@@ -119,12 +121,6 @@ class Game:
         return False
 
     @staticmethod
-    def _validate_firing_coordinates_json(fire_dict):
-        if fire_dict.get("coordinates") and fire_dict.get("user_id"):
-            return fire_dict
-        return False
-
-    @staticmethod
     def _validate_configurations(configs):
         # Throw an error if configs are corrupted, otherwise return as dictionary
         return configs
@@ -176,6 +172,7 @@ class Game:
             "who_started": game.who_started,
             "allowed_ships": game.allowed_ships,
             "who_won": game.who_won,
+            "last_modified": game.last_modified
         }
         return data
 
@@ -192,6 +189,7 @@ class Game:
         who_started = game_state.get("who_started", 1)
         allowed_ships = game_state.get("allowed_ships", {})
         who_won = game_state.get("who_won")
+        last_modified = game_state.get("last_modified")
         return Game(
             boards=board_objects,
             game_id=game_id,
@@ -201,4 +199,5 @@ class Game:
             who_started=who_started,
             allowed_ships=allowed_ships,
             who_won=who_won,
+            last_modified=last_modified
         )
