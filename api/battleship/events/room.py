@@ -1,6 +1,7 @@
 from flask_socketio import emit, join_room, leave_room, close_room
 from flask import session, request
 from ..models.game import Game
+from .game import hide_and_emit_boards
 from ..utils.extensions import socketio
 from ..utils.room_object import PLAYERS, ROOMS
 from ..utils.helpers import (
@@ -30,10 +31,7 @@ def on_join(room):
     if not game:
         return
     join_room(room)
-    masked_game_info = Game.hide_board_info(
-        Game.serialize(game), session.get("user_id"), opponent=True
-    )
-    emit("update", {"game": masked_game_info}, to=request.sid)
+    hide_and_emit_boards(room, game)
     emit("user_joined", {"room": room, "username": username}, to=room)
     emit("current_games", list_all_available_rooms(), broadcast=True)
 
@@ -52,7 +50,7 @@ def on_leave(room):
         del ROOMS[room]
         close_room(room)
     else:
-        game.remove_player_ships(user_id)
+        # game.remove_player_ships(user_id)
         game.remove_player(user_id)
         if game.players == []:
             del ROOMS[room]
