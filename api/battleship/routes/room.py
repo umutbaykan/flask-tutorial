@@ -5,7 +5,7 @@ from ..utils.extensions import socketio
 from ..utils.room_object import ROOMS
 from ..utils.helpers import *
 from ..models.game import Game
-from ..database.game import get_game_by_game_id
+from ..database.game import get_game_by_game_id, get_user_game_history
 
 bp = Blueprint("room", __name__, url_prefix="/room")
 
@@ -61,6 +61,14 @@ def load_game():
 
     ROOMS[room] = game
     return {}, 200
+
+
+@bp.route("/load_history")
+@login_required
+def load_game_history():
+    player = session.get("user_id")
+    result = get_user_game_history(player)
+    return make_response(list(result), 200)
 
 
 ### Development methods - To be removed later

@@ -19,7 +19,6 @@ export const CurrentGames = () => {
           <AllowedShipDisplayer allowedShips={currentGames[key].allowed_ships}/>
         </div>
       ))}
-      <br></br>
     </>
   );
 };
