@@ -46,10 +46,15 @@ def on_leave(room):
         return
     leave_room(room)
     emit("user_left", {"room": room, "username": username}, to=room)
+    # If user leaves a started game, game_id is added to their games.
+    if game.ready:
+        pass
+    # If the user leaves a finished game, game_state gets saved.
     if game.who_won:
         save_game_state(Game.serialize(game))
         del ROOMS[room]
         close_room(room)
+    # If the user leaves a non-started game, nothing in the DB gets invoked
     else:
         game.remove_player_ships(session.get("user_id"))
         game.remove_player(session.get("user_id"))

@@ -33,3 +33,11 @@ def register_user(username, password):
     else:
         result = db.users.insert_one({"username": username, "password": password})
         return str(result.inserted_id)
+
+
+def add_game_to_user_history(user_id, game_id):
+    """
+    Registers a game_id in user's games. Only invoked if the game has already started.
+    """
+    response = db.users.find_one_and_update({'_id': user_id}, {'$push': {'games': game_id}})
+    return response
