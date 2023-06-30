@@ -94,16 +94,3 @@ def test_loading_games_unsuccessfully(client, auth, room, expected_error):
         assert response.json == expected_error
         assert response.status_code == 400
         assert "aFKeajFE" not in ROOMS
-
-
-def test_loading_an_ongoing_game(client, auth, app_context):
-    with client:
-        game = db.games.find_one({})
-        ROOMS[game["game_id"]] = game
-        auth.login()
-        response = client.post(
-            "/room/load", data=json.dumps({"room": game["game_id"]}), content_type="application/json"
-        )
-        assert response.json == {"error": "Game is already ongoing."}
-        assert response.status_code == 400
-        assert game["game_id"] in ROOMS

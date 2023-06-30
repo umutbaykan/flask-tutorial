@@ -53,14 +53,18 @@ def load_game():
     if not game:
         return make_response({"error": "No such game to load."}, 400)
     
-    if room in ROOMS:
-        return make_response({"error": "Game is already ongoing."}, 400)
-    
     if player not in game["players"]:
         return make_response({"error": "You are not a player in this game."}, 400)
 
     ROOMS[room] = Game.deserialize(game)
     return {}, 200
+
+
+@bp.route("/load_check", methods=["GET"])
+@login_required
+def load_check():
+    player = session.get("user_id")
+    return make_response(list_load_games(player), 200)
 
 
 @bp.route("/load_history")

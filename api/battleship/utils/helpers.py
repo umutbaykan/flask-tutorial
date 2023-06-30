@@ -67,3 +67,11 @@ def save_game_state(serialized_game):
         create_game(serialized_game)
     else:
         save_game(serialized_game)
+
+
+def list_load_games(user_id):
+    available_games = {}
+    for game_id, game in ROOMS.items():
+        if user_id in game.players:
+            available_games[game_id] = {"game_id": game.game_id, "who_started": game.who_started, "turn": game.turn}
+    return available_games

@@ -5,3 +5,10 @@ export const getHistory = () => {
       .then((response) => response.json())
   };
   
+  export const loadCheck = () => {
+    return fetch(`/room/load_check`, {
+      method: "get",
+    })
+      .then((response) => response.json())
+  };
+  

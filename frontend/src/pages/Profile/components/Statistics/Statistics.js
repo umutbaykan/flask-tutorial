@@ -19,7 +19,7 @@ const Statistics = ({ gamesHistory }) => {
     }
   });
   const total = wins + loss + unfinished;
-  const winRatio = `${(wins / (total - unfinished)) * 100}%`
+  const winRatio = `${Math.round((wins / (total - unfinished)) * 100)}%`;
 
   return (
     <div className="statistics-container">
