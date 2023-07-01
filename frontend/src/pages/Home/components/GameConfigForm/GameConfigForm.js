@@ -8,11 +8,10 @@ import { socket } from "../../../../socket";
 import { createRoom } from "../../../../services/room";
 import { LoggedInContext } from "../../../../App";
 
-
 const GameConfigForm = () => {
-    const [loggedIn] = useContext(LoggedInContext);
-    const navigate = useNavigate();
-    const [error, setError] = useState("");
+  const [loggedIn] = useContext(LoggedInContext);
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const validate = Yup.object({
     size: Yup.number()
@@ -29,15 +28,14 @@ const GameConfigForm = () => {
       .max(5, "Lets not go crazy captain"),
     aircraftCarrier: Yup.number()
       .min(0, "Cant have negative ships")
-      .max(5, "Lets not go crazy captain")
+      .max(5, "Lets not go crazy captain"),
   });
 
   const handleSubmit = async (gameconfigs) => {
     if (!loggedIn) {
       navigate("/login");
     }
-    const result = await createRoom(gameconfigs
-      );
+    const result = await createRoom(gameconfigs);
     if (result.room) {
       socket.emit("join", result.room);
       navigate(`/game/${result.room}`);
@@ -50,11 +48,11 @@ const GameConfigForm = () => {
     <>
       <Formik
         initialValues={{
-          size: 5,
+          size: 10,
           destroyer: 1,
-          cruiser: 0,
-          battleship: 0,
-          aircraftCarrier: 0,
+          cruiser: 1,
+          battleship: 1,
+          aircraftCarrier: 1,
           who_started: 0,
         }}
         validationSchema={validate}
@@ -70,10 +68,10 @@ const GameConfigForm = () => {
           const formattedValues = {
             size,
             ships: [
-              {Destroyer: destroyer},
-              {Cruiser: cruiser},
-              {Battleship: battleship},
-              {AircraftCarrier: aircraftCarrier},
+              { Destroyer: destroyer },
+              { Cruiser: cruiser },
+              { Battleship: battleship },
+              { AircraftCarrier: aircraftCarrier },
             ],
             who_started: parseInt(who_started),
           };
@@ -90,7 +88,11 @@ const GameConfigForm = () => {
               <NumberField label="Destroyer" name="destroyer" />
               <NumberField label="Cruiser" name="cruiser" />
               <NumberField label="Battleship" name="battleship" />
-              <NumberField label="Aircraft Carrier" name="aircraftCarrier" type="number"/>
+              <NumberField
+                label="Aircraft Carrier"
+                name="aircraftCarrier"
+                type="number"
+              />
               <h3>
                 Who do you want to start? You will be player 1 if you create the
                 game.

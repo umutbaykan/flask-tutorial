@@ -1,9 +1,11 @@
 :root {
   --primary-color: #2C394B;
   --dark-color: #082032;
+  --light-color:  #36465d;
   --text-color: #ffffffe1;
   --error-color: #FF4C29;
   --accent-color: #67F362;
+  --accent-color-hover: #3ac435;
 }
 
 body {
@@ -16,9 +18,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* * {
-  color: #ffffffe1;
-} */
+h4 {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.error {
+  color: var(--error-color);
+}
+
+.small-text {
+  font-size: 12px;
+  margin: 3px;
+  font-weight: bold;
+}
+
+ul {
+  padding-left: 5px;
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

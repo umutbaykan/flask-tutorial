@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./JoinGameButton.css"
 import propTypes from "prop-types";
 
 import { joinRoom } from "../../services/room";
@@ -23,10 +24,10 @@ export const JoinGameButton = ({ game_id, load }) => {
 
   return (
     <>
-      <button key={game_id} onClick={handleJoin}>
+      <button className="button-join" key={game_id} onClick={handleJoin}>
         Join!
       </button>
-      <p>{error}</p>
+      <p className="small-text error">{error}</p>
     </>
   );
 };

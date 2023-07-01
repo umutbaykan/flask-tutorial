@@ -9,17 +9,24 @@ export const CurrentGames = () => {
   const currentGames = useContext(LobbyContext);
 
   return (
-    <>
-      <h3>Current available games:</h3>
+    <div className="container-home lobby">
+      <h4>Welcome to Battleships</h4>
+      <p>Open games are displayed here in the lobby. Join them as you like!</p>
+      {Object.keys(currentGames).length === 0 && (
+        <p className="error small-text">Sorry, looks like there are no open games at the moment.</p>
+      )}
       {Object.keys(currentGames).map((key) => (
-        <div key={key}>
+        <div className="container-home game" key={key}>
+          <p className="small-text">Host: {currentGames[key].players}</p>
+          <p className="small-text">Board Size: {currentGames[key].size}</p>
+          <p className='small-text'>Ships:</p>
+          <AllowedShipDisplayer
+            allowedShips={currentGames[key].allowed_ships}
+          />
           <JoinGameButton game_id={key} load={false} />
-          <p>Host: {currentGames[key].players}</p>
-          <p>Player {currentGames[key].who_started + 1} starts</p>
-          <AllowedShipDisplayer allowedShips={currentGames[key].allowed_ships}/>
         </div>
       ))}
-    </>
+    </div>
   );
 };
 
