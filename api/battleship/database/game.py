@@ -20,7 +20,6 @@ def create_game(serialized_game):
     """
     Creates the game in the database as an object
     """
-    serialized_game["last_modified"] = datetime.now()
     response = db.games.insert_one(serialized_game)
     return response
 

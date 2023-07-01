@@ -85,6 +85,7 @@ state_2 = {
             "who_started": 1,
             "allowed_ships": {"Cruiser": 1, "Destroyer": 1},
             "who_won": None,
+            "last_modified": "2023-06-30 21:43"
         }
 
 state_3 = {
@@ -129,4 +130,5 @@ state_3 = {
             "who_started": 2,
             "allowed_ships": {"Cruiser": 1, "Destroyer": 1},
             "who_won": "player_2",
+            "last_modified": "2023-06-30 21:43"
         }

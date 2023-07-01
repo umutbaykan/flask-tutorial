@@ -1,6 +1,7 @@
 import pytest
 import os
 import json
+from datetime import datetime
 from battleship.models.game import *
 from unittest.mock import Mock
 from unittest import TestCase
@@ -388,7 +389,8 @@ class TestSerializations:
             json_data_2 = json.load(file)
             board_2 = Board.deserialize(json_data_2)
 
-        game = Game(game_id="aFKeajFE", last_modified="2023-06-30 21:43")
+        time = datetime.strptime("2023-06-30 21:43", "%Y-%m-%d %H:%M")
+        game = Game(game_id="aFKeajFE", last_modified=time)
         game.players = ["player_1", "player_2"]
         game.boards = [board_1, board_2]
         game.turn = 7
