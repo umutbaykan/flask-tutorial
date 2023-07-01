@@ -2,7 +2,7 @@ import React from "react";
 import "../GamesPlayed.css";
 import propTypes from "prop-types";
 import { useCookies } from "react-cookie";
-import JoinGameButton from "../../../../Home/components/JoinGameButton/JoinGameButton";
+import JoinGameButton from "../../../../../components/JoinGameButton/JoinGameButton";
 
 import { whoseTurnIsIt } from "../../../../../utils/turn";
 

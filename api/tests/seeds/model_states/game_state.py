@@ -40,6 +40,7 @@ state_1 = {
             "who_started": 1,
             "allowed_ships": {"Cruiser": 1, "Destroyer": 1},
             "who_won": None,
+            "last_modified": "2023-06-30 21:43"
         }
 
 state_2 = {

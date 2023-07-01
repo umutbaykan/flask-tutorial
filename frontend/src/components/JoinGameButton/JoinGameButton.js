@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import propTypes from "prop-types";
 
-import { joinRoom } from "../../../../services/room";
-import { loadRoom } from "../../../../services/room";
+import { joinRoom } from "../../services/room";
+import { loadRoom } from "../../services/room";
 import { useNavigate } from "react-router-dom";
-import { socket } from "../../../../socket";
+import { socket } from "../../socket";
 
 export const JoinGameButton = ({ game_id, load }) => {
   const navigate = useNavigate();

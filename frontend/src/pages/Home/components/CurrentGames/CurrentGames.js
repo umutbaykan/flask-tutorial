@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-import JoinGameButton from "../JoinGameButton/JoinGameButton";
+import JoinGameButton from "../../../../components/JoinGameButton/JoinGameButton";
 import AllowedShipDisplayer from "../../../../components/AllowedShipDisplayer/AllowedShipDisplayer";
 
 import { LobbyContext } from "../../../../App";

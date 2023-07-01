@@ -9,7 +9,7 @@ import { loadCheck } from "../../services/profile";
 
 const Profile = () => {
   const [gamesHistory, setGamesHistory] = useState([]);
-  const [loadHistory, setLoadHistory] = useState([]);
+  const [loadHistory, setLoadHistory] = useState({});
 
   const getAllGamesOfUser = async () => {
     const result = await getHistory();

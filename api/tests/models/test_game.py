@@ -388,7 +388,7 @@ class TestSerializations:
             json_data_2 = json.load(file)
             board_2 = Board.deserialize(json_data_2)
 
-        game = Game(game_id="aFKeajFE")
+        game = Game(game_id="aFKeajFE", last_modified="2023-06-30 21:43")
         game.players = ["player_1", "player_2"]
         game.boards = [board_1, board_2]
         game.turn = 7
