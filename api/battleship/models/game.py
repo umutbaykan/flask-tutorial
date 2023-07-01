@@ -172,7 +172,7 @@ class Game:
             "who_started": game.who_started,
             "allowed_ships": game.allowed_ships,
             "who_won": game.who_won,
-            "last_modified": game.last_modified
+            "last_modified": game.last_modified.strftime("%Y-%m-%d %H:%M")
         }
         return data
 
