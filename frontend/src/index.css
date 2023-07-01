@@ -31,8 +31,14 @@ h4 {
   margin-bottom: 3px;
 }
 
+h3 {
+  margin-top: 3px;
+}
+
 .error {
   color: var(--error-color);
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 
 p {

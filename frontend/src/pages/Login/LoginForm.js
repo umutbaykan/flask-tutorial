@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import "./LoginForm.css";
 import { Formik, Form } from "formik";
 import TextField from "../../components/TextField/TextField";
 import * as Yup from "yup";
@@ -46,17 +47,21 @@ const LoginForm = () => {
         }}
       >
         {() => (
-          <div>
-            <h1>Log In</h1>
-            <Form>
-              <TextField label="username" name="username" type="text" />
-              <TextField label="password" name="password" type="password" />
-              <button type="submit">Login</button>
-            </Form>
+          <div className="container">
+            <div className="container-block login">
+              <h3>Log In</h3>
+              <Form>
+                <TextField label="Username" name="username" type="text" />
+                <TextField label="Password" name="password" type="password" />
+                <button className="button-join" type="submit">
+                  Login
+                </button>
+                <p className="error">{error}</p>
+              </Form>
+            </div>
           </div>
         )}
       </Formik>
-      <p>{error}</p>
     </>
   );
 };

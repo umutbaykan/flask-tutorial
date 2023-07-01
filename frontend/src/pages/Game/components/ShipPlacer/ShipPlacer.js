@@ -62,8 +62,8 @@ const ShipPlacer = ({ boardInfo }) => {
   return (
     <div className="container ship-placer">
       <div className="container board-header">
-      <h4>Your board</h4>
-      <Board boardInfo={boardInfo} action={() => {}} />
+        <h4>Your board</h4>
+        <Board boardInfo={boardInfo} action={() => {}} />
       </div>
       <div className="container placement-area">
         <h4>Place your ships, captain.</h4>

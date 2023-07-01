@@ -73,25 +73,28 @@ const Game = () => {
         gameState.who_won ? (
           <>
             <div className="container board-header">
-            <GameEnd didIwin={didIwin()} />
-            <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
-            <p className="small-text error">{error}</p>
+              <GameEnd didIwin={didIwin()} />
+              <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
+              <p className="small-text error">{error}</p>
             </div>
             <div className="container board-header">
-            <h4>Opponent board</h4>
-            <Board boardInfo={findBoardInfo("Opponent")} action={() => {}} />
+              <h4>Opponent board</h4>
+              <Board boardInfo={findBoardInfo("Opponent")} action={() => {}} />
             </div>
           </>
         ) : (
           <>
             <div className="container board-header">
-            <h4>Your board. {whoseTurnIsIt(gameState, cookies.user_id)} turn to fire.</h4>
-            <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
-            <p className="small-text error">{error}</p>
+              <h4>
+                Your board. {whoseTurnIsIt(gameState, cookies.user_id)} turn to
+                fire.
+              </h4>
+              <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
+              <p className="small-text error">{error}</p>
             </div>
             <div className="container board-header">
-            <h4>Opponent board</h4>
-            <Board boardInfo={findBoardInfo("Opponent")} action={fire} />
+              <h4>Opponent board</h4>
+              <Board boardInfo={findBoardInfo("Opponent")} action={fire} />
             </div>
           </>
         )

@@ -15,9 +15,7 @@ const ChatBox = () => {
           </p>
         ))}
       </div>
-      <div className="container chat-form">
-        <ChatForm />
-      </div>
+      <ChatForm />
     </div>
   );
 };
