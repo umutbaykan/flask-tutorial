@@ -52,6 +52,7 @@
 .container.board-header {
     display: block;
     padding: 0px;
+    min-width: 300px;
   }
 
 .container.board-header h4 {

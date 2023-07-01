@@ -19,6 +19,7 @@ export const JoinGameButton = ({ game_id, load }) => {
       navigate(`/game/${game_id}`);
     } else {
       setError(result.error);
+      navigate('/login')
     }
   };
 
