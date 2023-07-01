@@ -85,7 +85,7 @@ const ShipPlacer = ({ boardInfo }) => {
           </>
         )}
 
-        <p className="error">{error}</p>
+        <p className="small-text error">{error}</p>
       </div>
     </div>
   );

@@ -19,9 +19,11 @@ const TextField = ({ label, ...props }) => {
           autoComplete="off"
         />
       </div>
-      <div className="eror">
-        <ErrorMessage component="div" name={field.name} className="error" />
-      </div>
+      <ErrorMessage
+        component="div"
+        name={field.name}
+        className="small-text error"
+      />
     </>
   );
 };

@@ -192,7 +192,6 @@ class Game:
         allowed_ships = game_state.get("allowed_ships", {})
         who_won = game_state.get("who_won")
         last_modified = game_state.get("last_modified")
-        dt_object = datetime.strptime(last_modified, "%Y-%m-%d %H:%M")
         return Game(
             boards=board_objects,
             game_id=game_id,
@@ -202,5 +201,5 @@ class Game:
             who_started=who_started,
             allowed_ships=allowed_ships,
             who_won=who_won,
-            last_modified=dt_object
+            last_modified=last_modified
         )

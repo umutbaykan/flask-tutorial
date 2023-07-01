@@ -405,6 +405,9 @@ class TestSerializations:
     @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
     def test_successful_deserialization(self, read_json):
         game = Game.deserialize(read_json)
+        time = datetime.strptime("2023-06-30 21:43", "%Y-%m-%d %H:%M")
+        game.last_modified = time 
+
         from ..seeds.model_states.game_state import state_1
 
         result = Game.serialize(game)
@@ -417,6 +420,7 @@ class TestHidingBoards:
     @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
     def test_successful_board_hiding_for_p1(self, read_json):
         game = Game.deserialize(read_json)
+        game.last_modified = datetime.now()
         serialized_game = Game.serialize(game)
 
         game_with_hidden_board = Game.hide_board_info(serialized_game, "player_1", opponent=True)
@@ -431,6 +435,7 @@ class TestHidingBoards:
     @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
     def test_successful_board_hiding_for_p2(self, read_json):
         game = Game.deserialize(read_json)
+        game.last_modified = datetime.now()
         serialized_game = Game.serialize(game)
         
         game_with_hidden_board = Game.hide_board_info(serialized_game, "player_2", opponent=True)
@@ -445,6 +450,7 @@ class TestHidingBoards:
     @pytest.mark.parametrize("read_json", ["game_state_01"], indirect=["read_json"])
     def test_successful_board_hiding_for_self(self, read_json):
         game = Game.deserialize(read_json)
+        game.last_modified = datetime.now()
         serialized_game = Game.serialize(game)
 
         game_with_hidden_board = Game.hide_board_info(serialized_game, "player_1", opponent=False)
