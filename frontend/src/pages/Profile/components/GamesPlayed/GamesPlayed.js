@@ -14,11 +14,11 @@ const GamesPlayed = ({ gamesHistory }) => {
     const { who_won, game_id } = game;
     let result;
     if (who_won === cookies.user_id) {
-      result = <Won key={game_id} game={game} />;
+      result = <Won key={`${game_id}-w`} game={game} />;
     } else if (who_won === null) {
-      result = <Unfinished key={game_id} game={game} />;
+      result = <Unfinished key={`${game_id}-u`} game={game} />;
     } else {
-      result = <Loss key={game_id} game={game} />;
+      result = <Loss key={`${game_id}-l`} game={game} />;
     }
     return result;
   };

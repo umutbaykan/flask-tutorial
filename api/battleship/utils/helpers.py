@@ -75,5 +75,5 @@ def list_load_games(user_id):
     for game_id in user["games"]:
         if game_id in ROOMS:
             game = ROOMS[game_id]
-            available_games[game_id] = {"game_id": game.game_id, "who_started": game.who_started, "turn": game.turn, "last_modified": game.last_modified}
+            available_games[game_id] = {"game_id": game.game_id, "who_started": game.who_started, "turn": game.turn, "last_modified": game.last_modified, "players": game.players}
     return available_games
