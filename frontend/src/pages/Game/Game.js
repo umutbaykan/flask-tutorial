@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import "./Game.css"
 import { useLocation } from "react-router-dom";
 import { socket } from "../../socket";
 import { useCookies } from "react-cookie";
@@ -69,7 +70,6 @@ const Game = () => {
   return (
     <>
       <h1>Welcome to game {game_id}</h1>
-      <ChatBox />
       {gameState.ready === true ? (
         gameState.who_won ? (
           <>
@@ -90,6 +90,7 @@ const Game = () => {
         </>
       )}
       <h3>{error}</h3>
+      <ChatBox />
     </>
   );
 };

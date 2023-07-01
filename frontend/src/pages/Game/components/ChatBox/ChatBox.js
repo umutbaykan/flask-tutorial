@@ -1,4 +1,3 @@
-import "./ChatBox.css";
 import React, { useContext } from "react";
 
 import { ChatContext } from "../../../../App";
@@ -8,11 +7,11 @@ const ChatBox = () => {
   const [chats] = useContext(ChatContext);
 
   return (
-    <div className="chat-container">
+    <div className="container chat">
       {chats.map((chat, index) => (
-        <ul className="chat-message" key={index}>
+        <p className="chat-message" key={index}>
           {chat}
-        </ul>
+        </p>
       ))}
       <ChatForm />
     </div>

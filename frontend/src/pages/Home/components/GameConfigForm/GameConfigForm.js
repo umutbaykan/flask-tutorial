@@ -29,7 +29,10 @@ const GameConfigForm = () => {
     aircraftCarrier: Yup.number()
       .min(0, "Cant have negative ships")
       .max(5, "Lets not go crazy captain"),
-  });
+  }).test("atLeastOneAboveZero", "We need a ship, captain.", (values) => {
+    const { destroyer, cruiser, battleship, aircraftCarrier } = values;
+    return destroyer > 0 || cruiser > 0 || battleship > 0 || aircraftCarrier > 0;
+  })
 
   const handleSubmit = async (gameconfigs) => {
     if (!loggedIn) {
@@ -79,10 +82,10 @@ const GameConfigForm = () => {
         }}
       >
         {() => (
-          <div className="container-home config">
+          <div className="container config">
               <h4>Want to choose your own?</h4>
               <p>Configure your game below and create your own game.</p>
-            <Form className="container-home inputs">
+            <Form className="container inputs">
               <NumberField label="Board Size:" name="size" />
               <NumberField label="Destroyer" name="destroyer" />
               <NumberField label="Cruiser" name="cruiser" />
@@ -108,7 +111,7 @@ const GameConfigForm = () => {
           </div>
         )}
       </Formik>
-      <p>{error}</p>
+      <p className="error">{error}</p>
     </>
   );
 };

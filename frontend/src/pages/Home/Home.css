@@ -1,28 +1,22 @@
-.container-home {
-  color: var(--text-color);
-  padding: 10px;
-  border-radius: 5px;
-  display: flex;
-}
-
-.container-home.lobby {
+.container.lobby {
   display: block;
-  margin-right: 20px;
 }
 
-.container-home.inputs {
+.container.inputs {
     display: block;
     background-color: var(--light-color);
   }
 
-.container-home.game {
+.container.game {
     margin-top: 10px;
     background-color: var(--light-color);
-    max-width: 200px;
+    max-width: 230px;
     height: fit-content;
     display: block;
 }
 
-.container-home.config {
+.container.config {
     display: block;
 }
+
+

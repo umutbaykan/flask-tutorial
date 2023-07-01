@@ -18,6 +18,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.container {
+  color: var(--text-color);
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 h4 {
   margin-top: 3px;
   margin-bottom: 3px;
@@ -25,6 +34,10 @@ h4 {
 
 .error {
   color: var(--error-color);
+}
+
+p {
+  word-wrap: break-word;
 }
 
 .small-text {

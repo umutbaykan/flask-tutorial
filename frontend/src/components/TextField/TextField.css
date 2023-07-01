@@ -1,0 +1,11 @@
+.text-field {
+    display: flex;
+    width: 80%
+}
+
+.text-field input {
+    flex: 1;
+    margin-right: 3px;
+    background-color: var(--dark-color);
+    color: var(--text-color);
+}

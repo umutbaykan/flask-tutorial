@@ -1,8 +1,7 @@
-.container {
+.containerX {
   background-color: #f2f2f2;
   padding: 10px;
   margin-bottom: 10px;
-  border-radius: 5px;
 }
 
 .container.unfinished {
