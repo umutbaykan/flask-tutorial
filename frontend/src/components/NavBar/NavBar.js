@@ -16,7 +16,7 @@ const NavBar = () => {
     removeCookie("user_id");
     removeCookie("username");
     setLoggedIn(false);
-    navigate('/')
+    navigate("/");
   };
 
   return (

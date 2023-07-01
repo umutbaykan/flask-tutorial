@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
-import { LoggedInContext } from "../../App";
+import { useCookies } from "react-cookie";
 
 const PublicRoutes = () => {
-  const [loggedIn] = useContext(LoggedInContext);
+  const [cookie] = useCookies(["user_id"]);
 
-  return loggedIn ? <Navigate to="/" /> : <Outlet />;
+  return cookie.user_id ? <Navigate to="/" /> : <Outlet />;
 };
 export default PublicRoutes;

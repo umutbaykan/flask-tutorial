@@ -11,7 +11,11 @@ export const auth = (username, password, route) => {
       if (data.error) {
         return { success: false, error: data.error };
       } else {
-        return { success: true, user_id: data.user_id, username: data.username };
+        return {
+          success: true,
+          user_id: data.user_id,
+          username: data.username,
+        };
       }
     });
 };

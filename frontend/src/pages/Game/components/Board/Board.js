@@ -1,6 +1,6 @@
 import "./Board.css";
 import propTypes from "prop-types";
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import Cell from "../Cell/Cell";
 
 import { GameStateContext } from "../../../../App";
@@ -33,13 +33,8 @@ const Board = ({ boardInfo, action }) => {
     return result;
   }, [gameState]);
 
-  useEffect(() => {
-    console.log(gameState);
-  }, [gameState]);
-
   return (
-    <>
-      <h1>{owner} Board</h1>
+    <div className="container board">
       <div className="grid-container">
         {Array.from({ length: gameState.boards[index].size }, (_, rowIndex) => (
           <div className="row" key={rowIndex}>
@@ -64,7 +59,7 @@ const Board = ({ boardInfo, action }) => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

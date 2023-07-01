@@ -4,9 +4,9 @@ import propTypes from "prop-types";
 const GameEnd = ({ didIwin }) => {
   const youWon = didIwin ? true : false;
   if (youWon) {
-    return <h1>Congratulations, you win!</h1>;
+    return <h4>Congratulations captain, you win!</h4>;
   } else {
-    return <h1>Unlucky! Hopefully next time!</h1>;
+    return <h4>All your ships have sunk, you lost captain!</h4>;
   }
 };
 

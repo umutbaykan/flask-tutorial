@@ -1,0 +1,81 @@
+.container.game-main {
+  display: flex;
+  justify-content: space-between;
+}
+
+.container.chat {
+  background-color: var(--light-color);
+  padding: 10px;
+  max-height: calc(85vh);
+  width: 300px;
+  display: inline;
+  position: relative;
+}
+
+.container.board {
+  padding: 0px;
+}
+
+.container.placement-area {
+  padding: 0px;
+  width: 300px;
+  display: block;
+  margin-left: 30px;
+}
+
+.container.message {
+  display: flex;
+  padding: 0px;
+  align-items: left;
+  justify-content: left;
+  flex-direction: column;
+  max-height: 85%;
+}
+
+.chat-message {
+  margin: 3px;
+  text-align: left;
+}
+
+.container.board {
+  display: block;
+}
+
+.container.board-header {
+  display: block;
+  padding: 0px;
+  min-width: 300px;
+}
+
+.container.board-header h4 {
+  margin-bottom: 16px;
+}
+
+.container.chat-input {
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  margin-top: 10px;
+  margin-right: 10px;
+  width: 95%;
+  position: absolute;
+  display: block;
+  bottom: 0;
+  margin-bottom: 10px;
+}
+
+.button-regular {
+  padding: 5px;
+  width: 100%;
+  background-color: var(--dark-color);
+  color: var(--text-color);
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.button-regular:hover {
+  background-color: var(--text-color);
+  color: var(--dark-color);
+}

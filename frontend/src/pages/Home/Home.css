@@ -1,0 +1,20 @@
+.container.lobby {
+  display: block;
+}
+
+.container.inputs {
+  display: block;
+  background-color: var(--light-color);
+}
+
+.container.game {
+  margin-top: 10px;
+  background-color: var(--light-color);
+  max-width: 230px;
+  height: fit-content;
+  display: block;
+}
+
+.container.config {
+  display: block;
+}

@@ -1,7 +1,5 @@
 .grid-container {
-  /* Define grid layout properties */
   display: grid;
-  /* Add other styling as needed */
 }
 
 .row {

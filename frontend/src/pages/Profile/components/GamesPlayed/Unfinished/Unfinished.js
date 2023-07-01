@@ -1,8 +1,8 @@
 import React from "react";
-import "../GamesPlayed.css";
 import propTypes from "prop-types";
 import { useCookies } from "react-cookie";
 import JoinGameButton from "../../../../../components/JoinGameButton/JoinGameButton";
+import AllowedShipDisplayer from "../../../../../components/AllowedShipDisplayer/AllowedShipDisplayer";
 
 import { whoseTurnIsIt } from "../../../../../utils/turn";
 
@@ -11,24 +11,27 @@ const Unfinished = ({ game }) => {
   const [cookies, ,] = useCookies(["user_id"]);
 
   return (
-    <div className="container unfinished" key={game_id}>
-      <p>Last move: {last_modified}</p>
-      <p>Players: </p>
+    <div className="container game-history-ticket" key={game_id}>
+      <p className="small-text">Last move: {last_modified}</p>
+      <p className="small-text">Players: </p>
       {players_info.map((player, index) => {
         return (
-          <p key={`${game_id}-${index}`}>
+          <p className="small-text" key={`${game_id}-${index}`}>
             P{index + 1} - {player["username"]}
           </p>
         );
       })}
-      <p>Ships:</p>
-      {Object.entries(allowed_ships).map(([ship, quantity]) => (
-        <ul key={ship}>
-          {ship} - {quantity}
-        </ul>
-      ))}
-      <p>{whoseTurnIsIt(game, cookies.user_id)} plays next.</p>
-      <p>Unfinished game</p>
+      <br></br>
+      <p className="small-text">Ships:</p>
+      <AllowedShipDisplayer allowedShips={allowed_ships} />
+      <p className="small-text">
+        {whoseTurnIsIt(game, cookies.user_id)} turn next.
+      </p>
+      <br></br>
+      <p className="small-text">Unfinished game. Click button below to load.</p>
+      <p className="small-text">
+        Your opponent will get a notifier on their profile page.
+      </p>
       <JoinGameButton game_id={game_id} load={true} />
     </div>
   );

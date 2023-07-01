@@ -1,4 +1,3 @@
-import "./ChatForm.css";
 import { React, useContext } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -34,9 +33,11 @@ const ChatForm = () => {
         {() => (
           <>
             <Form>
-              <div className="form-row">
+              <div className="container chat-input">
                 <TextField name="chat" type="text" />
-                <button type="submit">Send</button>
+                <button className="button-regular" type="submit">
+                  Send
+                </button>
               </div>
             </Form>
           </>

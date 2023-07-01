@@ -10,7 +10,7 @@ import { LoggedInContext } from "../../App";
 
 const SignUpForm = () => {
   const [error, setError] = useState("");
-  const [, setCookie, ] = useCookies(["user_id"]);
+  const [, setCookie] = useCookies(["user_id"]);
   const navigate = useNavigate();
   const [, setLoggedIn] = useContext(LoggedInContext);
 
@@ -55,22 +55,26 @@ const SignUpForm = () => {
         }}
       >
         {() => (
-          <div>
-            <h1>Sign Up</h1>
-            <Form>
-              <TextField label="username" name="username" type="text" />
-              <TextField label="password" name="password" type="password" />
-              <TextField
-                label="Confirm Password"
-                name="confirmPassword"
-                type="password"
-              />
-              <button type="submit">Register</button>
-            </Form>
+          <div className="container">
+            <div className="container-block login">
+              <h3>Sign Up</h3>
+              <Form>
+                <TextField label="Username" name="username" type="text" />
+                <TextField label="Password" name="password" type="password" />
+                <TextField
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                />
+                <button className="button-join" type="submit">
+                  Register
+                </button>
+                <p className="error">{error}</p>
+              </Form>
+            </div>
           </div>
         )}
       </Formik>
-      <p>{error}</p>
     </>
   );
 };

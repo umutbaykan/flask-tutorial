@@ -31,10 +31,12 @@ const Profile = () => {
   }
 
   return (
-    <div className="profile-container">
+    <div className="container">
+      <div className="container profile">
+        <Statistics gamesHistory={gamesHistory} />
+        <LoadGames loadHistory={loadHistory} />
+      </div>
       <GamesPlayed gamesHistory={gamesHistory} />
-      <Statistics gamesHistory={gamesHistory} />
-      <LoadGames loadHistory={loadHistory} />
     </div>
   );
 };

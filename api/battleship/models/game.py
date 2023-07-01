@@ -1,6 +1,7 @@
 import copy
 from .ship import Ship, ship_classes
 from .board import Board
+from datetime import datetime
 
 
 class Game:
@@ -143,6 +144,7 @@ class Game:
         new_game.players.append(game_creator)
         new_game.game_id = server_allocated_room
         new_game.who_started = parsed_configs["who_started"]
+        new_game.last_modified = datetime.now()
         return new_game
 
     @staticmethod

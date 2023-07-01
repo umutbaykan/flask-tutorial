@@ -51,4 +51,3 @@ export const loadRoom = (game_id) => {
       }
     });
 };
-

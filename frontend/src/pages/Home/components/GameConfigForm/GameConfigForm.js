@@ -8,11 +8,10 @@ import { socket } from "../../../../socket";
 import { createRoom } from "../../../../services/room";
 import { LoggedInContext } from "../../../../App";
 
-
 const GameConfigForm = () => {
-    const [loggedIn] = useContext(LoggedInContext);
-    const navigate = useNavigate();
-    const [error, setError] = useState("");
+  const [loggedIn] = useContext(LoggedInContext);
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const validate = Yup.object({
     size: Yup.number()
@@ -29,15 +28,19 @@ const GameConfigForm = () => {
       .max(5, "Lets not go crazy captain"),
     aircraftCarrier: Yup.number()
       .min(0, "Cant have negative ships")
-      .max(5, "Lets not go crazy captain")
+      .max(5, "Lets not go crazy captain"),
+  }).test("atLeastOneAboveZero", "We need a ship, captain.", (values) => {
+    const { destroyer, cruiser, battleship, aircraftCarrier } = values;
+    return (
+      destroyer > 0 || cruiser > 0 || battleship > 0 || aircraftCarrier > 0
+    );
   });
 
   const handleSubmit = async (gameconfigs) => {
     if (!loggedIn) {
       navigate("/login");
     }
-    const result = await createRoom(gameconfigs
-      );
+    const result = await createRoom(gameconfigs);
     if (result.room) {
       socket.emit("join", result.room);
       navigate(`/game/${result.room}`);
@@ -50,12 +53,12 @@ const GameConfigForm = () => {
     <>
       <Formik
         initialValues={{
-          size: 5,
+          size: 10,
           destroyer: 1,
-          cruiser: 0,
-          battleship: 0,
-          aircraftCarrier: 0,
-          who_started: 0,
+          cruiser: 1,
+          battleship: 1,
+          aircraftCarrier: 1,
+          who_started: 1,
         }}
         validationSchema={validate}
         onSubmit={(values) => {
@@ -70,10 +73,10 @@ const GameConfigForm = () => {
           const formattedValues = {
             size,
             ships: [
-              {Destroyer: destroyer},
-              {Cruiser: cruiser},
-              {Battleship: battleship},
-              {AircraftCarrier: aircraftCarrier},
+              { Destroyer: destroyer },
+              { Cruiser: cruiser },
+              { Battleship: battleship },
+              { AircraftCarrier: aircraftCarrier },
             ],
             who_started: parseInt(who_started),
           };
@@ -81,34 +84,36 @@ const GameConfigForm = () => {
         }}
       >
         {() => (
-          <div>
-            <h1>Lets configure your game!</h1>
-            <Form>
-              <h3>Choose your board size</h3>
-              <NumberField label="size" name="size" />
-              <h3>Now lets pick your ships</h3>
+          <div className="container config">
+            <h4>Want to choose your own?</h4>
+            <p>Configure your game below and create your own game.</p>
+            <Form className="container inputs">
+              <NumberField label="Board Size:" name="size" />
               <NumberField label="Destroyer" name="destroyer" />
               <NumberField label="Cruiser" name="cruiser" />
               <NumberField label="Battleship" name="battleship" />
-              <NumberField label="Aircraft Carrier" name="aircraftCarrier" type="number"/>
-              <h3>
-                Who do you want to start? You will be player 1 if you create the
-                game.
-              </h3>
-              <label>
-                <Field type="radio" name="who_started" value="0" />
-                One
-              </label>
+              <NumberField
+                label="Aircraft Carrier"
+                name="aircraftCarrier"
+                type="number"
+              />
+              <p className="small-text">Who starts?</p>
               <label>
                 <Field type="radio" name="who_started" value="1" />
-                Two
+                Me
               </label>
-              <button type="submit">Create game</button>
+              <label>
+                <Field type="radio" name="who_started" value="0" />
+                My opponent
+              </label>
+              <button className="button-join" type="submit">
+                Create game
+              </button>
             </Form>
           </div>
         )}
       </Formik>
-      <p>{error}</p>
+      <p className="error">{error}</p>
     </>
   );
 };

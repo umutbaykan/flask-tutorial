@@ -24,7 +24,7 @@ const App = () => {
   const [chats, setChats] = useState([]);
   const [gameState, setGameState] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
   const [cookies, ,] = useCookies(["user_id"]);
 
   const onCurrentGames = (games) => {
@@ -43,14 +43,14 @@ const App = () => {
   const onJoiningRoom = (data) => {
     setChats((previous) => [
       ...previous,
-      `${data.username} has joined ${data.room}`,
+      `${data.username} has joined the room.`,
     ]);
   };
 
   const onLeavingRoom = (user) => {
     setChats((previous) => [
       ...previous,
-      `${user.username} has left ${user.room}`,
+      `${user.username} has left the room.`,
     ]);
   };
 
@@ -59,13 +59,13 @@ const App = () => {
   };
 
   const onGameUpdate = (data) => {
-    setError("")
-    setGameState(() => data.game)
-  }
+    setError("");
+    setGameState(() => data.game);
+  };
 
   const onError = (data) => {
-    setError(() => data.error)
-  }
+    setError(() => data.error);
+  };
 
   // Event listeners
   useEffect(() => {
@@ -73,15 +73,15 @@ const App = () => {
     socket.on("user_joined", onJoiningRoom);
     socket.on("user_left", onLeavingRoom);
     socket.on("chat_update", onChatUpdate);
-    socket.on("update", onGameUpdate)
-    socket.on("error", onError)
+    socket.on("update", onGameUpdate);
+    socket.on("error", onError);
     return () => {
       socket.off("current_games", onCurrentGames);
       socket.off("user_joined", onJoiningRoom);
       socket.off("user_left", onLeavingRoom);
       socket.off("chat_update", onChatUpdate);
-      socket.off("update", onGameUpdate)
-      socket.off("error", onError)
+      socket.off("update", onGameUpdate);
+      socket.off("error", onError);
     };
   }, []);
 
@@ -115,8 +115,8 @@ const App = () => {
                   <Route path="/login" element={<LoginForm />} />
                 </Route>
                 <Route element={<PrivateRoutes />}>
-                  <Route path="/profile" element={<Profile />} />
                   <Route path="/game/:gameId" element={<Game />} />
+                  <Route path="/profile" element={<Profile />} />
                 </Route>
                 <Route path="/" element={<Home />} />
                 <Route path="*" element={<NotFound />} />

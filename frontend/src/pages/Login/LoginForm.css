@@ -1,0 +1,9 @@
+.container-block.login {
+  display: inline;
+  width: 300px;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--light-color);
+  padding: 10px;
+  text-align: center;
+}

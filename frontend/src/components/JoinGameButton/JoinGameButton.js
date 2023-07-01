@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./JoinGameButton.css";
 import propTypes from "prop-types";
 
 import { joinRoom } from "../../services/room";
@@ -12,21 +13,24 @@ export const JoinGameButton = ({ game_id, load }) => {
 
   const handleJoin = async () => {
     let result;
-    load ? result = await loadRoom(game_id) : result = await joinRoom(game_id);
+    load
+      ? (result = await loadRoom(game_id))
+      : (result = await joinRoom(game_id));
     if (result.success) {
       socket.emit("join", game_id);
       navigate(`/game/${game_id}`);
     } else {
       setError(result.error);
+      navigate("/login");
     }
   };
 
   return (
     <>
-      <button key={game_id} onClick={handleJoin}>
+      <button className="button-join" key={game_id} onClick={handleJoin}>
         Join!
       </button>
-      <p>{error}</p>
+      <p className="small-text error">{error}</p>
     </>
   );
 };

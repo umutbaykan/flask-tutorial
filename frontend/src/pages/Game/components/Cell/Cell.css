@@ -1,38 +1,38 @@
 .cell {
-  background: #fff;
-  border: 1px solid #999;
+  background: var(--dark-color);
+  border: 1px solid var(--text-color);
   float: left;
   font-size: 24px;
   font-weight: bold;
-  line-height: 34px;
-  height: 34px;
+  line-height: 40px;
+  height: 40px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  width: 40px;
 }
 
 .cell-miss {
-  background: rgb(130, 130, 130);
+  background: rgb(165, 165, 165);
 }
 
 .cell-hit {
-  background: rgb(255, 0, 0);
+  background: var(--error-color);
 }
 
 .cell-Destroyer {
-  background: rgb(183, 255, 0);
+  background: rgb(145, 205, 41);
 }
 
 .cell-Cruiser {
-  background: rgb(255, 0, 132);
+  background: rgb(199, 29, 117);
 }
 
 .cell-Battleship {
-  background: rgb(0, 247, 255);
+  background: rgb(31, 191, 200);
 }
 
 .cell-AircraftCarrier {
-  background: rgb(47, 0, 255);
+  background: rgb(194, 135, 25);
 }

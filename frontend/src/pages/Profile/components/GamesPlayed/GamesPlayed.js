@@ -1,6 +1,5 @@
 import React from "react";
 import propTypes from "prop-types";
-import "./GamesPlayed.css";
 import { useCookies } from "react-cookie";
 
 import Won from "./Won/Won";
@@ -25,8 +24,8 @@ const GamesPlayed = ({ gamesHistory }) => {
 
   return (
     <>
-      <div className="history-container" key="history-container">
-        <h3>Your games so far:</h3>
+      <div className="container history">
+        <h4>Your game history</h4>
         {gamesHistory.map((game) => {
           return parseGame(game);
         })}
