@@ -58,7 +58,7 @@ const GameConfigForm = () => {
           cruiser: 1,
           battleship: 1,
           aircraftCarrier: 1,
-          who_started: 0,
+          who_started: 1,
         }}
         validationSchema={validate}
         onSubmit={(values) => {
@@ -99,11 +99,11 @@ const GameConfigForm = () => {
               />
               <p className="small-text">Who starts?</p>
               <label>
-                <Field type="radio" name="who_started" value="0" />
+                <Field type="radio" name="who_started" value="1" />
                 Me
               </label>
               <label>
-                <Field type="radio" name="who_started" value="1" />
+                <Field type="radio" name="who_started" value="0" />
                 My opponent
               </label>
               <button className="button-join" type="submit">

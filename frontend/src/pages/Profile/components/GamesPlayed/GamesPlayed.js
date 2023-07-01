@@ -25,7 +25,7 @@ const GamesPlayed = ({ gamesHistory }) => {
   return (
     <>
       <div className="container history">
-        <h3>Your game history</h3>
+        <h4>Your game history</h4>
         {gamesHistory.map((game) => {
           return parseGame(game);
         })}

@@ -32,11 +32,11 @@ const Profile = () => {
 
   return (
     <div className="container">
-      <GamesPlayed gamesHistory={gamesHistory} />
       <div className="container profile">
         <Statistics gamesHistory={gamesHistory} />
         <LoadGames loadHistory={loadHistory} />
       </div>
+      <GamesPlayed gamesHistory={gamesHistory} />
     </div>
   );
 };

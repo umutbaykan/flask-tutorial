@@ -1,19 +1,37 @@
 .container.profile {
-  display: inline-block;
+  display: inline;
+  margin-right: 20px;
 }
 
 .container.history {
-  background-color: var(--light-color);
   display: inline;
   height: 85vh;
   overflow-y: scroll;
   overflow-x: hidden;
 }
 
+.container.statistics {
+  display: inline;
+  padding: 0px;
+}
+
+.container.load-requests {
+  display: inline-block;
+  width: 95%;
+  background-color: var(--dark-color);
+}
+
+.container.load-item {
+  display: inline-block;
+  margin-top: 10px;
+  width: 94%;
+  background-color: var(--light-color);
+}
+
 .container.game-history-ticket {
   display: block;
-  background-color: var(--dark-color);
-  margin-bottom: 10px;
+  background-color: var(--light-color);
+  margin-top: 10px;
   width: 350px;
 }
 
