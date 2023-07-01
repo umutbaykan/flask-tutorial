@@ -8,12 +8,16 @@ const ChatBox = () => {
 
   return (
     <div className="container chat">
-      {chats.map((chat, index) => (
-        <p className="chat-message" key={index}>
-          {chat}
-        </p>
-      ))}
-      <ChatForm />
+      <div className="container message">
+        {chats.map((chat, index) => (
+          <p className="chat-message" key={index}>
+            {chat}
+          </p>
+        ))}
+      </div>
+      <div className="container chat-form">
+        <ChatForm />
+      </div>
     </div>
   );
 };

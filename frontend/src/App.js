@@ -43,14 +43,14 @@ const App = () => {
   const onJoiningRoom = (data) => {
     setChats((previous) => [
       ...previous,
-      `${data.username} has joined ${data.room}`,
+      `${data.username} has joined the room.`,
     ]);
   };
 
   const onLeavingRoom = (user) => {
     setChats((previous) => [
       ...previous,
-      `${user.username} has left ${user.room}`,
+      `${user.username} has left the room.`,
     ]);
   };
 

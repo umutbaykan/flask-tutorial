@@ -10,7 +10,7 @@ import { LoggedInContext } from "../../App";
 
 const SignUpForm = () => {
   const [error, setError] = useState("");
-  const [, setCookie, ] = useCookies(["user_id"]);
+  const [, setCookie] = useCookies(["user_id"]);
   const navigate = useNavigate();
   const [, setLoggedIn] = useContext(LoggedInContext);
 

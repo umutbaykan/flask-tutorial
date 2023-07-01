@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import "./Game.css"
+import "./Game.css";
 import { useLocation } from "react-router-dom";
 import { socket } from "../../socket";
 import { useCookies } from "react-cookie";
@@ -68,8 +68,7 @@ const Game = () => {
   }
 
   return (
-    <>
-      <h1>Welcome to game {game_id}</h1>
+    <div className="container game-main">
       {gameState.ready === true ? (
         gameState.who_won ? (
           <>
@@ -79,9 +78,16 @@ const Game = () => {
           </>
         ) : (
           <>
-            <h3>{whoseTurnIsIt(gameState, cookies.user_id)} turn.</h3>
+            <h3></h3>
+            <div className="container board-header">
+            <h4>Your board. {whoseTurnIsIt(gameState, cookies.user_id)} turn to fire.</h4>
             <Board boardInfo={findBoardInfo("Your")} action={() => {}} />
+            <p className="small-text error">{error}</p>
+            </div>
+            <div className="container board-header">
+            <h4>Opponent board</h4>
             <Board boardInfo={findBoardInfo("Opponent")} action={fire} />
+            </div>
           </>
         )
       ) : (
@@ -89,9 +95,8 @@ const Game = () => {
           <ShipPlacer boardInfo={findBoardInfo("Your")} />
         </>
       )}
-      <h3>{error}</h3>
       <ChatBox />
-    </>
+    </div>
   );
 };
 

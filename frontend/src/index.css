@@ -24,7 +24,6 @@ body {
   border-radius: 5px;
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
 h4 {
@@ -44,10 +43,6 @@ p {
   font-size: 12px;
   margin: 3px;
   font-weight: bold;
-}
-
-ul {
-  padding-left: 5px;
 }
 
 code {

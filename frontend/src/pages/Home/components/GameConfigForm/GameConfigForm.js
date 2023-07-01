@@ -31,8 +31,10 @@ const GameConfigForm = () => {
       .max(5, "Lets not go crazy captain"),
   }).test("atLeastOneAboveZero", "We need a ship, captain.", (values) => {
     const { destroyer, cruiser, battleship, aircraftCarrier } = values;
-    return destroyer > 0 || cruiser > 0 || battleship > 0 || aircraftCarrier > 0;
-  })
+    return (
+      destroyer > 0 || cruiser > 0 || battleship > 0 || aircraftCarrier > 0
+    );
+  });
 
   const handleSubmit = async (gameconfigs) => {
     if (!loggedIn) {
@@ -83,8 +85,8 @@ const GameConfigForm = () => {
       >
         {() => (
           <div className="container config">
-              <h4>Want to choose your own?</h4>
-              <p>Configure your game below and create your own game.</p>
+            <h4>Want to choose your own?</h4>
+            <p>Configure your game below and create your own game.</p>
             <Form className="container inputs">
               <NumberField label="Board Size:" name="size" />
               <NumberField label="Destroyer" name="destroyer" />
@@ -95,9 +97,7 @@ const GameConfigForm = () => {
                 name="aircraftCarrier"
                 type="number"
               />
-              <p className="small-text">
-                Who starts?
-              </p>
+              <p className="small-text">Who starts?</p>
               <label>
                 <Field type="radio" name="who_started" value="0" />
                 Me
@@ -106,7 +106,9 @@ const GameConfigForm = () => {
                 <Field type="radio" name="who_started" value="1" />
                 My opponent
               </label>
-              <button className="button-join" type="submit">Create game</button>
+              <button className="button-join" type="submit">
+                Create game
+              </button>
             </Form>
           </div>
         )}

@@ -34,8 +34,7 @@ const Board = ({ boardInfo, action }) => {
   }, [gameState]);
 
   return (
-    <>
-      <h1>{owner} Board</h1>
+    <div className="container board">
       <div className="grid-container">
         {Array.from({ length: gameState.boards[index].size }, (_, rowIndex) => (
           <div className="row" key={rowIndex}>
@@ -60,7 +59,7 @@ const Board = ({ boardInfo, action }) => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,16 +1,17 @@
 import React from 'react';
+import "./AllowedShipDisplayer.css"
 import propTypes from "prop-types"
 
 const AllowedShipDisplayer = ({ allowedShips }) => {
 
     return (
-        <>
+        <div className='allowed-ships'>
           {Object.entries(allowedShips).map(([ship, quantity]) => (
-            <ul className='small-text' key={ship}>
+            <p className='small-text' key={ship}>
               {ship} - {quantity}
-            </ul>
+            </p>
           ))}
-        </>
+        </div>
     )
 }
 

@@ -1,41 +1,85 @@
-.container.chat {
-    background-color: var(--light-color);
-    padding: 10px;
-    box-sizing: border-box;
-    flex-direction: column;
-    align-items: left;
-    justify-content: left;
-    max-height: calc(100vh);
-    max-width: 500px;
-    overflow-y: auto;
-  }
-  
-.chat-message {
-    margin: 3px;
-    text-align: left;
+.container.game-main {
+  display: flex;
+  justify-content: space-between;
 }
 
-.container.chat-input{
-    align-items: left;
-    justify-content: left;
+.container.chat {
+  background-color: var(--light-color);
+  padding: 10px;
+  max-height: calc(85vh);
+  width: 300px;
+  display: inline;
+  position: relative;
+}
+
+.container.board {
+  padding: 0px;
+}
+
+.container.placement-area {
+  padding: 0px;
+  width: 300px;
+  display: block;
+  margin-left: 30px;
+}
+
+.container.chat-form {
+  position: absolute;
+  bottom: 0;
+  padding: 0px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.container.message {
+  display: flex;
+  padding: 0px;
+  align-items: left;
+  justify-content: left;
+  flex-direction: column;
+  max-height: 85%;
+}
+
+.chat-message {
+  margin: 3px;
+  text-align: left;
+}
+
+.container.board {
+  display: block;
+}
+
+.container.board-header {
+    display: block;
     padding: 0px;
-    margin-top: 10px;
-    display: flex;
+  }
+
+.container.board-header h4 {
+    margin-bottom: 16px;
+}
+
+.container.chat-input {
+  align-items: left;
+  justify-content: left;
+  padding: 0px;
+  margin-top: 10px;
+  display: flex;
+  width: 100%;
 }
 
 .button-regular {
-    display: inline-block;
-    padding: 5px;
-    background-color: var(--dark-color);
-    color: var(--text-color);
-    border: none;
-    text-align: center;
-    cursor: pointer;
-    width: 20%;
-    border-radius: 4px;
-  }
-  
-  .button-regular:hover {
-    background-color: var(--text-color);
-    color: var(--dark-color)
-  }
+  display: inline-block;
+  padding: 5px;
+  width: 100%;
+  background-color: var(--dark-color);
+  color: var(--text-color);
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.button-regular:hover {
+  background-color: var(--text-color);
+  color: var(--dark-color);
+}
