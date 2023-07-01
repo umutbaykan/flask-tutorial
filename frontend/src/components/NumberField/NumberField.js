@@ -1,4 +1,5 @@
 import React from 'react';
+import "./NumberField.css"
 import propTypes from 'prop-types';
 import { ErrorMessage, useField } from 'formik';
 
@@ -13,7 +14,7 @@ const NumberField = ({ label, ...props }) => {
         autoComplete="off"
         type="number"
       />
-      <ErrorMessage component="div" name={field.name} className="error" />
+      <ErrorMessage component="div" name={field.name} className="small-text error" />
     </div>
   )
 }

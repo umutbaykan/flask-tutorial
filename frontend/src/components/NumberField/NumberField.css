@@ -1,0 +1,15 @@
+.number-field {
+    display: flex;
+}
+
+.number-field input {
+    margin-bottom: 3px;
+    width: 30px;
+    background-color: var(--dark-color);
+    color: var(--text-color);
+}
+
+.number-field label {
+    width: 150px; /* Adjust the width as needed */
+    display: inline-block;
+  }

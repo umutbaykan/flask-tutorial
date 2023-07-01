@@ -79,12 +79,11 @@ const GameConfigForm = () => {
         }}
       >
         {() => (
-          <div>
-            <h1>Lets configure your game!</h1>
-            <Form>
-              <h3>Choose your board size</h3>
-              <NumberField label="size" name="size" />
-              <h3>Now lets pick your ships</h3>
+          <div className="container-home config">
+              <h4>Want to choose your own?</h4>
+              <p>Configure your game below and create your own game.</p>
+            <Form className="container-home inputs">
+              <NumberField label="Board Size:" name="size" />
               <NumberField label="Destroyer" name="destroyer" />
               <NumberField label="Cruiser" name="cruiser" />
               <NumberField label="Battleship" name="battleship" />
@@ -93,19 +92,18 @@ const GameConfigForm = () => {
                 name="aircraftCarrier"
                 type="number"
               />
-              <h3>
-                Who do you want to start? You will be player 1 if you create the
-                game.
-              </h3>
+              <p className="small-text">
+                Who starts?
+              </p>
               <label>
                 <Field type="radio" name="who_started" value="0" />
-                One
+                Me
               </label>
               <label>
                 <Field type="radio" name="who_started" value="1" />
-                Two
+                My opponent
               </label>
-              <button type="submit">Create game</button>
+              <button className="button-join" type="submit">Create game</button>
             </Form>
           </div>
         )}

@@ -2,19 +2,27 @@
   color: var(--text-color);
   padding: 10px;
   border-radius: 5px;
+  display: flex;
 }
 
 .container-home.lobby {
-  background-color: var(--dark-color);
+  display: block;
+  margin-right: 20px;
 }
+
+.container-home.inputs {
+    display: block;
+    background-color: var(--light-color);
+  }
 
 .container-home.game {
     margin-top: 10px;
     background-color: var(--light-color);
     max-width: 200px;
     height: fit-content;
+    display: block;
 }
 
-/* .container-home.game > * {
-    flex: 1;
-  } */
+.container-home.config {
+    display: block;
+}

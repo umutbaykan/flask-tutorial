@@ -10,8 +10,8 @@ export const CurrentGames = () => {
 
   return (
     <div className="container-home lobby">
-      <h4>Welcome to Battleships</h4>
-      <p>Open games are displayed here in the lobby. Join them as you like!</p>
+      <h4>Lobby</h4>
+      <p>Open games are displayed here.</p>
       {Object.keys(currentGames).length === 0 && (
         <p className="error small-text">Sorry, looks like there are no open games at the moment.</p>
       )}
