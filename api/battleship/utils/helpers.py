@@ -72,8 +72,8 @@ def save_game_state(serialized_game):
 def list_load_games(user_id):
     user = get_user_by_id(user_id)
     available_games = {}
-    for game_id in user["games"]:
-        if game_id in ROOMS:
+    for game_id, game in ROOMS.items():
+        if game_id in user["games"]:
             game = ROOMS[game_id]
             available_games[game_id] = {"game_id": game.game_id, "who_started": game.who_started, "turn": game.turn, "last_modified": game.last_modified, "players": game.players}
     return available_games
