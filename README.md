@@ -2,6 +2,16 @@
 <img src="https://i.ibb.co/YXsBNPT/BATTLESHIP-02-07-2023-1.png" alt="logo" width="400" height="95"/>
 </p>
 
+Table of Contents
+---
+1. [Introduction](https://github.com/umutbaykan/battleship/edit/main/README.md#introduction)
+2. [Features](https://github.com/umutbaykan/battleship/edit/main/README.md#features)
+3. [Technologies Used](https://github.com/umutbaykan/battleship/edit/main/README.md#technologies-used)
+4. [Installation](https://github.com/umutbaykan/battleship/edit/main/README.md#introduction)
+5. [Getting Started](https://github.com/umutbaykan/battleship/edit/main/README.md#getting-started)
+6. [Structure](https://github.com/umutbaykan/battleship/edit/main/README.md#structure)
+7. [TODOS](https://github.com/umutbaykan/battleship/edit/main/README.md#TODOS)
+
 Introduction
 ---
 This is a multiplayer browser based full-stack application based on the (surprise surprise) battleship board gamewhere two players take turns trying to sink each other's ships. Full rules of the actual board game can be found [here](https://www.hasbro.com/common/instruct/battleship.pdf)
@@ -174,6 +184,14 @@ webpack compiled successfully
 At this point, both your backend and frontend servers should be running. You should see the landing page once you open http://localhost:3000/ from your browser.
 Remember, your backend server needs to be running for your application to work.
 
+Getting Started
+---
+Well this is an awkward section to have prior to deploying the app.
+It is currently not deployed, but you can play it locally (although it might be very tricky hiding your ships from your opponent).
+To get the second player locally, you need to launch the app in both normal and incognito / private modes of your browser so the backend would treat the second browser as a separate user.
+Both users need to create an account with the application to access full features.
+You can launch a different browser or repeat the same trick to get a 3rd player.
+
 Structure
 ---
 This section briefly covers the filing structure and logic of the application.
@@ -201,17 +219,23 @@ A high level explanation of the file structure can be found below:
         ├── pages         # sections and their respective components
         ├── services      # methods that conduct API call backend routes - shared across multiple components
         ├── utils         # helper methods
-        ├── App.js        # 
+        ├── App.js        # contains all event listeners, passes down game state to children
         ├── index.js      #
         └── socket.js     # socket.io connection for frontend
 ```
-
-- The application relies on server side sessions for verifications. 
+**Backend**
+- The application relies on server side sessions for verifications. Apart from initial logging in, users do not send their ID's with their actions.
 - Initial game creation / loading is handled through API calls for verification purposes.
 - All game actions are handled by events. Game sends an updated game state JSON object to players in the room each time game gets updated.
 - Validations are done on backend to prevent unauthorized users from joining games. Users cannot take place of other players in games that already started, or manually put in URL's in the browser to bypass checks.
 - Games are saved to database at the end of each turn, but game state is accessed through memory caching. All game state is stored in a global room object.
 - All game model objects have serialize / deserialize methods to allow transfer of game state as a JSON object in a bidirectional way between frontend / backend.
+
+**Frontend**
+- App.js is the main file which contains all event listeners. Received information is then put into contexts and accessed by children components who need them.
+- Game state is the most important object which contain all data related to the game. Backend removes all information related to opponent's ship positions prior to sending to frontend.
+- Once login verification from backend is received, user ID is stored in a session cookie in frontend to access protected routes.
+- Game actions are emitted as events to backend. Accompanying data is sent as JSON and deciphered on backend.
 
 Some items are still under development and very likely going to change:
 - Configurations will be revisited before deployment, so those sections are in progress.
