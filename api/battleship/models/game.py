@@ -63,6 +63,10 @@ class Game:
         self.is_over()
         return result
     
+    def fired_at_that_position_already(self, coordinate):
+        opponent_board = self._get_opponents_board()
+        return opponent_board.is_already_hit(coordinate)
+    
     def remove_player(self, user_id):
         player_index = self.players.index(user_id)
         if player_index == 1:

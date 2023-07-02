@@ -46,6 +46,14 @@ class Board:
             if True in ship.alive:
                 return True
         return False
+    
+    def is_already_hit(self, coordinate):
+        if coordinate in self.missed_shots:
+            return True
+        for ship in self.ships:
+            if ship.already_hit(coordinate):
+                return True
+        return False
 
     @staticmethod
     def _validate_board_size(size):

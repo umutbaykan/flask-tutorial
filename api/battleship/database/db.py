@@ -2,8 +2,6 @@ from flask import current_app, g
 from werkzeug.local import LocalProxy
 from flask_pymongo import PyMongo
 
-from bson.objectid import ObjectId
-
 
 def get_db():
     """
