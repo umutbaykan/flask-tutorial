@@ -28,7 +28,7 @@ const Board = ({ boardInfo, action }) => {
       });
     });
     missed_shots.forEach((coordinate) => {
-      result[JSON.stringify(coordinate)] = { class: "miss", symbol: " · " };
+      result[JSON.stringify(coordinate)] = { class: "miss", symbol: "" };
     });
     return result;
   }, [gameState]);

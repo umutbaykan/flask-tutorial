@@ -73,16 +73,3 @@ def load_game_history():
     player = session.get("user_id")
     result = get_user_game_history(player)
     return make_response(list(result), 200)
-
-
-### Development methods - To be removed later
-@bp.route("/list", methods=["GET"])
-def list_rooms():
-    return make_response(get_all_room_data(), 200)
-
-
-def get_all_room_data():
-    all_serialized_data = {}
-    for game_id, game in ROOMS.items():
-        all_serialized_data[game_id] = Game.serialize(game)
-    return all_serialized_data

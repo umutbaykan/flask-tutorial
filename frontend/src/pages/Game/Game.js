@@ -50,13 +50,10 @@ const Game = () => {
   };
 
   const fire = (coordinates) => {
-    if (error) {
-      return;
-    } else
-      socket.emit("fire", {
-        coordinates: coordinates,
-        room: gameState.game_id,
-      });
+    socket.emit("fire", {
+      coordinates: coordinates,
+      room: gameState.game_id,
+    });
   };
 
   const didIwin = () => {

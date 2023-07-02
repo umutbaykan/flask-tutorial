@@ -17,6 +17,9 @@ class Ship:
                 self.alive[i] = False
                 return True
         return False
+    
+    def already_hit(self, coordinate_to_check):
+        return coordinate_to_check in (self.coordinates[i] for i in range(len(self.alive)) if not self.alive[i])
 
     @staticmethod
     def _validate_ship_is_straight(coordinates):

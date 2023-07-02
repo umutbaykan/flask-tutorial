@@ -36,6 +36,10 @@ def on_fire(data):
     if not player_turn:
         emit("error", {"error": "Not your turn to shoot."}, to=request.sid)
         return
+    
+    if game.fired_at_that_position_already(coordinates):
+        emit("error", {"error": "You already fired there!"}, to=request.sid)
+        return
 
     game.fire(coordinates)
     save_game_state(Game.serialize(game))
