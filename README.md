@@ -24,7 +24,9 @@ The application supports multiplayer gameplay and allows multiple games to be pl
 
 Features
 ---
-This section outlines the various features of the application and provides small clips for illustration purposes. In many cases, two browsers are shown on the screen to demonstrate what other users are seeing. While the application remains largely loyal to the original game rules, there is one notable difference: when a player successfully hits their opponent's target, they do not receive information about which ship they hit. This is done consciously as I think the game becomes easier if you know which ship you struck.
+This section outlines the various features of the application and provides small clips for illustration purposes. In many cases, two browsers are shown on the screen to demonstrate what other users are seeing. Click [here](https://www.youtube.com/watch?v=f41EuTvlot8) to watch the demo on youtube.
+
+While the application remains largely loyal to the original game rules, there is one notable difference: when a player successfully hits their opponent's target, they do not receive information about which ship they hit. This is done consciously as I think the game becomes easier if you know which ship you struck.
 
 ### Signup - Login - Logout
 - Nothing really exciting here. No e-mail is required at this point as this is a toy app.
@@ -33,7 +35,11 @@ This section outlines the various features of the application and provides small
 
 ### Landing Page / Lobby
 - The lobby displays all available games. Player can see the game configurations and the host player prior to joining.
+<img src="https://i.ibb.co/Zz57vZR/optimize-lobby-createroom.gif" alt="create room" width="800"/>
+
 - If any player leaves before the game starts, the room becomes available again and reappears in the lobby. 
+<img src="https://i.ibb.co/RNd7GGR/optimize-leave-and-rejoin.gif" alt="leave and rejoin" width="800"/>
+
 - Players can also configure their own games and create rooms, which are then displayed in the lobby.
 <img src="https://i.ibb.co/Z8Rvh1L/optimize-lobby-1.gif" alt="lobby and game configuration" width="800"/>
 
@@ -135,11 +141,11 @@ The application's file structure and logic can be summarized as follows:
 ```
 **Backend**
 - User authentication and verification are handled through server-side sessions. Users do not send their IDs with each action, except during the initial login process.
-- API calls are used for initial game creation and loading, providing verification checks.
+- API calls are made to backend server for initial game creation and loading, providing verification checks.
+- Game model objects have serialize/deserialize methods to enable bidirectional transfer of game related data as JSON objects between the frontend and backend.
 - Game actions are processed through events, and the updated game state JSON object is sent to all players in the room whenever there is an update.
 - Backend validations ensure that unauthorized users cannot join games in progress or bypass checks by manually entering URLs in the browser.
 - Games are saved to the database at the end of each turn, while the game state is accessed through memory caching. The global room object stores all game state information.
-- Game model objects have serialize/deserialize methods to enable bidirectional transfer of game state as a JSON object between the frontend and backend.
 
 **Frontend**
 - The App.js file serves as the main component and contains all event listeners. Received information is stored in contexts and accessed by child components that require it.
