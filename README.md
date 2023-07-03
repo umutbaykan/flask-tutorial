@@ -14,6 +14,8 @@ Table of Contents
 
 Introduction
 ---
+<img src="https://i.ibb.co/wc4KFsK/gamescreesnhot.png" alt="screenshot from game"/>
+
 This is a multiplayer browser based full-stack application based on the (surprise surprise) battleship board gamewhere two players take turns trying to sink each other's ships. Full rules of the actual board game can be found [here](https://www.hasbro.com/common/instruct/battleship.pdf)
 (There has been a few tweaks to the rules here and there in this project, you can read more on that in the [features](https://github.com/umutbaykan/battleship/edit/main/README.md#features) section)
 
@@ -27,40 +29,55 @@ This section divides the features of the application into several sections and s
 The application is mostly loyal to the original game rules apart from one; when a player hits the opponent target they do not get information on which ship they hit. This is done consciously as I think the game becomes easier if you know which ship you struck.
 
 ### Signup - Login - Logout
+<img src="https://i.ibb.co/7Ydn6tF/optimize-signup.gif" alt="signup and login" width="800"/>
 - Nothing really exciting here. No e-mail is required at this point as this is a toy app.
 - Forms are validated with Formik - Yup on frontend, additional cross checks with db is done on backend.
 
 ### Landing Page / Lobby
+<img src="https://i.ibb.co/Z8Rvh1L/optimize-lobby-1.gif" alt="lobby and game configuration" width="800"/>
 - All available games are displayed on the lobby. Player can see the game configurations and host player prior to joining.
-- Once a game is full, it is removed from the lobby.
 - If any of the players leave prior to the game starting, the room becomes available again and displayed on the lobby.
 - Players can configure their own games and create a room to be displayed in the lobby.
+<img src="https://i.ibb.co/whV9QtZ/optimize-lobby-2.gif" alt="game gets removed from lobby when full" width="800"/>
+- Once a game is full, it is removed from the lobby.
 
 ### Game
+<img src="https://i.ibb.co/C0QRHjy/optimize-chat.gif" alt="chat functionality" width="800"/>
 - Each game is a room. Players in the room only receive information for their corresponding room and not others.
 - Game has a chat section where players can talk to one another. Information coming from the server is also displayed in this section.
 - Game URL's are protected, therefore players need to join through verififcation from backend.
 
-**Prior to game starting:**
+<br /> <br />
+_Prior to game starting:_
+
+<img src="https://i.ibb.co/h2KdFbq/optimize-shipplacing.gif" alt="placing ships" width="800"/>
 - Player can place their ships and press start game to signal they are ready. Game does not initiate until both players are ready.
 - Players can still leave / join the room as they like prior to game starting. If both players leave the room, the room and game automatically closes without saving.
 - Players can currently only randomise the positions of their ships. Placing ships manually is a feature I plan to add on later. Randomisation is done on frontend, but validation is done on backend to ensure player has not cheated.
 
-**Once game has started:**
+<br /> <br />
+_Once game has started:_
+
+<img src="https://i.ibb.co/4JtSLTM/optimize-shooting.gif" alt="shooting" width="800"/>
 - Game state gets saved at the end of every turn so players can come back to it at a later date.
 - Players take turn shooting at each other's boards (big surprise there). Players hits and misses are displayed on the board.
+<img src="https://i.ibb.co/GPNwjr2/optimize-leave-room-halfway.gif" alt="leaving room halfway through the game" width="800"/>
 - If any of the players leave halfway through, the other player gets a notification and the room closes down until it is loaded again by one of the players.
 - Game state is masked in the backend, so players never get information on where their opponent's ships are.
 
-**When game ends:**
+<br /> <br />
+_When game ends:_
+<img src="https://i.ibb.co/jrStmPk/optimize-game-end.gif" alt="game end" width="800"/>
 - Players get to see each others full boards.
 - Game state gets updated with the winner.
 - Players can still keep on chatting, room closes when they leave.
 
 ### Profile
+<img src="https://i.ibb.co/Vgrz5q2/optimize-history.gif" alt="player history" width="800"/>
 - Application profile section displays the history of the games user has played.
 - Simple statistics on how many games user has played and their W/L ratio is displayed.
 - It provides a load link to reactivate unfinished games. Once this link is pressed, the game room reopens from where players left off.
+<img src="https://i.ibb.co/9h9tyTc/optimize-game-load.gif" alt="game loading" width="800"/>
 - Loaded games are considered private and cannot be joined from the lobby by random people. Players can see their reactivated unfinished games in the profile section, and can click the join button to take their place again.
 
 Technologies Used
