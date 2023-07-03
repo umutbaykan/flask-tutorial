@@ -7,20 +7,20 @@ Table of Contents
 1. [Introduction](https://github.com/umutbaykan/battleship#introduction)
 2. [Features](https://github.com/umutbaykan/battleship#features)
 3. [Technologies Used](https://github.com/umutbaykan/battleship#technologies-used)
-4. [Installation](https://github.com/umutbaykan/battleship#introduction)
-5. [Getting Started](https://github.com/umutbaykan/battleship#getting-started)
-6. [Project Structure](https://github.com/umutbaykan/battleship#project-structure)
-7. [TODOS](https://github.com/umutbaykan/battleship#todos)
+4. [Project Structure](https://github.com/umutbaykan/battleship#project-structure)
+5. [Installation](https://github.com/umutbaykan/battleship#introduction)
+6. [Getting Started](https://github.com/umutbaykan/battleship#getting-started)
+7. [TODO's](https://github.com/umutbaykan/battleship#todos)
 
 Introduction
 ---
 <img src="https://i.ibb.co/wc4KFsK/gamescreesnhot.png" alt="screenshot from game"/>
 
-This project is a multiplayer browser-based full-stack application inspired by the (surprise surprise) classic battleship board game. In this game, two players take turns trying to sink each other's ships. While the core rules are based on the original game, there have been a few tweaks implemented, which are discussed in the [features](https://github.com/umutbaykan/battleship/edit/main/README.md#features) section. Full rules of the actual board game can be found [here](https://www.hasbro.com/common/instruct/battleship.pdf)
+This project is a multiplayer browser-based full-stack application inspired by the (surprise surprise) classic battleship board game. In this game, two players take turns trying to sink each other's ships. While the core rules are based on the original game, there have been a few tweaks implemented, which are discussed in the [features](https://github.com/umutbaykan/battleship#features) section. Full rules of the actual board game can be found [here](https://www.hasbro.com/common/instruct/battleship.pdf)
 
 The main motivation behind developing this application is to explore and gradually implement new concepts that I'm interested in learning. For the initial step, I wanted to focus on websockets and design an event-based game, rather than relying solely on CRUD methods. Battleship was chosen as the game of choice because it strikes a balance between simplicity and complexity, providing an opportunity to work with game logic that requires more than just a few lines of code.
 
-The application supports multiplayer gameplay and allows multiple games to be played simultaneously. Although it's still a work in progress and hasn't been deployed yet, you can run it on your local machine by following the [installation](https://github.com/umutbaykan/battleship/edit/main/README.md#installation) instructions provided.
+The application supports multiplayer gameplay and allows multiple games to be played simultaneously. It is still under development, but you can run it on your local machine by following the [installation](https://github.com/umutbaykan/battleship#installation) instructions provided.
 
 Features
 ---
@@ -83,10 +83,11 @@ _When game ends:_
 Technologies Used
 ---
 ### Frontend: 
-React, JavaScript, Cypress (In Progress!)
+React, JavaScript, Cypress (In Progress!), SocketIO
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> 
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/>
 <img src="https://www.cypress.io/images/layouts/cypress-logo.svg" alt="cypress" width="40" height="40"/>
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/socketio/socketio-original.svg" alt="socketio" width="40" height="40"/>
 
 ### Backend: 
 Python, Flask, MongoDB, PyTest
@@ -101,6 +102,58 @@ Python, Flask, MongoDB, PyTest
 
 There's no specific reason why I chose this particular stack other than the fact that I wanted to take on a challenge and try out a different backend framework and language for this project, which is why I went with Python and Flask. As for the database, MongoDB was the go-to option because I anticipate making further changes to the application as it develops. I wanted something that would provide me with flexibility in the long run.
 Some additional packages were used; such as Flask-SocketIO for web-sockets, PyMongo to interact with the database, Formik and Yup for form validation on frontend.
+
+Project Structure
+---
+The application's file structure and logic can be summarized as follows:
+
+```terminal
+.
+├── api
+│   ├── battleship
+│   │   ├── database      # Handles the connection to the database and contains methods for accessing the data.
+│   │   ├── events        # Manages the handling of WebSocket events.
+│   │   ├── models        # Defines the models that handle the game logic.
+│   │   ├── routes        # Handles the API calls and route handling.
+│   │   ├── utils         # Provides helper methods, the global ROOM object, and app extensions.
+│   │   └── __init__.py   # Serves as the app factory.
+│   ├── instance
+│   │   └── config.py     # Holds the configuration file (config.py) which is still under development and subject to change.
+│   └── tests
+│       ├── seeds         # Cntains a collection of seed data used in the database and JSON objects that mimic the data sent from the frontend.
+│       └── conftest.py   # Test configurations.
+└── frontend
+    ├── public            # contains image files and logos used in the application.
+    └── src
+        ├── components    # Contains components shared across multiple pages.
+        ├── pages         # Houses the sections and their respective components.
+        ├── services      # Provides methods for conducting API calls to backend routes, shared across multiple components.
+        ├── utils         # Includes helper methods.
+        ├── App.js        # Contains all event listeners and creates contexts to pass down data to children components.
+        ├── index.js      # Responsible for rendering the application.
+        └── socket.js     # Establishes the Socket.IO connection for the frontend.
+```
+**Backend**
+- User authentication and verification are handled through server-side sessions. Users do not send their IDs with each action, except during the initial login process.
+- API calls are used for initial game creation and loading, providing verification checks.
+- Game actions are processed through events, and the updated game state JSON object is sent to all players in the room whenever there is an update.
+- Backend validations ensure that unauthorized users cannot join games in progress or bypass checks by manually entering URLs in the browser.
+- Games are saved to the database at the end of each turn, while the game state is accessed through memory caching. The global room object stores all game state information.
+- Game model objects have serialize/deserialize methods to enable bidirectional transfer of game state as a JSON object between the frontend and backend.
+
+**Frontend**
+- The App.js file serves as the main component and contains all event listeners. Received information is stored in contexts and accessed by child components that require it.
+- The game state object holds crucial data related to the game. The backend removes any information related to the opponent's ship positions before sending it to the frontend.
+- Upon receiving login verification from the backend, the user ID is stored in a session cookie, enabling access to protected routes.
+- Game actions are emitted as events to the backend, with accompanying data sent as JSON and deciphered on the backend.
+
+Some aspects are still undergoing development and are likely to change:
+
+- Configuration settings are subject to revision before deployment.
+- CORS is currently enabled for development purposes but may be removed in the future.
+- Session management may transition from using separate files to writing sessions directly to the database.
+- By now, you might be thinking, why does it look.. awful? Why yes, yes it does. This is because CSS has been put together very quickly (and poorly) just to see something on the front end. This will be tidied up later.
+
 
 Installation
 ---
@@ -213,57 +266,6 @@ Hopefully, this section will be expanded when the application is deployed. In th
 2) Create an account in both browser windows to access all features.
 3) Start the game by placing your ships and taking turns shooting at each other's boards (might be very difficult to hide your ships from your opponent staring at the same screen). 
 4) To involve a third player, repeat the process by opening the application in a different browser or incognito/private mode.
-
-Project Structure
----
-The application's file structure and logic can be summarized as follows:
-
-```terminal
-.
-├── api
-│   ├── battleship
-│   │   ├── database      # Handles the connection to the database and contains methods for accessing the data.
-│   │   ├── events        # Manages the handling of WebSocket events.
-│   │   ├── models        # Defines the models that handle the game logic.
-│   │   ├── routes        # Handles the API calls and route handling.
-│   │   ├── utils         # Provides helper methods, the global ROOM object, and app extensions.
-│   │   └── __init__.py   # Serves as the app factory.
-│   ├── instance
-│   │   └── config.py     # Holds the configuration file (config.py) which is still under development and subject to change.
-│   └── tests
-│       ├── seeds         # Cntains a collection of seed data used in the database and JSON objects that mimic the data sent from the frontend.
-│       └── conftest.py   # Test configurations.
-└── frontend
-    ├── public            # contains image files and logos used in the application.
-    └── src
-        ├── components    # Contains components shared across multiple pages.
-        ├── pages         # Houses the sections and their respective components.
-        ├── services      # Provides methods for conducting API calls to backend routes, shared across multiple components.
-        ├── utils         # Includes helper methods.
-        ├── App.js        # Contains all event listeners and creates contexts to pass down data to children components.
-        ├── index.js      # Responsible for rendering the application.
-        └── socket.js     # Establishes the Socket.IO connection for the frontend.
-```
-**Backend**
-- User authentication and verification are handled through server-side sessions. Users do not send their IDs with each action, except during the initial login process.
-- API calls are used for initial game creation and loading, providing verification checks.
-- Game actions are processed through events, and the updated game state JSON object is sent to all players in the room whenever there is an update.
-- Backend validations ensure that unauthorized users cannot join games in progress or bypass checks by manually entering URLs in the browser.
-- Games are saved to the database at the end of each turn, while the game state is accessed through memory caching. The global room object stores all game state information.
-- Game model objects have serialize/deserialize methods to enable bidirectional transfer of game state as a JSON object between the frontend and backend.
-
-**Frontend**
-- The App.js file serves as the main component and contains all event listeners. Received information is stored in contexts and accessed by child components that require it.
-- The game state object holds crucial data related to the game. The backend removes any information related to the opponent's ship positions before sending it to the frontend.
-- Upon receiving login verification from the backend, the user ID is stored in a session cookie, enabling access to protected routes.
-- Game actions are emitted as events to the backend, with accompanying data sent as JSON and deciphered on the backend.
-
-Some aspects are still undergoing development and are likely to change:
-
-- Configuration settings are subject to revision before deployment.
-- CORS is currently enabled for development purposes but may be removed in the future.
-- Session management may transition from using separate files to writing sessions directly to the database.
-- By now, you might be thinking, why does it look.. awful? Why yes, yes it does. This is because CSS has been put together very quickly (and poorly) just to see something on the front end. This will be tidied up later.
 
 //TODO's
 ---
