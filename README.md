@@ -4,21 +4,21 @@
 
 Table of Contents
 ---
-1. [Introduction](https://github.com/umutbaykan/battleship#introduction)
-2. [Features](https://github.com/umutbaykan/battleship#features)
-3. [Technologies Used](https://github.com/umutbaykan/battleship#technologies-used)
-4. [Project Structure](https://github.com/umutbaykan/battleship#project-structure)
-5. [Installation](https://github.com/umutbaykan/battleship#introduction)
-6. [Getting Started](https://github.com/umutbaykan/battleship#getting-started)
-7. [TODO's](https://github.com/umutbaykan/battleship#todos)
+1. [Introduction](#introduction)
+2. [Features](#features)
+3. [Technologies Used](#technologies-used)
+4. [Project Structure](#project-structure)
+5. [Installation](#introduction)
+6. [Getting Started](#getting-started)
+7. [TODO's](#todos)
 
 Introduction
 ---
 <img src="https://i.ibb.co/wc4KFsK/gamescreesnhot.png" alt="screenshot from game"/>
 
-This project is a multiplayer browser-based full-stack application inspired by the (surprise surprise) classic battleship board game. In this game, two players take turns trying to sink each other's ships. While the core rules are based on the original game, there have been a few tweaks implemented, which are discussed in the [features](https://github.com/umutbaykan/battleship#features) section. Full rules of the actual board game can be found [here](https://www.hasbro.com/common/instruct/battleship.pdf)
+This project is a real-time, multiplayer, event-based full-stack application inspired by the (surprise surprise) classic battleship board game. In this game, two players take turns trying to sink each other's ships. While the core rules are based on the original game, there have been a few tweaks implemented, which are discussed in the [features](https://github.com/umutbaykan/battleship#features) section. Full rules of the actual board game can be found [here.](https://www.hasbro.com/common/instruct/battleship.pdf)
 
-The main motivation behind developing this application is to explore and gradually implement new concepts that I'm interested in learning. For the initial step, I wanted to focus on websockets and design an event-based game, rather than relying solely on CRUD methods. Battleship was chosen as the game of choice because it strikes a balance between simplicity and complexity, providing an opportunity to work with game logic that requires more than just a few lines of code.
+The main motivation behind developing this application is to explore and gradually implement new concepts that I'm interested in learning. For the initial step, I wanted to focus on web sockets and design a real-time game, rather than relying solely on CRUD methods. Battleship was chosen as the game of choice because it strikes a balance between simplicity and complexity, providing an opportunity to work with game logic that requires more than just a few lines of code.
 
 The application supports multiplayer gameplay and allows multiple games to be played simultaneously. It is still under development, but you can run it on your local machine by following the [installation](https://github.com/umutbaykan/battleship#installation) instructions provided.
 
@@ -34,7 +34,7 @@ While the application remains largely loyal to the original game rules, there is
 <img src="https://i.ibb.co/7Ydn6tF/optimize-signup.gif" alt="signup and login" width="800"/>
 
 ### Landing Page / Lobby
-- The lobby displays all available games. Player can see the game configurations and the host player prior to joining.
+- The lobby displays all available games. Players can see the game configurations and the host player prior to joining.
 <img src="https://i.ibb.co/Zz57vZR/optimize-lobby-createroom.gif" alt="create room" width="800"/>
 
 - If any player leaves before the game starts, the room becomes available again and reappears in the lobby. 
@@ -107,7 +107,7 @@ Python, Flask, MongoDB, PyTest
 **Why this stack?**
 
 There's no specific reason why I chose this particular stack other than the fact that I wanted to take on a challenge and try out a different backend framework and language for this project, which is why I went with Python and Flask. As for the database, MongoDB was the go-to option because I anticipate making further changes to the application as it develops. I wanted something that would provide me with flexibility in the long run.
-Some additional packages were used; such as Flask-SocketIO for web-sockets, PyMongo to interact with the database, Formik and Yup for form validation on frontend.
+Some additional packages were used; such as Flask-SocketIO for web sockets, PyMongo to interact with the database, Formik and Yup for form validation on frontend. I relied on Postman to test request / response cycles in my API routes.
 
 Project Structure
 ---
@@ -142,16 +142,17 @@ The application's file structure and logic can be summarized as follows:
 **Backend**
 - User authentication and verification are handled through server-side sessions. Users do not send their IDs with each action, except during the initial login process.
 - API calls are made to backend server for initial game creation and loading, providing verification checks.
-- Game model objects have serialize/deserialize methods to enable bidirectional transfer of game related data as JSON objects between the frontend and backend.
+- Everything related to a particular game state is stored in a game model object. This object has serialize/deserialize methods to enable transfer of game-related data as a JSON object between the frontend and backend, as well as the database when required.
 - Game actions are processed through events, and the updated game state JSON object is sent to all players in the room whenever there is an update.
 - Backend validations ensure that unauthorized users cannot join games in progress or bypass checks by manually entering URLs in the browser.
-- Games are saved to the database at the end of each turn, while the game state is accessed through memory caching. The global room object stores all game state information.
+- Games are saved to the database at the end of each turn, while the game object is accessed through in memory-storage. The global room object stores all game objects.
+- Available games in the global room object are broadcasted to every user in the lobby to display them in real-time.
 
 **Frontend**
-- The App.js file serves as the main component and contains all event listeners. Received information is stored in contexts and accessed by child components that require it.
+- The App.js file serves as the main component and contains all event listeners. Received information is stored in React contexts and accessed by child components.
 - The game state object holds crucial data related to the game. The backend removes any information related to the opponent's ship positions before sending it to the frontend.
-- Upon receiving login verification from the backend, the user ID is stored in a session cookie, enabling access to protected routes.
-- Game actions are emitted as events to the backend, with accompanying data sent as JSON and deciphered on the backend.
+- Game actions are emitted as events to the backend, with accompanying data sent as JSON and deciphered on the backend. If validated, these actions change the game model object in the backend, which is emitted to frontend through an update event.
+- Upon receiving login verification from the backend, the user ID is stored in a session cookie in the frontend, enabling access to protected routes.
 
 Some aspects are still undergoing development and are likely to change:
 
@@ -176,7 +177,7 @@ Prerequisites
 1) Clone this repository.
 2) Open a terminal and navigate to the api folder within the project's root folder.
 
-Before you install dependencies, you might want to create a python virtual environment for this project. The instructions below are for a macOS system, you can find out more about creating virtual environments for your opearting system through this [link](https://docs.python.org/3/library/venv.html).
+Before you install dependencies, you might want to create a Python virtual environment for this project. The instructions below are for a macOS system, you can find out more about creating virtual environments for your operating system through this [link](https://docs.python.org/3/library/venv.html).
 ```terminal
 # battleship/api
 # To create a virtual environment
@@ -273,7 +274,7 @@ Hopefully, this section will be expanded when the application is deployed. In th
 3) Start the game by placing your ships and taking turns shooting at each other's boards (might be very difficult to hide your ships from your opponent staring at the same screen). 
 4) To involve a third player, repeat the process by opening the application in a different browser or incognito/private mode.
 
-//TODO's
+TODO's
 ---
 
 Here's a list of tasks organized based on the next steps to take:
