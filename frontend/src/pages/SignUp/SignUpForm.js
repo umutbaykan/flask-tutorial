@@ -59,14 +59,15 @@ const SignUpForm = () => {
             <div className="container-block login">
               <h3>Sign Up</h3>
               <Form>
-                <TextField label="Username" name="username" type="text" />
-                <TextField label="Password" name="password" type="password" />
+                <TextField data-cy="username" label="Username" name="username" type="text" />
+                <TextField data-cy="password" label="Password" name="password" type="password" />
                 <TextField
+                  data-cy="confirm-password"
                   label="Confirm Password"
                   name="confirmPassword"
                   type="password"
                 />
-                <button className="button-join" type="submit">
+                <button data-cy="signup-submit" className="button-join" type="submit">
                   Register
                 </button>
                 <p className="error">{error}</p>
