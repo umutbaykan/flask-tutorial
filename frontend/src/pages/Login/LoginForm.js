@@ -56,7 +56,7 @@ const LoginForm = () => {
                 <button data-cy="login-submit" className="button-join" type="submit">
                   Login
                 </button>
-                <p className="error">{error}</p>
+                <p data-cy="error-message" className="error">{error}</p>
               </Form>
             </div>
           </div>
