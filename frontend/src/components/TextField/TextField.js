@@ -22,6 +22,7 @@ const TextField = ({ label, ...props }) => {
       <ErrorMessage
         component="div"
         name={field.name}
+        data-cy="error-message"
         className="small-text error"
       />
     </>
